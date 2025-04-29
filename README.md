@@ -91,26 +91,107 @@ court-kart-store/
 
 ## Database Schema (ERD)
 
-### Tables
+```plantuml
+@startuml CourtKartDB
+' General background
+skinparam backgroundColor #0d1117
+skinparam defaultTextColor #c9d1d9
 
-- **USERS** (id, name, email, password, role)
-- **PRODUCTS** (id, name, description, price, stock, image_url)
-- **ORDERS** (id, user_id, total_price, status, created_at)
-- **ORDER_ITEMS** (id, order_id, product_id, quantity, price)
-- **CART** (id, user_id, product_id, quantity)
-- **CANCELED_ORDERS** (id, order_id, canceled_at, reason)
+' Class table styles
+skinparam classBorderColor #30363d
+skinparam classBackgroundColor #161b22
+skinparam classAttributeFontColor #c9d1d9
+skinparam classHeaderBackgroundColor #21262d
+skinparam classHeaderFontColor #58a6ff
+skinparam classHeaderFontStyle bold
 
-### Relationships
+' Arrows
+skinparam arrowColor #30363d
+skinparam arrowFontColor #c9d1d9
 
-| Entity 1 | Relationship      | Entity 2        | Description                                             |
-| -------- | ----------------- | --------------- | ------------------------------------------------------- |
-| USERS    | 1:N (one-to-many) | ORDERS          | A user can have multiple orders                         |
-| ORDERS   | 1:N (one-to-many) | ORDER_ITEMS     | An order can contain multiple items                     |
-| PRODUCTS | 1:N (one-to-many) | ORDER_ITEMS     | A product can be in multiple order items                |
-| USERS    | 1:N (one-to-many) | CART            | A user has one cart with multiple items                 |
-| ORDER    | 1:1 (one-to-one)  | CANCELED_ORDERS | An order can be associated with one cancellation record |
+' Arrow label font
+skinparam ArrowFontColor #c9d1d9
 
-Use [https://dbdiagram.io](https://dbdiagram.io) to generate and visualize this ERD.
+entity "users" as users {
+  *id : INT <<PK>>
+  --
+  name : VARCHAR(100)
+  email : VARCHAR(100) <<UNIQUE>>
+  password : VARCHAR(255)
+  role : ENUM('user', 'admin')
+  created_at : TIMESTAMP
+}
+
+entity "products" as products {
+  *id : INT <<PK>>
+  --
+  name : VARCHAR(100)
+  description : TEXT
+  price : DECIMAL(10,2)
+  stock : INT
+  image_url : VARCHAR(255)
+  category : VARCHAR(50)
+  created_at : TIMESTAMP
+}
+
+entity "cart_items" as cart_items {
+  *id : INT <<PK>>
+  --
+  user_id : INT <<FK>>
+  product_id : INT <<FK>>
+  quantity : INT
+}
+
+entity "orders" as orders {
+  *id : INT <<PK>>
+  --
+  user_id : INT <<FK>>
+  total_price : DECIMAL(10,2)
+  status : ENUM('pending', 'confirmed', 'cancelled')
+  created_at : TIMESTAMP
+}
+
+entity "order_items" as order_items {
+  *id : INT <<PK>>
+  --
+  order_id : INT <<FK>>
+  product_id : INT <<FK>>
+  quantity : INT
+  price : DECIMAL(10,2)
+}
+
+entity "canceled_orders" as canceled_orders {
+  *id : INT <<PK>>
+  --
+  order_id : INT <<FK>>
+  reason : TEXT
+  canceled_at : TIMESTAMP
+}
+
+entity "logs" as logs {
+  *id : INT <<PK>>
+  --
+  action : VARCHAR(100)
+  user_id : INT <<FK>>
+  order_id : INT <<FK>><<nullable>>
+  message : TEXT
+  created_at : TIMESTAMP
+}
+
+' Relationships
+users ||--o{ cart_items : has
+users ||--o{ orders : places
+users ||--o{ logs : generates
+
+products ||--o{ cart_items : includes
+products ||--o{ order_items : sold_in
+
+orders ||--o{ order_items : contains
+orders ||--|| canceled_orders : may_be
+orders ||--o{ logs : associated_with
+
+@enduml
+```
 
 ## Author
 
