@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="src/assets/images/court-kart-logo-dark.png" alt="CourtKart Logo" width="200"/>
+  <img src="assets/images/court-kart-logo-dark.png" alt="CourtKart Logo" width="200"/>
 </p>
 
 ## Project Summary
@@ -59,6 +59,7 @@ _Screenshots will be added soon..._
 ```plaintext
 court-kart-store/
 ├── index.php                  ← homepage
+├── router.php                 ← URL route handling
 ├── shop/
 │   ├── index.php              ← list products
 │   ├── item.php               ← product details
@@ -81,117 +82,19 @@ court-kart-store/
 │   ├── db.php                 ← database connection
 │   ├── header.php             ← navbar, head
 │   └── footer.php             ← footer content
-├── sql/
-│   ├── schema.sql             ← table creation
-│   ├── procedures.sql         ← procedures
-│   └── triggers.sql           ← triggers
+└── sql/
+    ├── schema.sql             ← table creation
+    ├── procedures.sql         ← procedures
+    └── triggers.sql           ← triggers
 ```
 
 ---
 
 ## Database Schema (ERD)
 
-```plantuml
-@startuml CourtKartDB
-' General background
-skinparam backgroundColor #0d1117
-skinparam defaultTextColor #c9d1d9
-
-' Class table styles
-skinparam classBorderColor #30363d
-skinparam classBackgroundColor #161b22
-skinparam classAttributeFontColor #c9d1d9
-skinparam classHeaderBackgroundColor #21262d
-skinparam classHeaderFontColor #58a6ff
-skinparam classHeaderFontStyle bold
-
-' Arrows
-skinparam arrowColor #30363d
-skinparam arrowFontColor #c9d1d9
-
-' Arrow label font
-skinparam ArrowFontColor #c9d1d9
-
-entity "users" as users {
-  *id : INT <<PK>>
-  --
-  name : VARCHAR(100)
-  email : VARCHAR(100) <<UNIQUE>>
-  password : VARCHAR(255)
-  role : ENUM('user', 'admin')
-  created_at : TIMESTAMP
-}
-
-entity "products" as products {
-  *id : INT <<PK>>
-  --
-  name : VARCHAR(100)
-  description : TEXT
-  price : DECIMAL(10,2)
-  stock : INT
-  image_url : VARCHAR(255)
-  category : VARCHAR(50)
-  created_at : TIMESTAMP
-}
-
-entity "cart_items" as cart_items {
-  *id : INT <<PK>>
-  --
-  user_id : INT <<FK>>
-  product_id : INT <<FK>>
-  quantity : INT
-}
-
-entity "orders" as orders {
-  *id : INT <<PK>>
-  --
-  user_id : INT <<FK>>
-  total_price : DECIMAL(10,2)
-  status : ENUM('pending', 'confirmed', 'cancelled')
-  created_at : TIMESTAMP
-}
-
-entity "order_items" as order_items {
-  *id : INT <<PK>>
-  --
-  order_id : INT <<FK>>
-  product_id : INT <<FK>>
-  quantity : INT
-  price : DECIMAL(10,2)
-}
-
-entity "canceled_orders" as canceled_orders {
-  *id : INT <<PK>>
-  --
-  order_id : INT <<FK>>
-  reason : TEXT
-  canceled_at : TIMESTAMP
-}
-
-entity "logs" as logs {
-  *id : INT <<PK>>
-  --
-  action : VARCHAR(100)
-  user_id : INT <<FK>>
-  order_id : INT <<FK>><<nullable>>
-  message : TEXT
-  created_at : TIMESTAMP
-}
-
-' Relationships
-users ||--o{ cart_items : has
-users ||--o{ orders : places
-users ||--o{ logs : generates
-
-products ||--o{ cart_items : includes
-products ||--o{ order_items : sold_in
-
-orders ||--o{ order_items : contains
-orders ||--|| canceled_orders : may_be
-orders ||--o{ logs : associated_with
-
-@enduml
-```
+<p align="center">
+  <img src="assets/images/db-schema.png" alt="CourtKart Logo"/>
+</p>
 
 ## Author
 
