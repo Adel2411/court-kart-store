@@ -1,7 +1,49 @@
 <?php
+$db_status = 'Database connection: ';
+$db = null;
+
+if (! file_exists('includes/db.php')) {
+    $db_status = 'Error: Database connection file not found!';
+} else {
+    require_once 'includes/db.php';
+
+    try {
+        DB::fromConfig();
+        $db = DB::getInstance();
+        $db_status .= 'Connected successfully';
+    } catch (Exception $e) {
+        $db_status .= 'Failed to connect: '.htmlspecialchars($e->getMessage());
+    }
+}
+
+if ($db instanceof DB) {
+    try {
+        $query = 'SELECT * FROM users';
+        $users = $db->fetchRows($query);
+
+        if (! empty($users)) {
+            echo '<h2>Users</h2>';
+            echo '<table border="1" cellpadding="5" cellspacing="0">';
+            echo '<tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th></tr>';
+            foreach ($users as $row) {
+                echo '<tr>';
+                echo '<td>'.htmlspecialchars($row['id']).'</td>';
+                echo '<td>'.htmlspecialchars($row['name']).'</td>';
+                echo '<td>'.htmlspecialchars($row['email']).'</td>';
+                echo '<td>'.htmlspecialchars($row['role']).'</td>';
+                echo '</tr>';
+            }
+            echo '</table>';
+        } else {
+            echo '<p>No users found.</p>';
+        }
+    } catch (PDOException $e) {
+        echo '<p>Query failed: '.htmlspecialchars($e->getMessage()).'</p>';
+    }
+}
+
 require_once 'router.php';
 
-// Register routes
 register_route('/', function () {
     echo '<h2>Home Page</h2>';
     echo '<p>This is the home page of Court Kart Store.</p>';
@@ -22,7 +64,6 @@ register_route('/about', function () {
     echo '<p>We sell high-quality tennis equipment.</p>';
 });
 
-// HTML structure now wraps the router handling
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,6 +84,13 @@ register_route('/about', function () {
         .nav a {
             margin-right: 10px;
         }
+        .debug-info {
+            background-color: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -50,11 +98,15 @@ register_route('/about', function () {
         <h1>Court Kart Store</h1>
         <p>Welcome to our store!</p>
         
+        <div class="debug-info">
+            <?php echo $db_status; ?>
+        </div>
+        
         <div class="nav">
-            <a href="?page=home">Home</a>
-            <a href="?page=shop">Shop</a>
-            <a href="?page=cart">Cart</a>
-            <a href="?page=about">About</a>
+            <a href="/">Home</a>
+            <a href="/shop">Shop</a>
+            <a href="/cart">Cart</a>
+            <a href="/about">About</a>
         </div>
         
         <hr>
