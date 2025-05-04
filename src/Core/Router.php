@@ -6,6 +6,7 @@ class Router
 {
     private array $routes = [];
     private $notFoundCallback = null;
+    private $unauthorizedCallback = null;
     
     /**
      * Register a route with a callback
@@ -13,11 +14,15 @@ class Router
      * @param string $method HTTP method (GET, POST, etc.)
      * @param string $route Route path
      * @param callable|string $callback Function or Controller method to execute
+     * @param string|null $middleware Optional middleware to apply
      * @return void
      */
-    public function addRoute(string $method, string $route, $callback): void
+    public function addRoute(string $method, string $route, $callback, ?string $middleware = null): void
     {
-        $this->routes[$method][$route] = $callback;
+        $this->routes[$method][$route] = [
+            'callback' => $callback,
+            'middleware' => $middleware
+        ];
     }
     
     /**
@@ -25,11 +30,12 @@ class Router
      * 
      * @param string $route Route path
      * @param callable|string $callback Function or Controller method to execute
+     * @param string|null $middleware Optional middleware to apply
      * @return void
      */
-    public function get(string $route, $callback): void
+    public function get(string $route, $callback, ?string $middleware = null): void
     {
-        $this->addRoute('GET', $route, $callback);
+        $this->addRoute('GET', $route, $callback, $middleware);
     }
     
     /**
@@ -37,11 +43,12 @@ class Router
      * 
      * @param string $route Route path
      * @param callable|string $callback Function or Controller method to execute
+     * @param string|null $middleware Optional middleware to apply
      * @return void
      */
-    public function post(string $route, $callback): void
+    public function post(string $route, $callback, ?string $middleware = null): void
     {
-        $this->addRoute('POST', $route, $callback);
+        $this->addRoute('POST', $route, $callback, $middleware);
     }
     
     /**
@@ -53,6 +60,17 @@ class Router
     public function setNotFoundHandler($callback): void
     {
         $this->notFoundCallback = $callback;
+    }
+    
+    /**
+     * Set the 403 unauthorized handler
+     * 
+     * @param callable|string $callback Function or Controller method to execute
+     * @return void
+     */
+    public function setUnauthorizedHandler($callback): void
+    {
+        $this->unauthorizedCallback = $callback;
     }
     
     /**
@@ -77,6 +95,26 @@ class Router
     }
     
     /**
+     * Apply middleware to a route
+     * 
+     * @param string|null $middleware Middleware name
+     * @return bool True if middleware passes
+     */
+    private function applyMiddleware(?string $middleware): bool
+    {
+        if ($middleware === null) {
+            return true;
+        }
+        
+        // Call middleware method if it exists
+        if (method_exists(Middleware::class, $middleware)) {
+            return Middleware::$middleware();
+        }
+        
+        return true;
+    }
+    
+    /**
      * Handle the current HTTP request
      * 
      * @return void
@@ -89,10 +127,17 @@ class Router
         
         // Check each route for the current method
         if (isset($this->routes[$method])) {
-            foreach ($this->routes[$method] as $route => $callback) {
+            foreach ($this->routes[$method] as $route => $routeData) {
                 $params = $this->matchRoute($route, $uri);
                 
                 if ($params !== false) {
+                    // Apply middleware if exists
+                    if (!$this->applyMiddleware($routeData['middleware'])) {
+                        return;
+                    }
+                    
+                    $callback = $routeData['callback'];
+                    
                     // Route matched, execute callback with parameters
                     if (is_callable($callback)) {
                         call_user_func_array($callback, $params);

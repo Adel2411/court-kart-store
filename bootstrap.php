@@ -26,7 +26,7 @@ spl_autoload_register(function ($class) {
 });
 
 // Initialize session
-session_start();
+\App\Core\Session::start();
 
 // Load database connection
 require_once BASE_PATH . '/src/Core/Database.php';
