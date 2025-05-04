@@ -1,16 +1,16 @@
 <h1>Login</h1>
 
-<?php if (isset($error)): ?>
+<?php if (isset($error)) { ?>
     <div class="alert alert-error">
         <?= htmlspecialchars($error) ?>
     </div>
-<?php endif; ?>
+<?php } ?>
 
-<?php if (isset($success)): ?>
+<?php if (isset($success)) { ?>
     <div class="alert alert-success">
         <?= htmlspecialchars($success) ?>
     </div>
-<?php endif; ?>
+<?php } ?>
 
 <div class="auth-form">
     <form action="/login" method="post">

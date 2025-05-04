@@ -3,9 +3,9 @@
 namespace App\Controllers;
 
 use App\Core\View;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
-use App\Models\Order;
 
 class AdminController
 {
@@ -19,20 +19,20 @@ class AdminController
         $totalSales = Order::getTotalSales();
         $totalUsers = User::getCount();
         $totalProducts = Product::getCount();
-        
+
         // Get recent orders
         $recentOrders = Order::getRecent(5);
-        
+
         echo View::renderWithLayout('admin/index', 'admin', [
-            'title' => 'Admin Dashboard - Court Kart Store',
+            'title' => 'Admin Dashboard - Court Kart',
             'totalOrders' => $totalOrders,
             'totalSales' => $totalSales,
             'totalUsers' => $totalUsers,
             'totalProducts' => $totalProducts,
-            'recentOrders' => $recentOrders
+            'recentOrders' => $recentOrders,
         ]);
     }
-    
+
     /**
      * Display products management page
      */
@@ -40,13 +40,13 @@ class AdminController
     {
         // Get real products data from database
         $products = Product::getAll(10);
-        
+
         echo View::renderWithLayout('admin/products', 'admin', [
-            'title' => 'Product Management - Court Kart Store',
-            'products' => $products
+            'title' => 'Product Management - Court Kart',
+            'products' => $products,
         ]);
     }
-    
+
     /**
      * Display orders management page
      */
@@ -54,18 +54,18 @@ class AdminController
     {
         // Get real orders data from database
         $orders = Order::getAll(10);
-        
+
         // Get items count for each order
         foreach ($orders as &$order) {
             $order['items_count'] = Order::getItemsCount($order['id']);
         }
-        
+
         echo View::renderWithLayout('admin/orders', 'admin', [
-            'title' => 'Order Management - Court Kart Store',
-            'orders' => $orders
+            'title' => 'Order Management - Court Kart',
+            'orders' => $orders,
         ]);
     }
-    
+
     /**
      * Display users management page
      */
@@ -73,10 +73,10 @@ class AdminController
     {
         // Get real users data from database
         $users = User::getAll(10);
-        
+
         echo View::renderWithLayout('admin/users', 'admin', [
-            'title' => 'User Management - Court Kart Store',
-            'users' => $users
+            'title' => 'User Management - Court Kart',
+            'users' => $users,
         ]);
     }
 }

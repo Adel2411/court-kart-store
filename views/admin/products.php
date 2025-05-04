@@ -16,12 +16,12 @@
         </tr>
     </thead>
     <tbody>
-        <?php if (empty($products)): ?>
+        <?php if (empty($products)) { ?>
             <tr>
                 <td colspan="6">No products found.</td>
             </tr>
-        <?php else: ?>
-            <?php foreach ($products as $product): ?>
+        <?php } else { ?>
+            <?php foreach ($products as $product) { ?>
                 <tr>
                     <td><?= $product['id'] ?></td>
                     <td><?= htmlspecialchars($product['name']) ?></td>
@@ -33,8 +33,8 @@
                         <a href="#" class="btn">Delete</a>
                     </td>
                 </tr>
-            <?php endforeach; ?>
-        <?php endif; ?>
+            <?php } ?>
+        <?php } ?>
     </tbody>
 </table>
 

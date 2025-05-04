@@ -12,12 +12,12 @@
         </tr>
     </thead>
     <tbody>
-        <?php if (empty($users)): ?>
+        <?php if (empty($users)) { ?>
             <tr>
                 <td colspan="6">No users found.</td>
             </tr>
-        <?php else: ?>
-            <?php foreach ($users as $user): ?>
+        <?php } else { ?>
+            <?php foreach ($users as $user) { ?>
                 <tr>
                     <td><?= $user['id'] ?></td>
                     <td><?= htmlspecialchars($user['name']) ?></td>
@@ -29,8 +29,8 @@
                         <a href="#" class="btn">Delete</a>
                     </td>
                 </tr>
-            <?php endforeach; ?>
-        <?php endif; ?>
+            <?php } ?>
+        <?php } ?>
     </tbody>
 </table>
 

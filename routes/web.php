@@ -2,7 +2,7 @@
 
 /**
  * Define application routes
- * 
+ *
  * This file registers all routes for the application
  */
 
@@ -35,11 +35,11 @@ $router->get('/admin/orders', 'AdminController@orders', 'admin');
 $router->get('/admin/users', 'AdminController@users', 'admin');
 
 // Error handlers
-$router->get('/unauthorized', function() {
-    require_once BASE_PATH . '/views/errors/unauthorized.php';
+$router->get('/unauthorized', function () {
+    require_once BASE_PATH.'/views/errors/unauthorized.php';
 });
 
 // Set 404 handler
-$router->setNotFoundHandler(function() {
-    require_once BASE_PATH . '/views/errors/404.php';
+$router->setNotFoundHandler(function () {
+    require_once BASE_PATH.'/views/errors/404.php';
 });

@@ -2,9 +2,9 @@
 
 namespace App\Core;
 
+use Exception;
 use PDO;
 use PDOException;
-use Exception;
 
 class Database
 {
@@ -25,11 +25,12 @@ class Database
     private static $connectionParams = [];
 
     /**
-     * @param string $host Database host
-     * @param string $dbname Database name
-     * @param string $username Database username
-     * @param string $password Database password
-     * @param array $options PDO options
+     * @param  string  $host  Database host
+     * @param  string  $dbname  Database name
+     * @param  string  $username  Database username
+     * @param  string  $password  Database password
+     * @param  array  $options  PDO options
+     *
      * @throws PDOException if connection fails
      */
     private function __construct(
@@ -78,9 +79,9 @@ class Database
      */
     public static function loadConfig(): void
     {
-        $configPath = dirname(dirname(__DIR__)) . '/config/database.php';
+        $configPath = dirname(dirname(__DIR__)).'/config/database.php';
 
-        if (!file_exists($configPath)) {
+        if (! file_exists($configPath)) {
             throw new Exception('Database configuration file not found.');
         }
 
@@ -95,8 +96,8 @@ class Database
     }
 
     /**
-     * @param string $sql SQL query with placeholders
-     * @param array $params Parameters to bind
+     * @param  string  $sql  SQL query with placeholders
+     * @param  array  $params  Parameters to bind
      * @return \PDOStatement The prepared and executed statement
      */
     public function query(string $sql, array $params = []): \PDOStatement

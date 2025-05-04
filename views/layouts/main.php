@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?? 'Court Kart Store' ?></title>
+    <title><?= $title ?? 'Court Kart' ?></title>
     <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="/assets/css/layouts.css">
     <link rel="stylesheet" href="/assets/css/components.css">
@@ -17,8 +17,8 @@
             <div class="header-content">
                 <div class="logo">
                     <a href="/">
-                        <img src="../public/assets/images/court-kart-logo-dark.svg" alt="Court Kart Store" >
-                        <span>Court Kart Store</span>
+                        <img src="/assets/images/court-kart-logo-dark.svg" alt="Court Kart" width="50">
+                        <span>Court Kart</span>
                     </a>
                 </div>
                 
@@ -89,7 +89,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>Court Kart Store</h3>
+                    <h3>Court Kart</h3>
                     <p>Your one-stop shop for premium basketball equipment and apparel.</p>
                 </div>
                 <div class="footer-section">
@@ -107,7 +107,7 @@
                 </div>
             </div>
             <div class="copyright">
-                &copy; <?= date('Y') ?> Court Kart Store. All rights reserved.
+                &copy; <?= date('Y') ?> Court Kart. All rights reserved.
             </div>
         </div>
     </footer>

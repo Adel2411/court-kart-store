@@ -13,12 +13,12 @@
         </tr>
     </thead>
     <tbody>
-        <?php if (empty($orders)): ?>
+        <?php if (empty($orders)) { ?>
             <tr>
                 <td colspan="7">No orders found.</td>
             </tr>
-        <?php else: ?>
-            <?php foreach ($orders as $order): ?>
+        <?php } else { ?>
+            <?php foreach ($orders as $order) { ?>
                 <tr>
                     <td>#<?= $order['id'] ?></td>
                     <td><?= htmlspecialchars($order['customer_name']) ?></td>
@@ -31,8 +31,8 @@
                         <a href="#" class="btn">Update</a>
                     </td>
                 </tr>
-            <?php endforeach; ?>
-        <?php endif; ?>
+            <?php } ?>
+        <?php } ?>
     </tbody>
 </table>
 

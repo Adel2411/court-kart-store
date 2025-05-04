@@ -1,10 +1,10 @@
 <h1>Register</h1>
 
-<?php if (isset($error)): ?>
+<?php if (isset($error)) { ?>
     <div class="alert alert-error">
         <?= htmlspecialchars($error) ?>
     </div>
-<?php endif; ?>
+<?php } ?>
 
 <div class="auth-form">
     <form action="/register" method="post">

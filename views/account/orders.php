@@ -7,7 +7,7 @@
     </p>
 </div>
 
-<?php if (empty($orders)): ?>
+<?php if (empty($orders)) { ?>
     <div class="empty-state">
         <div class="empty-state-icon">
             <i class="fas fa-shopping-bag"></i>
@@ -16,7 +16,7 @@
         <p>You haven't placed any orders yet.</p>
         <a href="/shop" class="btn btn-primary">Start Shopping</a>
     </div>
-<?php else: ?>
+<?php } else { ?>
     <div class="table-responsive">
         <table class="data-table orders-table">
             <thead>
@@ -30,7 +30,7 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($orders as $order): ?>
+                <?php foreach ($orders as $order) { ?>
                     <tr>
                         <td><strong>#<?= $order['id'] ?></strong></td>
                         <td><?= date('M d, Y', strtotime($order['created_at'])) ?></td>
@@ -45,7 +45,7 @@
                             <a href="/orders/<?= $order['id'] ?>" class="btn btn-sm">View Details</a>
                         </td>
                     </tr>
-                <?php endforeach; ?>
+                <?php } ?>
             </tbody>
         </table>
     </div>
@@ -53,7 +53,7 @@
     <div class="pagination">
         <!-- Placeholder for pagination if needed -->
     </div>
-<?php endif; ?>
+<?php } ?>
 
 <div class="actions">
     <a href="/account" class="btn btn-outline">

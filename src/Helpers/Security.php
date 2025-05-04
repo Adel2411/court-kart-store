@@ -9,7 +9,7 @@ class Security
     /**
      * Hash a password using PHP's password_hash function
      *
-     * @param string $password Plain text password
+     * @param  string  $password  Plain text password
      * @return string Hashed password
      */
     public static function hashPassword(string $password): string
@@ -20,8 +20,8 @@ class Security
     /**
      * Verify if a password matches a hash
      *
-     * @param string $password Plain text password
-     * @param string $hash Hashed password
+     * @param  string  $password  Plain text password
+     * @param  string  $hash  Hashed password
      * @return bool True if password matches hash
      */
     public static function verifyPassword(string $password, string $hash): bool
@@ -38,32 +38,34 @@ class Security
     {
         $token = bin2hex(random_bytes(32));
         Session::set('csrf_token', $token);
+
         return $token;
     }
 
     /**
      * Verify if the provided CSRF token is valid
      *
-     * @param string $token The token to verify
+     * @param  string  $token  The token to verify
      * @return bool True if token is valid
      */
     public static function verifyCsrfToken(string $token): bool
     {
         $storedToken = Session::get('csrf_token');
-        
-        if (!$storedToken || $token !== $storedToken) {
+
+        if (! $storedToken || $token !== $storedToken) {
             return false;
         }
-        
+
         // Regenerate token after verification for enhanced security
         self::generateCsrfToken();
+
         return true;
     }
 
     /**
      * Generate a secure random token
      *
-     * @param int $length Length of the token
+     * @param  int  $length  Length of the token
      * @return string Random token
      */
     public static function generateRandomToken(int $length = 32): string
@@ -74,16 +76,16 @@ class Security
     /**
      * Create a remember me cookie
      *
-     * @param int $userId User ID
-     * @param string $token Remember me token
-     * @param int $days Cookie expiration in days
+     * @param  int  $userId  User ID
+     * @param  string  $token  Remember me token
+     * @param  int  $days  Cookie expiration in days
      * @return bool True if cookie was set
      */
     public static function createRememberCookie(int $userId, string $token, int $days = 30): bool
     {
         $expiry = time() + 60 * 60 * 24 * $days;
         $value = "$userId:$token";
-        
+
         return setcookie(
             'remember_me',
             $value,
@@ -93,7 +95,7 @@ class Security
                 'domain' => '',
                 'secure' => true, // Only send over HTTPS
                 'httponly' => true, // Not accessible via JavaScript
-                'samesite' => 'Strict' // CSRF protection
+                'samesite' => 'Strict', // CSRF protection
             ]
         );
     }
@@ -109,12 +111,12 @@ class Security
             'remember_me',
             '',
             [
-                'expires' => time() - 3600, 
+                'expires' => time() - 3600,
                 'path' => '/',
                 'domain' => '',
                 'secure' => true,
                 'httponly' => true,
-                'samesite' => 'Strict'
+                'samesite' => 'Strict',
             ]
         );
     }
@@ -133,11 +135,12 @@ class Security
         $parts = explode(':', $_COOKIE['remember_me'], 2);
         if (count($parts) !== 2) {
             self::removeRememberCookie();
+
             return null;
         }
 
         return [
-            'user_id' => (int)$parts[0],
+            'user_id' => (int) $parts[0],
             'token' => $parts[1],
         ];
     }

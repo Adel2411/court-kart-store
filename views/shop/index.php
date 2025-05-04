@@ -1,11 +1,11 @@
-<h1>Welcome to Court Kart Store</h1>
+<h1>Welcome to Court Kart</h1>
 <p>Browse our extensive collection of basketball products.</p>
 
 <div class="product-grid">
-    <?php if (empty($products)): ?>
+    <?php if (empty($products)) { ?>
         <p>No products available at this time.</p>
-    <?php else: ?>
-        <?php foreach ($products as $product): ?>
+    <?php } else { ?>
+        <?php foreach ($products as $product) { ?>
             <div class="product-card">
                 <h3><?= htmlspecialchars($product['name']) ?></h3>
                 <p><?= htmlspecialchars($product['description']) ?></p>
@@ -13,8 +13,8 @@
                 <p>In Stock: <?= $product['stock'] ?> units</p>
                 <a href="/shop/product/<?= $product['id'] ?>" class="btn">View Details</a>
             </div>
-        <?php endforeach; ?>
-    <?php endif; ?>
+        <?php } ?>
+    <?php } ?>
 </div>
 
 <div class="db-connection-success">

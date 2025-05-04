@@ -1,11 +1,11 @@
 <h1>Your Shopping Cart</h1>
 
-<?php if (empty($cart_items ?? [])): ?>
+<?php if (empty($cart_items ?? [])) { ?>
     <div class="empty-cart">
         <p>Your cart is empty.</p>
         <a href="/shop" class="btn">Continue Shopping</a>
     </div>
-<?php else: ?>
+<?php } else { ?>
     <table>
         <thead>
             <tr>
@@ -17,7 +17,7 @@
             </tr>
         </thead>
         <tbody>
-            <?php for ($i = 1; $i <= 3; $i++): ?>
+            <?php for ($i = 1; $i <= 3; $i++) { ?>
                 <tr>
                     <td>Sample Product <?= $i ?></td>
                     <td>$<?= $price = rand(50, 200) ?>.99</td>
@@ -36,7 +36,7 @@
                         </form>
                     </td>
                 </tr>
-            <?php endfor; ?>
+            <?php } ?>
         </tbody>
         <tfoot>
             <tr>
@@ -50,4 +50,4 @@
         <a href="/shop" class="btn">Continue Shopping</a>
         <a href="/checkout" class="btn">Proceed to Checkout</a>
     </div>
-<?php endif; ?>
+<?php } ?>
