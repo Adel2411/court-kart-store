@@ -3,19 +3,19 @@
 <div class="dashboard-stats">
     <div class="stat-card">
         <h3>Total Orders</h3>
-        <p class="stat-number">254</p>
+        <p class="stat-number"><?= $totalOrders ?></p>
     </div>
     <div class="stat-card">
         <h3>Total Sales</h3>
-        <p class="stat-number">$15,687.45</p>
+        <p class="stat-number">$<?= number_format($totalSales, 2) ?></p>
     </div>
     <div class="stat-card">
         <h3>Total Users</h3>
-        <p class="stat-number">532</p>
+        <p class="stat-number"><?= $totalUsers ?></p>
     </div>
     <div class="stat-card">
         <h3>Products</h3>
-        <p class="stat-number">87</p>
+        <p class="stat-number"><?= $totalProducts ?></p>
     </div>
 </div>
 
@@ -31,14 +31,24 @@
         </tr>
     </thead>
     <tbody>
-        <?php for ($i = 1; $i <= 5; $i++): ?>
+        <?php if (empty($recentOrders)): ?>
             <tr>
-                <td>#<?= 1000 + $i ?></td>
-                <td>Customer <?= $i ?></td>
-                <td><?= date('Y-m-d', strtotime("-$i days")) ?></td>
-                <td>$<?= rand(50, 500) ?>.00</td>
-                <td><?= ['Confirmed', 'Processing', 'Shipped', 'Delivered'][array_rand(['Confirmed', 'Processing', 'Shipped', 'Delivered'])] ?></td>
+                <td colspan="5">No recent orders found.</td>
             </tr>
-        <?php endfor; ?>
+        <?php else: ?>
+            <?php foreach ($recentOrders as $order): ?>
+                <tr>
+                    <td>#<?= $order['id'] ?></td>
+                    <td><?= htmlspecialchars($order['customer_name']) ?></td>
+                    <td><?= date('Y-m-d', strtotime($order['created_at'])) ?></td>
+                    <td>$<?= number_format($order['total_price'], 2) ?></td>
+                    <td><?= ucfirst($order['status']) ?></td>
+                </tr>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </tbody>
 </table>
+
+<div class="db-connection-success">
+    <p style="color: green; font-weight: bold;">Database connection successful! Admin dashboard data loaded from database.</p>
+</div>

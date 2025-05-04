@@ -16,18 +16,28 @@
         </tr>
     </thead>
     <tbody>
-        <?php for ($i = 1; $i <= 10; $i++): ?>
+        <?php if (empty($products)): ?>
             <tr>
-                <td><?= $i ?></td>
-                <td>Basketball Product <?= $i ?></td>
-                <td><?= ['Footwear', 'Apparel', 'Equipment', 'Accessories'][array_rand(['Footwear', 'Apparel', 'Equipment', 'Accessories'])] ?></td>
-                <td>$<?= rand(50, 300) ?>.99</td>
-                <td><?= rand(0, 100) ?></td>
-                <td>
-                    <a href="#" class="btn">Edit</a>
-                    <a href="#" class="btn">Delete</a>
-                </td>
+                <td colspan="6">No products found.</td>
             </tr>
-        <?php endfor; ?>
+        <?php else: ?>
+            <?php foreach ($products as $product): ?>
+                <tr>
+                    <td><?= $product['id'] ?></td>
+                    <td><?= htmlspecialchars($product['name']) ?></td>
+                    <td><?= htmlspecialchars($product['category']) ?></td>
+                    <td>$<?= number_format($product['price'], 2) ?></td>
+                    <td><?= $product['stock'] ?></td>
+                    <td>
+                        <a href="#" class="btn">Edit</a>
+                        <a href="#" class="btn">Delete</a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </tbody>
 </table>
+
+<div class="db-connection-success">
+    <p style="color: green; font-weight: bold;">Database connection successful! Product data loaded from database.</p>
+</div>

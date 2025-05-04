@@ -13,19 +13,29 @@
         </tr>
     </thead>
     <tbody>
-        <?php for ($i = 1; $i <= 10; $i++): ?>
+        <?php if (empty($orders)): ?>
             <tr>
-                <td>#<?= 1000 + $i ?></td>
-                <td>Customer <?= $i ?></td>
-                <td><?= date('Y-m-d', strtotime("-$i days")) ?></td>
-                <td><?= rand(1, 5) ?></td>
-                <td>$<?= rand(50, 500) ?>.00</td>
-                <td><?= ['Pending', 'Confirmed', 'Processing', 'Shipped', 'Delivered', 'Cancelled'][array_rand(['Pending', 'Confirmed', 'Processing', 'Shipped', 'Delivered', 'Cancelled'])] ?></td>
-                <td>
-                    <a href="#" class="btn">View</a>
-                    <a href="#" class="btn">Update</a>
-                </td>
+                <td colspan="7">No orders found.</td>
             </tr>
-        <?php endfor; ?>
+        <?php else: ?>
+            <?php foreach ($orders as $order): ?>
+                <tr>
+                    <td>#<?= $order['id'] ?></td>
+                    <td><?= htmlspecialchars($order['customer_name']) ?></td>
+                    <td><?= date('Y-m-d', strtotime($order['created_at'])) ?></td>
+                    <td><?= $order['items_count'] ?></td>
+                    <td>$<?= number_format($order['total_price'], 2) ?></td>
+                    <td><?= ucfirst($order['status']) ?></td>
+                    <td>
+                        <a href="#" class="btn">View</a>
+                        <a href="#" class="btn">Update</a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </tbody>
 </table>
+
+<div class="db-connection-success">
+    <p style="color: green; font-weight: bold;">Database connection successful! Order data loaded from database.</p>
+</div>

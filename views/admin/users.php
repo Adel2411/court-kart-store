@@ -12,18 +12,28 @@
         </tr>
     </thead>
     <tbody>
-        <?php for ($i = 1; $i <= 10; $i++): ?>
+        <?php if (empty($users)): ?>
             <tr>
-                <td><?= $i ?></td>
-                <td>User <?= $i ?></td>
-                <td>user<?= $i ?>@example.com</td>
-                <td><?= $i <= 8 ? 'User' : 'Admin' ?></td>
-                <td><?= date('Y-m-d', strtotime("-".rand(1, 100)." days")) ?></td>
-                <td>
-                    <a href="#" class="btn">Edit</a>
-                    <a href="#" class="btn">Delete</a>
-                </td>
+                <td colspan="6">No users found.</td>
             </tr>
-        <?php endfor; ?>
+        <?php else: ?>
+            <?php foreach ($users as $user): ?>
+                <tr>
+                    <td><?= $user['id'] ?></td>
+                    <td><?= htmlspecialchars($user['name']) ?></td>
+                    <td><?= htmlspecialchars($user['email']) ?></td>
+                    <td><?= ucfirst($user['role']) ?></td>
+                    <td><?= date('Y-m-d', strtotime($user['created_at'])) ?></td>
+                    <td>
+                        <a href="#" class="btn">Edit</a>
+                        <a href="#" class="btn">Delete</a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </tbody>
 </table>
+
+<div class="db-connection-success">
+    <p style="color: green; font-weight: bold;">Database connection successful! User data loaded from database.</p>
+</div>
