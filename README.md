@@ -1,105 +1,186 @@
 <p align="center">
-  <img src="assets/images/court-kart-logo-dark.png" alt="CourtKart Logo" width="200"/>
+  <img src="public/assets/images/court-kart-logo-dark.png" alt="CourtKart Logo" width="200"/>
 </p>
+
+# Court-Kart Store
 
 ## Project Summary
 
-**CourtKart** is a pure PHP and MySQL-based e-commerce web application tailored for basketball enthusiasts. It offers a clean shopping experience for buying basketball shoes, jerseys, balls, accessories, and more—complete with admin controls, search filters, cart system, and backend database logic including procedures and triggers.
+**CourtKart** is a full-featured e-commerce web application built with pure PHP and MySQL, specifically designed for basketball enthusiasts. The platform offers a seamless shopping experience for basketball shoes, jerseys, equipment, and accessories—implementing a complete solution with robust user management, product catalog, shopping cart functionality, and comprehensive admin controls.
+
+This project demonstrates advanced PHP concepts including MVC architecture, session management, secure authentication, and complex database operations with stored procedures and triggers.
 
 ---
 
 ## Features
 
-### User Features
+### Customer Features
 
-- View all basketball-related products
-- See item details with image, price, and description
-- Search and filter products
-- Register, login, and logout
-- Add/remove/view items in cart
-- Finalize orders
+- **Product Browsing**: Browse through categorized basketball products
+- **Search & Filter**: Find products by name, price range, category, and brand
+- **Account Management**: Register, login, view profile, and order history
+- **Shopping Cart**: Add/remove items, adjust quantities, view cart totals
+- **Checkout Process**: Address entry, payment method selection, order confirmation
+- **Order Tracking**: View status and details of past orders
 
 ### Admin Features
 
-- Access a dedicated admin panel
-- Add new products to the shop
+- **Product Management**: Add, edit, and remove products from inventory
+- **Order Administration**: Process orders, update status, and view order details
+- **User Management**: View and manage customer accounts
+- **Inventory Control**: Monitor stock levels with automatic alerts
+- **Analytics Dashboard**: View sales data and popular products
 
-### Database Logic
+### Database Features
 
-- Use of stored procedures:
-  - Show order details and total price
-  - Finalize order & empty cart
-  - View order history
-- Use of triggers:
-  - Decrease stock after order
-  - Prevent order if stock is insufficient
-  - Restore stock when order is canceled
-  - Log canceled orders into a history table
-
----
-
-## Screenshots
-
-_Screenshots will be added soon..._
+- **Stored Procedures**:
+  - `GetOrderDetails`: Retrieve order details with calculated total
+  - `FinalizeOrder`: Process order completion and empty cart
+  - `GetCustomerOrderHistory`: Display all orders for a customer
+  
+- **Triggers**:
+  - `after_order_confirm`: Decrease product stock on order confirmation
+  - `before_order_insert`: Prevent orders exceeding available stock
+  - `after_order_cancel`: Restore inventory when orders are canceled
+  - `log_canceled_orders`: Record canceled orders in history table
 
 ---
 
-## Technologies Used
+## Technology Stack
 
-- **Frontend**: HTML, CSS, JavaScript (vanilla)
-- **Backend**: PHP (no frameworks)
-- **Database**: MySQL
-- **Hosting**: Localhost via XAMPP, MAMP, or LAMP
-- **Sessions & Cookies**: For cart and user auth
+- **Frontend**: HTML5, CSS3, JavaScript (vanilla)
+- **Backend**: PHP 8.0+ (no frameworks)
+- **Database**: MySQL 8.0+
+- **Session Management**: PHP native sessions
+- **Authentication**: Custom-built, secure hash-based system
+- **Development Environment**: XAMPP/LAMP/MAMP
 
 ---
 
-## Folder Structure
+## Architecture
+
+CourtKart follows a lightweight MVC (Model-View-Controller) architecture:
+
+- **Models**: Encapsulate database logic and business rules
+- **Views**: Handle presentation and templating
+- **Controllers**: Process requests and coordinate between models and views
+- **Services**: Handle complex business logic operations
+
+---
+
+## Enhanced Folder Structure
 
 ```plaintext
 court-kart-store/
-├── index.php                  ← homepage
-├── router.php                 ← URL route handling
-├── shop/
-│   ├── index.php              ← list products
-│   ├── item.php               ← product details
-│   ├── search.php             ← filter logic
-├── cart/
-│   ├── view.php               ← show cart
-│   ├── add.php                ← add to cart
-│   └── remove.php             ← remove from cart
-├── auth/
-│   ├── login.php
-│   ├── logout.php
-│   └── register.php
-├── admin/
-│   ├── index.php              ← admin dashboard
-│   └── add_item.php           ← add new product
-├── assets/
-│   ├── styles.css             ← all styles
-│   └── scripts.js             ← all JS
-├── includes/
-│   ├── db.php                 ← database connection
-│   ├── header.php             ← navbar, head
-│   └── footer.php             ← footer content
-└── sql/
-    ├── schema.sql             ← table creation
-    ├── procedures.sql         ← procedures
-    └── triggers.sql           ← triggers
+├── public/                    # Web root - publicly accessible files
+│   ├── index.php             # Application entry point
+│   ├── assets/               # Static assets
+│   │   ├── css/              # Stylesheets
+│   │   ├── js/               # JavaScript files
+│   │   └── images/           # Images and graphics
+│   └── .htaccess             # URL rewriting rules
+├── src/                       # Application source code
+│   ├── Models/               # Data access layer
+│   │   ├── User.php
+│   │   ├── Product.php
+│   │   ├── Cart.php
+│   │   ├── Order.php
+│   │   └── Category.php
+│   ├── Controllers/          # Request handlers
+│   │   ├── ShopController.php
+│   │   ├── CartController.php
+│   │   ├── AuthController.php
+│   │   ├── OrderController.php
+│   │   └── AdminController.php
+│   ├── Services/             # Business logic
+│   │   ├── AuthService.php
+│   │   ├── CartService.php
+│   │   └── OrderService.php
+│   ├── Core/                 # Framework components
+│   │   ├── Database.php
+│   │   ├── Router.php
+│   │   ├── Session.php
+│   │   └── View.php
+│   └── Helpers/              # Utility functions
+│       ├── Validator.php
+│       └── Security.php
+├── config/                    # Configuration files
+│   ├── app.php
+│   └── database.php
+├── views/                     # Template files
+│   ├── layouts/              # Reusable layouts
+│   │   ├── main.php          # Main site layout
+│   │   └── admin.php         # Admin panel layout
+│   ├── shop/
+│   ├── cart/
+│   ├── auth/
+│   └── admin/
+├── sql/                       # Database scripts
+│   ├── schema.sql            # Table structure
+│   ├── procedures.sql        # Stored procedures
+│   ├── triggers.sql          # Database triggers
+│   └── seed.sql              # Sample data
+└── bootstrap.php              # Application initialization
 ```
+
+---
+
+## Installation & Setup
+
+1. **Clone the repository**
+   ```
+   git clone https://github.com/Adel2411/court-kart-store.git
+   ```
+
+2. **Configure your web server**
+   - Set document root to the `public` directory
+   - Ensure PHP has appropriate permissions
+
+3. **Create the database**
+   ```
+   mysql -u username -p < sql/schema.sql
+   mysql -u username -p < sql/procedures.sql
+   mysql -u username -p < sql/triggers.sql
+   mysql -u username -p < sql/seed.sql
+   ```
+
+4. **Configure database connection**
+   - Edit `config/database.php` with your credentials
+
+5. **Start your local server**
+   - Run your XAMPP/MAMP/LAMP stack
+
+6. **Access the application**
+   - Navigate to `http://localhost` in your browser
 
 ---
 
 ## Database Schema (ERD)
 
 <p align="center">
-  <img src="assets/images/db-schema.png" alt="CourtKart Logo"/>
+  <img src="public/assets/images/db-schema.png" alt="CourtKart Database Schema"/>
 </p>
+
+---
+
+## Project Requirements
+
+This project fulfills the following academic requirements:
+
+- Main shop page with detailed product listings
+- User authentication system
+- Shopping cart functionality
+- Product search and filtering
+- Database integration with stored procedures and triggers
+- Session and cookie management
+- Admin interface for product management
+
+---
 
 ## Author
 
-Made by [Adel2411](https://github.com/Adel2411)  
-For educational purposes — built with ❤️ for basketball and clean code.
+Made with ❤️ by [Adel2411](https://github.com/Adel2411)  
+For educational purposes — crafted for basketball enthusiasts and clean code advocates.
 
 ---
 
@@ -109,4 +190,4 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
-> **Disclaimer**: This project is built without any external libraries or frameworks, intended for local development and academic demonstration only.
+> **Disclaimer**: This project is built without external libraries or frameworks, intended for educational demonstration only.
