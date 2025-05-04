@@ -4,158 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?? 'Court Kart Store' ?></title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
-        header {
-            background-color: #2c3e50;
-            color: white;
-            padding: 1rem;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem;
-        }
-        nav {
-            display: flex;
-            gap: 1rem;
-            margin: 1rem 0;
-            align-items: center;
-        }
-        nav a {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem;
-            border-radius: 4px;
-        }
-        nav a:hover {
-            background-color: #34495e;
-        }
-        .nav-right {
-            margin-left: auto;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-        .main-content {
-            padding: 1rem;
-            min-height: calc(100vh - 200px);
-        }
-        footer {
-            background-color: #2c3e50;
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            margin-top: 2rem;
-        }
-        .product-card {
-            border: 1px solid #ddd;
-            padding: 1rem;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-        }
-        .btn {
-            display: inline-block;
-            background-color: #3498db;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            text-decoration: none;
-            cursor: pointer;
-            border: none;
-        }
-        .btn:hover {
-            background-color: #2980b9;
-        }
-        .btn-danger {
-            background-color: #e74c3c;
-        }
-        .btn-danger:hover {
-            background-color: #c0392b;
-        }
-        .alert {
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 5px;
-        }
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .user-badge {
-            background-color: #34495e;
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-        }
-        .user-badge.admin {
-            background-color: #e74c3c;
-        }
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1rem;
-        }
-    </style>
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/layouts.css">
+    <link rel="stylesheet" href="/assets/css/components.css">
+    <?php if (isset($page_css)) { ?>
+        <link rel="stylesheet" href="/assets/css/pages/<?= $page_css ?>.css">
+    <?php } ?>
 </head>
 <body>
     <header>
         <div class="container">
-            <h1>Court Kart Store</h1>
-            <nav>
-                <a href="/">Home</a>
-                <a href="/shop">Shop</a>
-                
-                <div class="nav-right">
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                        <?php if ($_SESSION['user_role'] === 'admin'): ?>
-                            <a href="/admin">Admin Dashboard</a>
-                        <?php endif; ?>
-                        
-                        <a href="/cart">Cart</a>
-                        <a href="/orders">My Orders</a>
-                        <a href="/account">
-                            <?= htmlspecialchars($_SESSION['user_name']) ?>
-                            <span class="user-badge <?= $_SESSION['user_role'] === 'admin' ? 'admin' : '' ?>">
-                                <?= ucfirst($_SESSION['user_role']) ?>
-                            </span>
-                        </a>
-                        <a href="/logout" class="btn btn-danger">Logout</a>
-                    <?php else: ?>
-                        <a href="/login" class="btn">Login</a>
-                        <a href="/register">Register</a>
-                    <?php endif; ?>
+            <div class="header-content">
+                <div class="logo">
+                    <a href="/">
+                        <img src="../public/assets/images/court-kart-logo-dark.svg" alt="Court Kart Store" >
+                        <span>Court Kart Store</span>
+                    </a>
                 </div>
-            </nav>
+                
+                <nav>
+                    <a href="/">Home</a>
+                    <a href="/shop">Shop</a>
+                    
+                    <div class="nav-right">
+                        <?php if (isset($_SESSION['user_id'])) { ?>
+                            <?php if ($_SESSION['user_role'] === 'admin') { ?>
+                                <a href="/admin">Admin Dashboard</a>
+                            <?php } ?>
+                            
+                            <a href="/cart" class="cart-icon">
+                                <i class="fa fa-shopping-cart"></i>
+                                <span class="cart-count">0</span>
+                            </a>
+                            <a href="/orders">My Orders</a>
+                            <div class="dropdown">
+                                <button class="dropdown-btn">
+                                    <?= htmlspecialchars($_SESSION['user_name']) ?>
+                                    <span class="user-badge <?= $_SESSION['user_role'] === 'admin' ? 'admin' : '' ?>">
+                                        <?= ucfirst($_SESSION['user_role']) ?>
+                                    </span>
+                                    <i class="fa fa-caret-down"></i>
+                                </button>
+                                <div class="dropdown-content">
+                                    <a href="/account">My Account</a>
+                                    <a href="/orders">My Orders</a>
+                                    <a href="/logout" class="btn-danger">Logout</a>
+                                </div>
+                            </div>
+                        <?php } else { ?>
+                            <a href="/login" class="btn btn-primary">Login</a>
+                            <a href="/register" class="btn btn-outline">Register</a>
+                        <?php } ?>
+                    </div>
+                </nav>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
         </div>
     </header>
     
     <div class="container main-content">
+        <?php if (isset($_SESSION['success'])) { ?>
+            <div class="alert alert-success">
+                <?= htmlspecialchars($_SESSION['success']) ?>
+                <?php unset($_SESSION['success']); ?>
+            </div>
+        <?php } ?>
+        
+        <?php if (isset($_SESSION['error'])) { ?>
+            <div class="alert alert-error">
+                <?= htmlspecialchars($_SESSION['error']) ?>
+                <?php unset($_SESSION['error']); ?>
+            </div>
+        <?php } ?>
+        
         <?= $content ?>
     </div>
     
     <footer>
         <div class="container">
-            &copy; <?= date('Y') ?> Court Kart Store. All rights reserved.
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Court Kart Store</h3>
+                    <p>Your one-stop shop for premium basketball equipment and apparel.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="/shop">Shop</a></li>
+                        <li><a href="/cart">Cart</a></li>
+                        <li><a href="/account">My Account</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: info@courtkart.com</p>
+                    <p>Phone: (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; <?= date('Y') ?> Court Kart Store. All rights reserved.
+            </div>
         </div>
     </footer>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="/assets/js/main.js"></script>
+    <?php if (isset($page_js)) { ?>
+        <script src="/assets/js/pages/<?= $page_js ?>.js"></script>
+    <?php } ?>
 </body>
 </html>
