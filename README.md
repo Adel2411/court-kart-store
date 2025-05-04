@@ -37,7 +37,6 @@ This project demonstrates advanced PHP concepts including MVC architecture, sess
   - `GetOrderDetails`: Retrieve order details with calculated total
   - `FinalizeOrder`: Process order completion and empty cart
   - `GetCustomerOrderHistory`: Display all orders for a customer
-  
 - **Triggers**:
   - `after_order_confirm`: Decrease product stock on order confirmation
   - `before_order_insert`: Prevent orders exceeding available stock
@@ -128,15 +127,18 @@ court-kart-store/
 ## Installation & Setup
 
 1. **Clone the repository**
+
    ```
    git clone https://github.com/Adel2411/court-kart-store.git
    ```
 
 2. **Configure your web server**
+
    - Set document root to the `public` directory
    - Ensure PHP has appropriate permissions
 
 3. **Create the database**
+
    ```
    mysql -u username -p < sql/schema.sql
    mysql -u username -p < sql/procedures.sql
@@ -145,9 +147,11 @@ court-kart-store/
    ```
 
 4. **Configure database connection**
+
    - Edit `config/database.php` with your credentials
 
 5. **Start your local server**
+
    - Run your XAMPP/MAMP/LAMP stack
 
 6. **Access the application**

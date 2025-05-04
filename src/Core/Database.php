@@ -1,11 +1,17 @@
 <?php
 
-class DB
+namespace App\Core;
+
+use PDO;
+use PDOException;
+use Exception;
+
+class Database
 {
     /** @var PDO */
     private $pdo;
 
-    /** @var DB|null */
+    /** @var Database|null */
     private static $instance = null;
 
     /** @var array */
@@ -19,12 +25,11 @@ class DB
     private static $connectionParams = [];
 
     /**
-     * @param  string  $host  Database host
-     * @param  string  $dbname  Database name
-     * @param  string  $username  Database username
-     * @param  string  $password  Database password
-     * @param  array  $options  PDO options
-     *
+     * @param string $host Database host
+     * @param string $dbname Database name
+     * @param string $username Database username
+     * @param string $password Database password
+     * @param array $options PDO options
      * @throws PDOException if connection fails
      */
     private function __construct(
@@ -53,7 +58,7 @@ class DB
     {
         if (self::$instance === null) {
             if (empty(self::$connectionParams)) {
-                self::fromConfig();
+                self::loadConfig();
             }
 
             self::$instance = new self(
@@ -69,26 +74,17 @@ class DB
     }
 
     /**
-     * @param  string|null  $configPath  Path to config file
-     *
-     * @throws Exception if config file not found
+     * Load database configuration from config file
      */
-    public static function fromConfig(?string $configPath = null): void
+    public static function loadConfig(): void
     {
-        $configPath = $configPath ?? __DIR__.'/config.php';
+        $configPath = dirname(dirname(__DIR__)) . '/config/database.php';
 
-        if (! file_exists($configPath)) {
+        if (!file_exists($configPath)) {
             throw new Exception('Database configuration file not found.');
         }
 
-        require_once $configPath;
-
-        self::$connectionParams = [
-            'host' => DB_HOST,
-            'dbname' => DB_NAME,
-            'username' => DB_USER,
-            'password' => DB_PASS,
-        ];
+        self::$connectionParams = require $configPath;
     }
 
     private function __clone() {}
@@ -99,11 +95,11 @@ class DB
     }
 
     /**
-     * @param  string  $sql  SQL query with placeholders
-     * @param  array  $params  Parameters to bind
-     * @return PDOStatement The prepared and executed statement
+     * @param string $sql SQL query with placeholders
+     * @param array $params Parameters to bind
+     * @return \PDOStatement The prepared and executed statement
      */
-    public function query(string $sql, array $params = []): PDOStatement
+    public function query(string $sql, array $params = []): \PDOStatement
     {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
