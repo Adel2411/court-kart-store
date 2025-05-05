@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Core\Session;
 use App\Core\View;
 use App\Models\Order;
 use App\Models\Product;
@@ -38,13 +39,93 @@ class AdminController
      */
     public function products()
     {
-        // Get real products data from database
-        $products = Product::getAll(10);
+        // Get all products from database
+        $products = Product::getAll();
 
         echo View::renderWithLayout('admin/products', 'admin', [
             'title' => 'Product Management - Court Kart',
             'products' => $products,
+            'page_css' => 'admin_products',
+            'page_js' => 'admin_products',
         ]);
+    }
+    
+    /**
+     * Save a product (create or update)
+     */
+    public function saveProduct()
+    {
+        // Validate CSRF token
+        // ...
+        
+        $id = $_POST['id'] ?? null;
+        $data = [
+            'name' => $_POST['name'] ?? '',
+            'description' => $_POST['description'] ?? '',
+            'price' => $_POST['price'] ?? 0,
+            'stock' => $_POST['stock'] ?? 0,
+            'category' => $_POST['category'] ?? '',
+            'image_url' => $_POST['image_url'] ?? '',
+        ];
+        
+        // Validate product data
+        if (empty($data['name']) || empty($data['description']) || 
+            $data['price'] <= 0 || $data['stock'] < 0 || 
+            empty($data['category']) || empty($data['image_url'])) {
+            
+            Session::set('error', 'Please fill in all required fields correctly.');
+            header('Location: /admin/products');
+            exit;
+        }
+        
+        $success = false;
+        
+        if ($id) {
+            // Update existing product
+            $success = Product::update($id, $data);
+            $message = 'Product updated successfully.';
+        } else {
+            // Add new product
+            $success = Product::add($data);
+            $message = 'Product added successfully.';
+        }
+        
+        if ($success) {
+            Session::set('success', $message);
+        } else {
+            Session::set('error', 'Failed to save product.');
+        }
+        
+        header('Location: /admin/products');
+        exit;
+    }
+    
+    /**
+     * Delete a product
+     */
+    public function deleteProduct()
+    {
+        // Validate CSRF token
+        // ...
+        
+        $id = $_POST['id'] ?? null;
+        
+        if (!$id) {
+            Session::set('error', 'Invalid product ID.');
+            header('Location: /admin/products');
+            exit;
+        }
+        
+        $success = Product::delete($id);
+        
+        if ($success) {
+            Session::set('success', 'Product deleted successfully.');
+        } else {
+            Session::set('error', 'Failed to delete product.');
+        }
+        
+        header('Location: /admin/products');
+        exit;
     }
 
     /**

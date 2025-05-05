@@ -24,13 +24,18 @@ $router->post('/cart/add', 'CartController@add', 'auth');
 $router->post('/cart/update', 'CartController@update', 'auth');
 $router->post('/cart/remove', 'CartController@remove', 'auth');
 $router->get('/checkout', 'CheckoutController@index', 'auth');
+$router->post('/checkout', 'CheckoutController@process', 'auth');
+$router->get('/orders', 'OrderController@index', 'auth');
+$router->get('/orders/{id}', 'OrderController@show', 'auth');
+$router->post('/orders/{id}/cancel', 'OrderController@cancel', 'auth');
 $router->get('/account', 'AccountController@index', 'auth');
-$router->get('/orders', 'AccountController@orders', 'auth');
 $router->get('/logout', 'AuthController@logout', 'auth');
 
 // Admin routes
 $router->get('/admin', 'AdminController@index', 'admin');
 $router->get('/admin/products', 'AdminController@products', 'admin');
+$router->post('/admin/products/save', 'AdminController@saveProduct', 'admin');
+$router->post('/admin/products/delete', 'AdminController@deleteProduct', 'admin');
 $router->get('/admin/orders', 'AdminController@orders', 'admin');
 $router->get('/admin/users', 'AdminController@users', 'admin');
 

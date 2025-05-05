@@ -8,16 +8,31 @@ use App\Models\Product;
 class ShopController
 {
     /**
-     * Display the shop index page
+     * Display the shop index page with search and filtering
      */
     public function index()
     {
-        // Fetch products from the database
-        $products = Product::getAll(8);
+        // Get filter parameters
+        $search = $_GET['search'] ?? '';
+        $category = $_GET['category'] ?? '';
+        $minPrice = $_GET['min_price'] ?? null;
+        $maxPrice = $_GET['max_price'] ?? null;
+        $sort = $_GET['sort'] ?? 'name_asc';
+
+        // Fetch filtered products from the database
+        $products = Product::getFiltered([
+            'search' => $search,
+            'category' => $category,
+            'min_price' => $minPrice,
+            'max_price' => $maxPrice,
+            'sort' => $sort,
+        ]);
 
         echo View::renderWithLayout('shop/index', 'main', [
             'title' => 'Shop - Court Kart',
             'products' => $products,
+            'page_css' => 'shop',
+            'page_js' => 'shop',
         ]);
     }
 
@@ -48,6 +63,8 @@ class ShopController
             'stock' => $product['stock'],
             'image_url' => $product['image_url'],
             'category' => $product['category'],
+            'page_css' => 'product',
+            'page_js' => 'product',
         ]);
     }
 
