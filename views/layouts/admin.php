@@ -4,195 +4,142 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?? 'Admin - Court Kart' ?></title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            color: #333;
-            background-color: #f8f9fa;
-        }
-        header {
-            background-color: #34495e;
-            color: white;
-            padding: 1rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem;
-        }
-        nav {
-            display: flex;
-            gap: 1rem;
-            margin: 1rem 0;
-            align-items: center;
-        }
-        nav a {
-            color: white;
-            text-decoration: none;
-        }
-        nav a:hover {
-            text-decoration: underline;
-        }
-        .admin-layout {
-            display: flex;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            margin-top: 1rem;
-        }
-        .sidebar {
-            width: 250px;
-            background-color: #f4f4f4;
-            padding: 1rem;
-            min-height: 80vh;
-            border-radius: 5px 0 0 5px;
-        }
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-            margin-top: 2rem;
-        }
-        .sidebar li {
-            margin-bottom: 1rem;
-        }
-        .sidebar a {
-            text-decoration: none;
-            color: #333;
-            display: block;
-            padding: 0.75rem 1rem;
-            border-radius: 5px;
-            transition: all 0.2s ease;
-        }
-        .sidebar a:hover {
-            color: #3498db;
-            background-color: #ecf0f1;
-        }
-        .sidebar a.active {
-            background-color: #3498db;
-            color: white;
-        }
-        .main-content {
-            flex-grow: 1;
-            padding: 2rem;
-        }
-        footer {
-            background-color: #34495e;
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            margin-top: 2rem;
-        }
-        .btn {
-            display: inline-block;
-            background-color: #3498db;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .btn:hover {
-            background-color: #2980b9;
-        }
-        .btn-danger {
-            background-color: #e74c3c;
-        }
-        .btn-danger:hover {
-            background-color: #c0392b;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1.5rem 0;
-        }
-        table, th, td {
-            border: 1px solid #dee2e6;
-        }
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-        }
-        th {
-            background-color: #f8f9fa;
-            font-weight: bold;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        tr:hover {
-            background-color: #e9ecef;
-        }
-        .dashboard-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .stat-card {
-            background-color: white;
-            border-radius: 5px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #3498db;
-        }
-        .user-info {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .user-info span {
-            color: #ecf0f1;
-        }
-    </style>
+    <!-- Load main CSS files -->
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/components.css">
+    <link rel="stylesheet" href="/assets/css/layouts.css">
+    <link rel="stylesheet" href="/assets/css/pages/admin.css">
+    
+    <?php if (isset($page_css)) { ?>
+        <link rel="stylesheet" href="/assets/css/pages/<?= $page_css ?>.css">
+    <?php } ?>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h1>Court Kart Admin</h1>
-                <div class="user-info">
-                    <span>Logged in as: <strong><?= htmlspecialchars($_SESSION['user_name']) ?></strong></span>
-                    <a href="/logout" class="btn btn-danger">Logout</a>
+    <div class="admin-wrapper" id="adminWrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-logo">
+                    <img src="/assets/images/court-kart-logo-dark.svg" alt="Court Kart" width="32">
+                    <span>Court Kart</span>
                 </div>
             </div>
-            <nav>
-                <a href="/">Store Front</a>
-                <a href="/admin">Dashboard</a>
-            </nav>
-        </div>
-    </header>
-    
-    <div class="container">
-        <div class="admin-layout">
-            <div class="sidebar">
-                <h3>Admin Menu</h3>
+            
+            <div class="admin-menu">
+                <div class="admin-menu-title">Main</div>
                 <ul>
-                    <li><a href="/admin" <?= $_SERVER['REQUEST_URI'] == '/admin' ? 'class="active"' : '' ?>>Dashboard</a></li>
-                    <li><a href="/admin/products" <?= $_SERVER['REQUEST_URI'] == '/admin/products' ? 'class="active"' : '' ?>>Products</a></li>
-                    <li><a href="/admin/orders" <?= $_SERVER['REQUEST_URI'] == '/admin/orders' ? 'class="active"' : '' ?>>Orders</a></li>
-                    <li><a href="/admin/users" <?= $_SERVER['REQUEST_URI'] == '/admin/users' ? 'class="active"' : '' ?>>Users</a></li>
+                    <li class="admin-menu-item">
+                        <a href="/admin" class="admin-menu-link <?= $_SERVER['REQUEST_URI'] == '/admin' ? 'active' : '' ?>">
+                            <span class="admin-menu-icon"><i class="fas fa-tachometer-alt"></i></span>
+                            Dashboard
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="admin-menu-title">Management</div>
+                <ul>
+                    <li class="admin-menu-item">
+                        <a href="/admin/products" class="admin-menu-link <?= $_SERVER['REQUEST_URI'] == '/admin/products' ? 'active' : '' ?>">
+                            <span class="admin-menu-icon"><i class="fas fa-box"></i></span>
+                            Products
+                        </a>
+                    </li>
+                    <li class="admin-menu-item">
+                        <a href="/admin/orders" class="admin-menu-link <?= $_SERVER['REQUEST_URI'] == '/admin/orders' ? 'active' : '' ?>">
+                            <span class="admin-menu-icon"><i class="fas fa-shopping-cart"></i></span>
+                            Orders
+                        </a>
+                    </li>
+                    <li class="admin-menu-item">
+                        <a href="/admin/users" class="admin-menu-link <?= $_SERVER['REQUEST_URI'] == '/admin/users' ? 'active' : '' ?>">
+                            <span class="admin-menu-icon"><i class="fas fa-users"></i></span>
+                            Users
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="admin-menu-title">Settings</div>
+                <ul>
+                    <li class="admin-menu-item">
+                        <a href="/" target="_blank" class="admin-menu-link">
+                            <span class="admin-menu-icon"><i class="fas fa-home"></i></span>
+                            View Store
+                        </a>
+                    </li>
+                    <li class="admin-menu-item">
+                        <a href="/logout" class="admin-menu-link">
+                            <span class="admin-menu-icon"><i class="fas fa-sign-out-alt"></i></span>
+                            Logout
+                        </a>
+                    </li>
                 </ul>
             </div>
-            <div class="main-content">
-                <?= $content ?>
-            </div>
-        </div>
+        </aside>
+        
+        <!-- Main content -->
+        <main class="admin-main">
+            <!-- Header with user info -->
+            <header class="admin-header">
+                <h1 class="admin-title"><?= $title ?? 'Dashboard' ?></h1>
+                <div class="admin-header-actions">
+                    <div class="admin-user">
+                        <div class="admin-user-image">
+                            <?= strtoupper(substr($_SESSION['user_name'] ?? 'A', 0, 1)) ?>
+                        </div>
+                        <div class="admin-user-info">
+                            <div class="admin-user-name"><?= htmlspecialchars($_SESSION['user_name'] ?? 'Admin') ?></div>
+                            <div class="admin-user-role">Administrator</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Flash messages -->
+            <?php if (isset($_SESSION['success'])) { ?>
+                <div class="alert alert-success">
+                    <?= htmlspecialchars($_SESSION['success']) ?>
+                    <?php unset($_SESSION['success']); ?>
+                </div>
+            <?php } ?>
+            
+            <?php if (isset($_SESSION['error'])) { ?>
+                <div class="alert alert-error">
+                    <?= htmlspecialchars($_SESSION['error']) ?>
+                    <?php unset($_SESSION['error']); ?>
+                </div>
+            <?php } ?>
+            
+            <!-- Main content -->
+            <?= $content ?>
+        </main>
     </div>
     
-    <footer>
-        <div class="container">
-            &copy; <?= date('Y') ?> Court Kart Admin Panel
-        </div>
-    </footer>
+    <!-- Sidebar toggle button for mobile -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- JavaScript -->
+    <script src="/assets/js/main.js"></script>
+    <?php if (isset($page_js)) { ?>
+        <script src="/assets/js/pages/<?= $page_js ?>.js"></script>
+    <?php } ?>
+    
+    <script>
+        // Sidebar toggle for mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const wrapper = document.getElementById('adminWrapper');
+            const toggle = document.getElementById('sidebarToggle');
+            
+            if (toggle) {
+                toggle.addEventListener('click', function() {
+                    wrapper.classList.toggle('sidebar-visible');
+                });
+            }
+        });
+    </script>
 </body>
 </html>
