@@ -64,7 +64,7 @@
 
 .btn-danger {
   background-color: var(--danger);
-  color: var(--white) !important;
+  color: var(--white);
   box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
 }
 
@@ -154,7 +154,11 @@
   height: 100%;
   top: 0;
   left: 0;
-  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
   opacity: 0;
   transition: opacity var(--transition-fast);
 }
@@ -171,7 +175,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
   position: fixed;
   bottom: 2rem;
   right: 2rem;
@@ -190,7 +194,9 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
   border: 1px solid var(--light-gray);
 }
 
@@ -923,7 +929,9 @@
   border-radius: 50%;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .range-slider input[type="range"]::-webkit-slider-thumb:hover {
@@ -953,7 +961,9 @@
   border: 2px solid var(--white);
   box-shadow: 0 0 0 1px var(--light-gray);
   cursor: pointer;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .color-swatch:hover {
@@ -1096,15 +1106,15 @@
   .btn {
     padding: 0.7rem 1.25rem;
   }
-  
+
   .actions {
     flex-direction: column;
   }
-  
+
   .actions .btn {
     width: 100%;
   }
-  
+
   .form-control {
     font-size: 16px; /* prevent zoom on iOS */
   }

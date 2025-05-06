@@ -42,7 +42,7 @@ header.scrolled {
 }
 
 .logo img {
-  height: 40px;
+  height: 60px;
   width: auto;
 }
 
@@ -71,7 +71,7 @@ nav a.active {
 }
 
 nav a.active::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 50%;
@@ -238,7 +238,7 @@ footer {
   .grid-4 {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .product-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -249,7 +249,7 @@ footer {
   .grid-4 {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
   }

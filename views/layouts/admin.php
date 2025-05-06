@@ -22,10 +22,7 @@
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="admin-sidebar-header">
-                <div class="admin-logo">
-                    <img src="/assets/images/court-kart-logo-dark.svg" alt="Court Kart" width="32">
-                    <span>Court Kart</span>
-                </div>
+                <img src="/assets/images/court-kart-logo.svg" alt="Court Kart">
             </div>
             
             <div class="admin-menu">

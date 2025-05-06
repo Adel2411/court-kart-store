@@ -17,8 +17,7 @@
             <div class="header-content">
                 <div class="logo">
                     <a href="/">
-                        <img src="/assets/images/court-kart-logo-dark.svg" alt="Court Kart" width="50">
-                        <span>Court Kart</span>
+                        <img src="/assets/images/court-kart-logo.svg" alt="Court Kart">
                     </a>
                 </div>
                 

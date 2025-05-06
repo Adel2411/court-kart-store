@@ -136,7 +136,7 @@ table td:nth-child(2) {
 .admin-sidebar {
   width: 260px;
   background-color: var(--white);
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
   position: fixed;
   top: 0;
   left: 0;
@@ -148,22 +148,14 @@ table td:nth-child(2) {
 .admin-sidebar-header {
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: var(--space-lg);
   border-bottom: 1px solid var(--light-gray);
   height: 70px;
 }
 
-.admin-logo {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  color: var(--secondary);
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.admin-logo img {
-  height: 32px;
+.admin-sidebar-header img {
+  height: 50px;
   width: auto;
 }
 
@@ -288,7 +280,9 @@ table td:nth-child(2) {
   align-items: center;
   gap: var(--space-lg);
   border: 1px solid var(--light-gray);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .stat-card:hover {
@@ -459,7 +453,7 @@ table td:nth-child(2) {
   .admin-form-row {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .admin-user-info {
     display: block;
   }
@@ -601,15 +595,15 @@ table td:nth-child(2) {
   .admin-sidebar {
     transform: translateX(-100%);
   }
-  
+
   .admin-main {
     margin-left: 0;
   }
-  
+
   .sidebar-visible .admin-sidebar {
     transform: translateX(0);
   }
-  
+
   .sidebar-toggle {
     display: flex;
   }
@@ -619,32 +613,32 @@ table td:nth-child(2) {
   .admin-main {
     padding: var(--space-lg) var(--space-md);
   }
-  
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .admin-header {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-md);
   }
-  
+
   .admin-header-actions {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .admin-card-header {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-md);
   }
-  
+
   .admin-card-actions {
     width: 100%;
   }
-  
+
   .admin-table th,
   .admin-table td {
     padding: var(--space-sm);
