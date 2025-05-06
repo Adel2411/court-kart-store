@@ -31,6 +31,7 @@ class AdminController
             'totalUsers' => $totalUsers,
             'totalProducts' => $totalProducts,
             'recentOrders' => $recentOrders,
+            'page_css' => 'admin', // Make sure admin.css is loaded
         ]);
     }
 
@@ -45,7 +46,7 @@ class AdminController
         echo View::renderWithLayout('admin/products', 'admin', [
             'title' => 'Product Management - Court Kart',
             'products' => $products,
-            'page_css' => 'admin_products',
+            'page_css' => 'admin',
             'page_js' => 'admin_products',
         ]);
     }

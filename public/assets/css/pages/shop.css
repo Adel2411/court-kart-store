@@ -1,0 +1,231 @@
+/* Shop Page Styles */
+
+/* Search and Filter Section */
+.search-filter-container {
+  background-color: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.search-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.search-row {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.search-row input[type="text"] {
+  flex-grow: 1;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+}
+
+.filter-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+}
+
+.filter-group label {
+  font-weight: 500;
+  margin-bottom: var(--space-xs);
+  font-size: 0.9rem;
+  color: var(--gray);
+}
+
+.filter-group select,
+.filter-group input[type="number"] {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: var(--radius-md);
+}
+
+.price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.price-inputs input {
+  width: 80px;
+}
+
+/* Product Cards */
+.product-card {
+  background-color: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 280px; /* Reduced from 320px for better grid fit */
+  margin: 0 auto;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.product-card img {
+  width: 100%;
+  height: 180px; /* Reduced from 200px to make cards more compact */
+  object-fit: contain;
+  margin: 0 auto;
+  display: block;
+  background-color: var(--light-gray);
+  padding: var(--space-sm);
+}
+
+.product-card h3 {
+  font-size: 1.2rem;
+  margin: var(--space-md) var(--space-md) var(--space-xs);
+}
+
+.product-card p {
+  margin: 0 var(--space-md);
+  font-size: 0.9rem;
+  color: var(--gray);
+  flex-grow: 1;
+}
+
+.product-card p strong {
+  color: var(--primary);
+  font-size: 1.1rem;
+  display: inline-block;
+  margin-top: var(--space-xs);
+}
+
+.product-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  margin-top: auto;
+}
+
+.add-to-cart-form {
+  flex-grow: 1;
+}
+
+.product-actions .btn {
+  flex-grow: 1;
+}
+
+/* Category Pills */
+.category-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+}
+
+.category-pill {
+  padding: 0.5rem 1rem;
+  background-color: var(--white);
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  color: var(--secondary);
+  transition: all var(--transition-fast);
+}
+
+.category-pill:hover,
+.category-pill.active {
+  background-color: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+}
+
+/* Empty State */
+.no-products {
+  text-align: center;
+  padding: var(--space-xxl);
+  background-color: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.no-products i {
+  font-size: 3rem;
+  color: var(--gray);
+  margin-bottom: var(--space-md);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .search-row {
+    flex-direction: column;
+  }
+  
+  .filter-options {
+    flex-direction: column;
+  }
+  
+  .filter-group {
+    width: 100%;
+  }
+  
+  .product-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 576px) {
+  .category-pills {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: var(--space-sm);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  
+  .category-pills::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Product Detail Page */
+.product-image img {
+  max-width: 100%;
+  height: auto;
+  max-height: 350px; /* Reduced from 400px */
+  width: auto;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+  border-radius: var(--radius-md);
+}
+
+.product-thumbnail img {
+  max-width: 70px; /* Reduced from 80px */
+  height: 70px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+/* Cart Product Images */
+.cart-item-image img {
+  max-width: 80px; /* Reduced from 100px */
+  height: 80px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+}
