@@ -25,6 +25,7 @@ $router->post('/cart/update', 'CartController@update', 'auth');
 $router->post('/cart/remove', 'CartController@remove', 'auth');
 $router->get('/checkout', 'CheckoutController@index', 'auth');
 $router->post('/checkout', 'CheckoutController@process', 'auth');
+$router->get('/checkout/success', 'CheckoutController@success', 'auth'); // Make sure this route exists
 $router->get('/orders', 'OrderController@index', 'auth');
 $router->get('/orders/{id}', 'OrderController@show', 'auth');
 $router->post('/orders/{id}/cancel', 'OrderController@cancel', 'auth');
