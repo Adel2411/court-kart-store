@@ -201,4 +201,46 @@ class Product
         $db = Database::getInstance();
         return $db->execute('DELETE FROM products WHERE id = ?', [$id]);
     }
+
+    /**
+     * Get newest products based on creation date
+     * 
+     * @param int $limit Maximum number of products to return
+     * @return array
+     */
+    public static function getNewest($limit = 4)
+    {
+        $db = Database::getInstance();
+        $sql = 'SELECT * FROM products ORDER BY created_at DESC';
+        
+        if ($limit) {
+            $sql .= ' LIMIT ?';
+            return $db->fetchRows($sql, [$limit]);
+        }
+        
+        return $db->fetchRows($sql);
+    }
+    
+    /**
+     * Get popular products (currently based on lowest stock as an indicator of sales)
+     * 
+     * @param int $limit Maximum number of products to return
+     * @return array
+     */
+    public static function getPopular($limit = 4)
+    {
+        $db = Database::getInstance();
+        
+        // In a real-world scenario, this would be based on sales data or view counts
+        // For now, we're assuming popular products have lower stock due to more sales
+        // Alternatively, this could be implemented with a product_views or order_items table join
+        $sql = 'SELECT * FROM products WHERE stock > 0 ORDER BY stock ASC';
+        
+        if ($limit) {
+            $sql .= ' LIMIT ?';
+            return $db->fetchRows($sql, [$limit]);
+        }
+        
+        return $db->fetchRows($sql);
+    }
 }
