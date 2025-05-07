@@ -1,0 +1,220 @@
+/* Authentication Pages Styling */
+
+.auth-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  padding: var(--space-xl) 0;
+}
+
+.auth-card {
+  background-color: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  max-width: 480px;
+  padding: var(--space-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+}
+
+.auth-header {
+  margin-bottom: var(--space-xl);
+  text-align: center;
+}
+
+.auth-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+  color: var(--dark);
+}
+
+.auth-subtitle {
+  color: var(--gray);
+  font-size: 0.95rem;
+}
+
+.auth-form .form-group {
+  margin-bottom: var(--space-lg);
+  position: relative;
+}
+
+.auth-form label {
+  display: block;
+  margin-bottom: var(--space-xs);
+  font-weight: 500;
+  color: var(--secondary);
+  font-size: 0.9rem;
+}
+
+.auth-form .input-icon-wrapper {
+  position: relative;
+}
+
+.auth-form .form-icon {
+  position: absolute;
+  left: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray);
+  transition: color var(--transition-fast);
+}
+
+.auth-form .form-control {
+  width: 100%;
+  padding: var(--space-md) var(--space-md) var(--space-md) calc(var(--space-md) * 2 + 1rem);
+  border: 1px solid var(--light-gray);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  transition: all var(--transition-fast);
+}
+
+.auth-form .form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+
+.auth-form .form-control:focus + .form-icon {
+  color: var(--primary);
+}
+
+.auth-form .toggle-password {
+  position: absolute;
+  right: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--gray);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.auth-form .toggle-password:hover {
+  color: var(--dark);
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.remember-me input {
+  margin-right: var(--space-sm);
+  cursor: pointer;
+}
+
+.form-actions {
+  margin-top: var(--space-xl);
+}
+
+.auth-form .btn {
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: var(--space-md);
+}
+
+.auth-form .btn-primary {
+  background: linear-gradient(to right, var(--primary), var(--primary-dark));
+  border: none;
+  transition: all var(--transition-fast);
+}
+
+.auth-form .btn-primary:hover {
+  background: linear-gradient(to right, var(--primary-dark), var(--primary));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-footer {
+  margin-top: var(--space-xl);
+  text-align: center;
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--light-gray);
+  color: var(--gray);
+}
+
+.form-footer a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.form-footer a:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  margin: var(--space-lg) 0;
+  color: var(--gray);
+  font-size: 0.9rem;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex-grow: 1;
+  height: 1px;
+  background-color: var(--light-gray);
+}
+
+.auth-divider span {
+  padding: 0 var(--space-md);
+}
+
+/* Authentication alerts */
+.auth-alert {
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.auth-alert i {
+  margin-right: var(--space-sm);
+  font-size: 1.1rem;
+}
+
+.auth-alert-error {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+}
+
+.auth-alert-success {
+  background-color: rgba(46, 204, 113, 0.1);
+  color: #2ecc71;
+}
+
+/* Responsive design */
+@media (max-width: 576px) {
+  .auth-card {
+    padding: var(--space-lg);
+    margin: 0 var(--space-md);
+  }
+  
+  .auth-title {
+    font-size: 1.5rem;
+  }
+}

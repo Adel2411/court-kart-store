@@ -157,6 +157,10 @@ footer {
   font-size: 1.25rem;
 }
 
+.footer-section p {
+  color: var(--light-gray);
+}
+
 .footer-section ul {
   list-style: none;
   padding: 0;
@@ -167,20 +171,21 @@ footer {
 }
 
 .footer-section a {
-  color: var(--gray);
+  color: var(--light-gray);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
 .footer-section a:hover {
-  color: var(--white);
+  color: var(--accent);
 }
 
 .copyright {
   text-align: center;
   padding-top: var(--space-lg);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--secondary-dark);
   font-size: 0.9rem;
+  color: var(--light-gray);
 }
 
 /* Grid Layouts */

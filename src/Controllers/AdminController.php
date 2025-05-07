@@ -155,10 +155,14 @@ class AdminController
     {
         // Get real users data from database
         $users = User::getAll(10);
+        $totalUsers = User::getCount();
 
         echo View::renderWithLayout('admin/users', 'admin', [
             'title' => 'User Management - Court Kart',
             'users' => $users,
+            'totalUsers' => $totalUsers,
+            'page_css' => 'admin-users',
+            'page_js' => 'admin-users',
         ]);
     }
 }
