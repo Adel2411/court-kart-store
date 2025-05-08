@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Core\Database;
 use Exception;
+use PDO;
 
 class Order
 {
@@ -140,181 +141,181 @@ class Order
      * Get detailed information about a specific order including all items
      * Uses the GetOrderDetails stored procedure
      *
-     * @param int $orderId Order ID
+     * @param  int  $orderId  Order ID
      * @return array Detailed order information
      */
     public static function getOrderDetails(int $orderId): array
     {
         $db = Database::getInstance();
-        $mysqli = $db->getMysqli();
-        
-        $stmt = $mysqli->prepare("CALL GetOrderDetails(?)");
-        $stmt->bind_param("i", $orderId);
+        $pdo = $db->getPdo();
+
+        $stmt = $pdo->prepare('CALL GetOrderDetails(?)');
+        $stmt->bindParam(1, $orderId, PDO::PARAM_INT);
         $stmt->execute();
-        
-        $result = $stmt->get_result();
-        $data = [];
-        while ($row = $result->fetch_assoc()) {
-            $data[] = $row;
-        }
-        $stmt->close();
-        
-        return $data;
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
+
     /**
+     * Finalize an order by confirming it and emptying the cart
      * Uses the FinalizeOrder stored procedure
      * Triggers: AfterOrderConfirmed will automatically reduce product stock
      *
-     * @param int $orderId Order ID
-     * @param int $userId User ID
+     * @param  int  $orderId  Order ID
+     * @param  int  $userId  User ID
      * @return bool Success status
+     *
      * @throws Exception If order does not exist or is not pending
      */
     public static function finalizeOrder(int $orderId, int $userId): bool
     {
         try {
             $db = Database::getInstance();
-            $mysqli = $db->getMysqli();
-            
-            $stmt = $mysqli->prepare("CALL FinalizeOrder(?, ?)");
-            $stmt->bind_param("ii", $orderId, $userId);
+            $pdo = $db->getPdo();
+
+            $stmt = $pdo->prepare('CALL FinalizeOrder(?, ?)');
+            $stmt->bindParam(1, $orderId, PDO::PARAM_INT);
+            $stmt->bindParam(2, $userId, PDO::PARAM_INT);
             $stmt->execute();
-            
-            $stmt->close();
+
             return true;
         } catch (Exception $e) {
             // Capture the MySQL error message
             throw new Exception($e->getMessage());
         }
     }
-    
+
     /**
      * Get a customer's order history with item counts and product names
      * Uses a direct SQL query instead of a stored procedure
      *
-     * @param int $userId User ID
+     * @param  int  $userId  User ID
      * @return array Customer's order history
      */
     public static function getCustomerOrderHistory(int $userId): array
     {
         $db = Database::getInstance();
-        
+
         // Get orders for this user
-        $sql = "SELECT o.*, u.email as customer_email 
+        $sql = 'SELECT o.*, u.email as customer_email 
                 FROM orders o 
                 JOIN users u ON o.user_id = u.id 
                 WHERE o.user_id = ? 
-                ORDER BY o.created_at DESC";
-        
+                ORDER BY o.created_at DESC';
+
         $orders = $db->fetchRows($sql, [$userId]);
-        
+
         // Get item count for each order
         foreach ($orders as &$order) {
             $order['items_count'] = self::getItemsCount($order['id']);
         }
-        
+
         return $orders;
     }
-    
+
     /**
      * Create a new order from cart items
      * Trigger: BeforeOrderItemInsert will prevent orders with insufficient stock
      *
-     * @param int $userId User ID
-     * @param array $items Order items
-     * @param float $totalPrice Total price
+     * @param  int  $userId  User ID
+     * @param  array  $items  Order items
+     * @param  float  $totalPrice  Total price
      * @return int|bool Order ID on success, false on failure
      */
-    public static function createOrder(int $userId, array $items, float $totalPrice)
+    public static function createOrder(int $userId, array $items, float $totalPrice): int|bool
     {
         $db = Database::getInstance();
-        
+
         try {
             $db->beginTransaction();
-            
+
             // Create order header
             $sql = "INSERT INTO orders (user_id, total_price, status) VALUES (?, ?, 'pending')";
             $db->execute($sql, [$userId, $totalPrice]);
             $orderId = (int) $db->getLastInsertId();
-            
+
             // Add order items - BeforeOrderItemInsert trigger will validate stock
             foreach ($items as $item) {
-                $sql = "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
+                $sql = 'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)';
                 $db->execute($sql, [
                     $orderId,
                     $item['product_id'],
                     $item['quantity'],
-                    $item['price']
+                    $item['price'],
                 ]);
             }
-            
+
             $db->commit();
+
             return $orderId;
         } catch (Exception $e) {
             $db->rollBack();
             // Log the error message which could come from the trigger
-            error_log("Order creation failed: " . $e->getMessage());
+            error_log('Order creation failed: '.$e->getMessage());
+
             return false;
         }
     }
-    
+
     /**
      * Cancel an order
      * Triggers: AfterOrderCancelled will restore product stock
      * Triggers: LogCanceledOrder will log the cancellation
      *
-     * @param int $orderId Order ID
-     * @param int $userId User ID
+     * @param  int  $orderId  Order ID
+     * @param  int  $userId  User ID
      * @return bool Success status
      */
     public static function cancelOrder(int $orderId, int $userId): bool
     {
         $db = Database::getInstance();
-        
+
         try {
             // Verify order belongs to user
             $sql = "SELECT id FROM orders WHERE id = ? AND user_id = ? AND status != 'cancelled'";
             $order = $db->fetchRow($sql, [$orderId, $userId]);
-            
-            if (!$order) {
+
+            if (! $order) {
                 return false;
             }
-            
+
             // Update status - triggers will handle stock restoration and logging
             $sql = "UPDATE orders SET status = 'cancelled' WHERE id = ?";
             $db->execute($sql, [$orderId]);
-            
+
             return true;
         } catch (Exception $e) {
-            error_log("Error cancelling order: " . $e->getMessage());
+            error_log('Error cancelling order: '.$e->getMessage());
+
             return false;
         }
     }
-    
+
     /**
      * Update order status
      * Triggers will handle stock updates for status changes to 'confirmed' or 'cancelled'
      *
-     * @param int $orderId Order ID
-     * @param string $status New status
+     * @param  int  $orderId  Order ID
+     * @param  string  $status  New status
      * @return bool Success status
      */
     public static function updateStatus(int $orderId, string $status): bool
     {
         $db = Database::getInstance();
         $validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
-        
-        if (!in_array($status, $validStatuses)) {
+
+        if (! in_array($status, $validStatuses)) {
             return false;
         }
-        
+
         try {
-            $sql = "UPDATE orders SET status = ? WHERE id = ?";
+            $sql = 'UPDATE orders SET status = ? WHERE id = ?';
             $db->execute($sql, [$status, $orderId]);
+
             return true;
         } catch (Exception $e) {
-            error_log("Error updating order status: " . $e->getMessage());
+            error_log('Error updating order status: '.$e->getMessage());
+
             return false;
         }
     }

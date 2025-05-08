@@ -3,21 +3,22 @@
 namespace App\Core;
 
 use Exception;
-use mysqli;
-use mysqli_stmt;
-use mysqli_sql_exception;
+use PDO;
+use PDOException;
 
 class Database
 {
-    /** @var mysqli */
-    private $mysqli;
+    /** @var PDO */
+    private $pdo;
 
     /** @var Database|null */
     private static $instance = null;
 
     /** @var array */
     private static $defaultOptions = [
-        // mysqli options will be set in constructor
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
     ];
 
     /** @var array */
@@ -28,9 +29,9 @@ class Database
      * @param  string  $dbname  Database name
      * @param  string  $username  Database username
      * @param  string  $password  Database password
-     * @param  array  $options  MySQLi options
+     * @param  array  $options  PDO options
      *
-     * @throws mysqli_sql_exception if connection fails
+     * @throws PDOException if connection fails
      */
     private function __construct(
         string $host,
@@ -39,19 +40,17 @@ class Database
         string $password,
         array $options = []
     ) {
-        // Enable mysqli exception mode
-        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-        
+        $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
+
         try {
-            $this->mysqli = new mysqli($host, $username, $password, $dbname);
-            $this->mysqli->set_charset('utf8mb4');
-            
-            // Apply any custom options
-            foreach ($options as $option => $value) {
-                $this->mysqli->options($option, $value);
-            }
-        } catch (mysqli_sql_exception $e) {
-            throw new mysqli_sql_exception('Database connection failed: '.$e->getMessage(),
+            $this->pdo = new PDO(
+                $dsn,
+                $username,
+                $password,
+                array_merge(self::$defaultOptions, $options)
+            );
+        } catch (PDOException $e) {
+            throw new PDOException('Database connection failed: '.$e->getMessage(),
                 (int) $e->getCode(), $e);
         }
     }
@@ -89,9 +88,18 @@ class Database
         self::$connectionParams = require $configPath;
     }
 
-    private function __clone() {}
+    /**
+     * Private clone method to prevent cloning of the singleton instance.
+     */
+    private function __clone(): void {}
 
-    public function __wakeup()
+    /**
+     * Prevent unserialization of the singleton instance.
+     *
+     *
+     * @throws Exception When attempting to unserialize singleton
+     */
+    public function __wakeup(): void
     {
         throw new Exception('Cannot unserialize singleton');
     }
@@ -99,105 +107,128 @@ class Database
     /**
      * @param  string  $sql  SQL query with placeholders
      * @param  array  $params  Parameters to bind
-     * @return mysqli_stmt The prepared and executed statement
+     * @return \PDOStatement The prepared and executed statement
      */
-    public function query(string $sql, array $params = []): mysqli_stmt
+    public function query(string $sql, array $params = []): \PDOStatement
     {
-        $stmt = $this->mysqli->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         
+        // Bind parameters properly based on their type
         if (!empty($params)) {
-            // Build types string for bind_param (s for string, i for integer, d for double, b for blob)
-            $types = '';
-            foreach ($params as $param) {
-                if (is_int($param)) {
-                    $types .= 'i';
-                } elseif (is_float($param)) {
-                    $types .= 'd';
-                } elseif (is_string($param)) {
-                    $types .= 's';
+            foreach ($params as $key => $value) {
+                // Determine parameter type for proper binding
+                $type = PDO::PARAM_STR;
+                if (is_int($value)) {
+                    $type = PDO::PARAM_INT;
+                } elseif (is_bool($value)) {
+                    $type = PDO::PARAM_BOOL;
+                } elseif (is_null($value)) {
+                    $type = PDO::PARAM_NULL;
+                }
+                
+                // If key is numeric (positional parameter)
+                if (is_int($key)) {
+                    $stmt->bindValue($key + 1, $value, $type);
                 } else {
-                    $types .= 'b'; // Default to blob
+                    // Named parameter
+                    $stmt->bindValue($key, $value, $type);
                 }
             }
-            
-            // Dynamically bind parameters
-            if (!empty($types)) {
-                $bindParams = [$types];
-                foreach ($params as $key => $value) {
-                    $bindParams[] = &$params[$key];
-                }
-                call_user_func_array([$stmt, 'bind_param'], $bindParams);
-            }
+            $stmt->execute();
+        } else {
+            $stmt->execute();
         }
-        
-        $stmt->execute();
+
         return $stmt;
     }
 
+    /**
+     * Fetches a single row from the database.
+     *
+     * @param  string  $sql  SQL query with placeholders
+     * @param  array  $params  Parameters to bind
+     * @return array|null The fetched row as an associative array, or null if no row is found
+     */
     public function fetchRow(string $sql, array $params = []): ?array
     {
         $stmt = $this->query($sql, $params);
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        $stmt->close();
-        
+        $row = $stmt->fetch();
+
         return $row === false ? null : $row;
     }
 
+    /**
+     * Fetches multiple rows from the database.
+     *
+     * @param  string  $sql  SQL query with placeholders
+     * @param  array  $params  Parameters to bind
+     * @return array The fetched rows as an array of associative arrays
+     */
     public function fetchRows(string $sql, array $params = []): array
     {
         $stmt = $this->query($sql, $params);
-        $result = $stmt->get_result();
-        
-        $rows = [];
-        while ($row = $result->fetch_assoc()) {
-            $rows[] = $row;
-        }
-        
-        $stmt->close();
-        return $rows;
+        $results = $stmt->fetchAll();
+
+        return $results ?: [];
     }
 
+    /**
+     * Executes an SQL statement and returns the number of affected rows.
+     *
+     * @param  string  $sql  SQL query with placeholders
+     * @param  array  $params  Parameters to bind
+     * @return int The number of affected rows
+     */
     public function execute(string $sql, array $params = []): int
     {
         $stmt = $this->query($sql, $params);
-        $affectedRows = $stmt->affected_rows;
-        $stmt->close();
-        
-        return $affectedRows;
+
+        return $stmt->rowCount();
     }
 
     public function getLastInsertId(?string $name = null): string
     {
-        return (string)$this->mysqli->insert_id;
+        return $this->pdo->lastInsertId($name);
     }
 
     public function beginTransaction(): bool
     {
-        return $this->mysqli->begin_transaction();
+        return $this->pdo->beginTransaction();
     }
 
     public function commit(): bool
     {
-        return $this->mysqli->commit();
+        return $this->pdo->commit();
     }
 
     public function rollBack(): bool
     {
-        return $this->mysqli->rollback();
+        return $this->pdo->rollBack();
     }
 
-    public function getMysqli(): mysqli
+    public function getPdo(): PDO
     {
-        return $this->mysqli;
+        return $this->pdo;
     }
 
     public function closeConnection(): void
     {
-        if ($this->mysqli) {
-            $this->mysqli->close();
-            $this->mysqli = null;
-        }
+        $this->pdo = null;
         self::$instance = null;
+    }
+
+    /**
+     * Fetches a single column value from the database.
+     *
+     * @param  string  $sql  SQL query with placeholders
+     * @param  array  $params  Parameters to bind
+     * @return mixed|null The fetched value, or null if no row is found
+     */
+    public function fetchOne(string $sql, array $params = []): mixed
+    {
+        $stmt = $this->query($sql, $params);
+        $value = $stmt->fetchColumn();
+
+        return $value === false ? null : $value;
     }
 }
