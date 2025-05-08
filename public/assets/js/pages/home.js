@@ -8,6 +8,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize quick actions like wishlist
     initQuickActions();
+    
+    // Initialize animations and interactions
+    initAnimations();
+    
+    // Initialize newsletter form
+    initNewsletterForm();
 });
 
 /**
@@ -104,29 +110,104 @@ function initQuickActions() {
 }
 
 /**
+ * Initialize animations for landing page elements
+ */
+function initAnimations() {
+    // Animate hero section on page load
+    const heroContent = document.querySelector('.hero-content');
+    const heroImage = document.querySelector('.hero-image');
+    
+    if (heroContent) {
+        setTimeout(() => {
+            heroContent.style.opacity = '1';
+            heroContent.style.transform = 'translateY(0)';
+        }, 300);
+    }
+    
+    if (heroImage) {
+        setTimeout(() => {
+            heroImage.style.opacity = '1';
+            heroImage.style.transform = 'translateY(0)';
+        }, 600);
+    }
+    
+    // Initialize intersection observer for scroll animations
+    if ('IntersectionObserver' in window) {
+        const animateOnScroll = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                    animateOnScroll.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        // Elements to animate on scroll
+        const animatedElements = document.querySelectorAll('.section-title, .product-card, .category-feature-card, .testimonial-card, .category-card');
+        animatedElements.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            animateOnScroll.observe(el);
+        });
+    }
+}
+
+/**
+ * Initialize newsletter form submission
+ */
+function initNewsletterForm() {
+    const newsletterForm = document.querySelector('.newsletter-form');
+    
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const emailInput = this.querySelector('input[type="email"]');
+            const submitBtn = this.querySelector('button');
+            const originalText = submitBtn.textContent;
+            
+            // Basic validation
+            if (!emailInput.value) {
+                showTooltip(emailInput, 'Please enter your email');
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            submitBtn.disabled = true;
+            
+            // Simulate form submission (replace with actual API call)
+            setTimeout(() => {
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> Subscribed!';
+                submitBtn.classList.add('btn-success');
+                
+                // Reset form after delay
+                setTimeout(() => {
+                    emailInput.value = '';
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('btn-success');
+                }, 2000);
+            }, 1000);
+        });
+    }
+}
+
+/**
  * Show a temporary tooltip on an element
  */
 function showTooltip(element, text) {
-    // Create tooltip element
     const tooltip = document.createElement('div');
     tooltip.className = 'tooltip';
     tooltip.textContent = text;
     
-    // Position it above the element
-    const rect = element.getBoundingClientRect();
-    tooltip.style.top = (rect.top - 10 - tooltip.offsetHeight) + 'px';
-    tooltip.style.left = (rect.left + rect.width / 2) + 'px';
-    
-    // Add to document
     document.body.appendChild(tooltip);
     
-    // Show tooltip
-    setTimeout(() => {
-        tooltip.style.opacity = '1';
-        tooltip.style.top = (rect.top - 10 - tooltip.offsetHeight) + 'px';
-    }, 10);
+    const rect = element.getBoundingClientRect();
+    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 10 + window.scrollY}px`;
+    tooltip.style.left = `${rect.left + rect.width/2 - tooltip.offsetWidth/2}px`;
+    tooltip.style.opacity = '1';
     
-    // Remove after delay
     setTimeout(() => {
         tooltip.style.opacity = '0';
         setTimeout(() => {
@@ -139,28 +220,22 @@ function showTooltip(element, text) {
  * Update the cart count in the header
  */
 function updateCartCount() {
-    fetch('/cart/count', {
-        method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => response.ok ? response.json() : Promise.reject('Failed to get cart count'))
-    .then(data => {
-        if (data.count !== undefined) {
-            const cartCountElements = document.querySelectorAll('.cart-count');
-            cartCountElements.forEach(el => {
-                el.textContent = data.count;
+    // Fetch the updated cart count
+    fetch('/cart/count')
+        .then(response => response.json())
+        .then(data => {
+            const cartCountElement = document.querySelector('.cart-count');
+            if (cartCountElement) {
+                cartCountElement.textContent = data.count || 0;
                 
-                // Animate the count update
-                el.style.transform = 'scale(1.5)';
+                // Add animation effect
+                cartCountElement.classList.add('cart-count-updated');
                 setTimeout(() => {
-                    el.style.transform = 'scale(1)';
-                }, 300);
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Error updating cart count:', error);
-    });
+                    cartCountElement.classList.remove('cart-count-updated');
+                }, 700);
+            }
+        })
+        .catch(error => {
+            console.error('Error updating cart count:', error);
+        });
 }

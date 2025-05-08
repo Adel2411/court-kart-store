@@ -69,6 +69,11 @@
   --container-lg: 1024px;
   --container-xl: 1280px;
   --container-max: 1440px;
+
+  /* Additional color theme enhancements */
+  --accent-light: rgba(255, 87, 51, 0.1); /* Light version of accent color for backgrounds */
+  --primary-gradient: linear-gradient(45deg, var(--primary), var(--primary-dark));
+  --secondary-gradient: linear-gradient(45deg, var(--secondary), var(--secondary-dark));
 }
 
 /* Global Reset */
@@ -265,4 +270,108 @@ a:hover {
   h1 {
     font-size: 1.8rem;
   }
+}
+
+/* Additional global styles for enhanced landing page */
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Animation Classes */
+.animate-in {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+.cart-count-updated {
+  animation: pulse 0.7s ease;
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  background-color: var(--secondary-dark);
+  color: white;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  z-index: 1000;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--secondary-dark) transparent transparent transparent;
+}
+
+/* Hero section initial state for animations */
+.hero-content, .hero-image {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* Button hover effects */
+.btn {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.btn:active {
+  transform: translateY(-1px);
+}
+
+.gradient-bg {
+  background: var(--primary-gradient);
+}
+
+.glass-card {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
