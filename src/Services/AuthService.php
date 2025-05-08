@@ -6,7 +6,6 @@ use App\Core\Session;
 use App\Core\Database;
 use App\Helpers\Security;
 use App\Models\User;
-use PDO;
 
 class AuthService
 {
@@ -84,7 +83,7 @@ class AuthService
                     "INSERT INTO logs (action, user_id, message) VALUES (?, ?, ?)",
                     ['USER_LOGOUT', $userId, 'User logged out']
                 );
-            } catch (\PDOException $e) {
+            } catch (\mysqli_sql_exception $e) {
                 // Column doesn't exist or other DB error - just log logout
                 $db->execute(
                     "INSERT INTO logs (action, user_id, message) VALUES (?, ?, ?)",

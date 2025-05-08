@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Core\Database;
-use PDO;
 use Exception;
 
 class Order
@@ -147,17 +146,23 @@ class Order
     public static function getOrderDetails(int $orderId): array
     {
         $db = Database::getInstance();
-        $pdo = $db->getPdo();
+        $mysqli = $db->getMysqli();
         
-        $stmt = $pdo->prepare("CALL GetOrderDetails(?)");
-        $stmt->bindParam(1, $orderId, PDO::PARAM_INT);
+        $stmt = $mysqli->prepare("CALL GetOrderDetails(?)");
+        $stmt->bind_param("i", $orderId);
         $stmt->execute();
         
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = $stmt->get_result();
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
+        $stmt->close();
+        
+        return $data;
     }
     
     /**
-     * Finalize an order by confirming it and emptying the cart
      * Uses the FinalizeOrder stored procedure
      * Triggers: AfterOrderConfirmed will automatically reduce product stock
      *
@@ -170,13 +175,13 @@ class Order
     {
         try {
             $db = Database::getInstance();
-            $pdo = $db->getPdo();
+            $mysqli = $db->getMysqli();
             
-            $stmt = $pdo->prepare("CALL FinalizeOrder(?, ?)");
-            $stmt->bindParam(1, $orderId, PDO::PARAM_INT);
-            $stmt->bindParam(2, $userId, PDO::PARAM_INT);
+            $stmt = $mysqli->prepare("CALL FinalizeOrder(?, ?)");
+            $stmt->bind_param("ii", $orderId, $userId);
             $stmt->execute();
             
+            $stmt->close();
             return true;
         } catch (Exception $e) {
             // Capture the MySQL error message

@@ -3,22 +3,21 @@
 namespace App\Core;
 
 use Exception;
-use PDO;
-use PDOException;
+use mysqli;
+use mysqli_stmt;
+use mysqli_sql_exception;
 
 class Database
 {
-    /** @var PDO */
-    private $pdo;
+    /** @var mysqli */
+    private $mysqli;
 
     /** @var Database|null */
     private static $instance = null;
 
     /** @var array */
     private static $defaultOptions = [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES => false,
+        // mysqli options will be set in constructor
     ];
 
     /** @var array */
@@ -29,9 +28,9 @@ class Database
      * @param  string  $dbname  Database name
      * @param  string  $username  Database username
      * @param  string  $password  Database password
-     * @param  array  $options  PDO options
+     * @param  array  $options  MySQLi options
      *
-     * @throws PDOException if connection fails
+     * @throws mysqli_sql_exception if connection fails
      */
     private function __construct(
         string $host,
@@ -40,17 +39,19 @@ class Database
         string $password,
         array $options = []
     ) {
-        $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
-
+        // Enable mysqli exception mode
+        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+        
         try {
-            $this->pdo = new PDO(
-                $dsn,
-                $username,
-                $password,
-                array_merge(self::$defaultOptions, $options)
-            );
-        } catch (PDOException $e) {
-            throw new PDOException('Database connection failed: '.$e->getMessage(),
+            $this->mysqli = new mysqli($host, $username, $password, $dbname);
+            $this->mysqli->set_charset('utf8mb4');
+            
+            // Apply any custom options
+            foreach ($options as $option => $value) {
+                $this->mysqli->options($option, $value);
+            }
+        } catch (mysqli_sql_exception $e) {
+            throw new mysqli_sql_exception('Database connection failed: '.$e->getMessage(),
                 (int) $e->getCode(), $e);
         }
     }
@@ -98,67 +99,105 @@ class Database
     /**
      * @param  string  $sql  SQL query with placeholders
      * @param  array  $params  Parameters to bind
-     * @return \PDOStatement The prepared and executed statement
+     * @return mysqli_stmt The prepared and executed statement
      */
-    public function query(string $sql, array $params = []): \PDOStatement
+    public function query(string $sql, array $params = []): mysqli_stmt
     {
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
-
+        $stmt = $this->mysqli->prepare($sql);
+        
+        if (!empty($params)) {
+            // Build types string for bind_param (s for string, i for integer, d for double, b for blob)
+            $types = '';
+            foreach ($params as $param) {
+                if (is_int($param)) {
+                    $types .= 'i';
+                } elseif (is_float($param)) {
+                    $types .= 'd';
+                } elseif (is_string($param)) {
+                    $types .= 's';
+                } else {
+                    $types .= 'b'; // Default to blob
+                }
+            }
+            
+            // Dynamically bind parameters
+            if (!empty($types)) {
+                $bindParams = [$types];
+                foreach ($params as $key => $value) {
+                    $bindParams[] = &$params[$key];
+                }
+                call_user_func_array([$stmt, 'bind_param'], $bindParams);
+            }
+        }
+        
+        $stmt->execute();
         return $stmt;
     }
 
     public function fetchRow(string $sql, array $params = []): ?array
     {
         $stmt = $this->query($sql, $params);
-        $row = $stmt->fetch();
-
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        
         return $row === false ? null : $row;
     }
 
     public function fetchRows(string $sql, array $params = []): array
     {
         $stmt = $this->query($sql, $params);
-        $results = $stmt->fetchAll();
-
-        return $results ?: [];
+        $result = $stmt->get_result();
+        
+        $rows = [];
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+        }
+        
+        $stmt->close();
+        return $rows;
     }
 
     public function execute(string $sql, array $params = []): int
     {
         $stmt = $this->query($sql, $params);
-
-        return $stmt->rowCount();
+        $affectedRows = $stmt->affected_rows;
+        $stmt->close();
+        
+        return $affectedRows;
     }
 
     public function getLastInsertId(?string $name = null): string
     {
-        return $this->pdo->lastInsertId($name);
+        return (string)$this->mysqli->insert_id;
     }
 
     public function beginTransaction(): bool
     {
-        return $this->pdo->beginTransaction();
+        return $this->mysqli->begin_transaction();
     }
 
     public function commit(): bool
     {
-        return $this->pdo->commit();
+        return $this->mysqli->commit();
     }
 
     public function rollBack(): bool
     {
-        return $this->pdo->rollBack();
+        return $this->mysqli->rollback();
     }
 
-    public function getPdo(): PDO
+    public function getMysqli(): mysqli
     {
-        return $this->pdo;
+        return $this->mysqli;
     }
 
     public function closeConnection(): void
     {
-        $this->pdo = null;
+        if ($this->mysqli) {
+            $this->mysqli->close();
+            $this->mysqli = null;
+        }
         self::$instance = null;
     }
 }
