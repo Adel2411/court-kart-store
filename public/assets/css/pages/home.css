@@ -10,6 +10,7 @@
   position: relative;
   min-height: 650px;
   overflow: hidden;
+  padding: var(--space-xxl) 0;
 }
 
 .hero-overlay {
@@ -738,7 +739,7 @@
 }
 
 .brand-item img {
-  height: 40px;
+  height: 120px;
   width: auto;
   filter: grayscale(100%);
   opacity: 0.7;
