@@ -328,9 +328,9 @@
                 </div>
                 <p class="testimonial-text">"The quality of these basketball shoes is incredible. I've noticed significant improvement in my game since switching to Court Kart products."</p>
                 <div class="testimonial-author">
-                    <img src="/assets/images/testimonials/user1.jpg" alt="Customer photo">
+                    <img src="https://cdn.britannica.com/20/264820-050-3FA4E891/devin-booker-team-united-states-olympics-paris-2024-august-3-2024.jpg" alt="Customer photo">
                     <div>
-                        <h4>Michael R.</h4>
+                        <h4>Devin B.</h4>
                         <span>Verified Buyer</span>
                     </div>
                 </div>
@@ -346,9 +346,9 @@
                 </div>
                 <p class="testimonial-text">"Fast shipping and exceptional customer service. The jersey I ordered fits perfectly and the material feels premium. Will definitely shop again!"</p>
                 <div class="testimonial-author">
-                    <img src="/assets/images/testimonials/user2.jpg" alt="Customer photo">
+                    <img src="https://www.proballers.com/media/cache/torso_player/https---www.proballers.com/ul/player/sabrina-ionescu-1ef53709-8e3b-6a82-b4e5-5fe5e1a8d6a8.png" alt="Customer photo">
                     <div>
-                        <h4>Jessica K.</h4>
+                        <h4>Sabrina L.</h4>
                         <span>Verified Buyer</span>
                     </div>
                 </div>
@@ -364,9 +364,9 @@
                 </div>
                 <p class="testimonial-text">"My team ordered custom jerseys and they arrived even better than we expected. The quality and attention to detail is outstanding!"</p>
                 <div class="testimonial-author">
-                    <img src="/assets/images/testimonials/user3.jpg" alt="Customer photo">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjtps7JFKZMQ4qs4VodkJyonumin8mtb-sWA&s" alt="Customer photo">
                     <div>
-                        <h4>Coach Thomas</h4>
+                        <h4>Coach Popovich</h4>
                         <span>Verified Buyer</span>
                     </div>
                 </div>
