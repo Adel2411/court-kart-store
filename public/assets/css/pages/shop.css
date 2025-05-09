@@ -754,7 +754,7 @@ details:not([open]) .filter-title::after {
 
 .original-price {
   font-size: 0.875rem;
-  color: var(--gray);
+  color: var (--gray);
   text-decoration: line-through;
 }
 
@@ -998,11 +998,32 @@ details:not([open]) .filter-title::after {
 
 .error {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 200px;
+  gap: var(--space-md);
   color: var(--danger);
-  font-size: 1rem;
+  text-align: center;
+}
+
+.error i {
+  font-size: 2.5rem;
+}
+
+.error p {
+  margin: 0;
+}
+
+.error .error-message {
+  font-family: monospace;
+  background-color: rgba(var(--danger-rgb), 0.1);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  margin-top: var(--space-sm);
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 /* Mobile filters toggle button */
@@ -1452,7 +1473,7 @@ details:not([open]) .filter-title::after {
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--primary);
-  margin-bottom: var(--space-md);
+  margin-bottom: var (--space-md);
   display: flex;
   align-items: center;
   gap: var(--space-sm);
@@ -1626,6 +1647,17 @@ details:not([open]) .filter-title::after {
 
 .error p {
   margin: 0;
+}
+
+.error .error-message {
+  font-family: monospace;
+  background-color: rgba(var(--danger-rgb), 0.1);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  margin-top: var(--space-sm);
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 .pulse {

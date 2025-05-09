@@ -568,10 +568,12 @@ document.addEventListener('DOMContentLoaded', function() {
             quickViewContent.innerHTML = '<div class="loader"><i class="fas fa-basketball-ball fa-spin"></i><p>Loading product details...</p></div>';
             quickViewModal.setAttribute('aria-hidden', 'false');
             
-            // Fetch product data
+            // Fetch product data with proper error handling
             fetch(`/api/products/${productId}`)
                 .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
                     return response.json();
                 })
                 .then(data => {
@@ -603,20 +605,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     
                     // Format original price if there's a discount
-                    let priceDisplay = `<div class="quick-view-price">$${data.price.toFixed(2)}</div>`;
+                    let priceDisplay = `<div class="quick-view-price">$${parseFloat(data.price).toFixed(2)}</div>`;
                     if (data.original_price && data.original_price > data.price) {
                         priceDisplay = `
                             <div class="quick-view-price">
-                                <span class="current-price">$${data.price.toFixed(2)}</span>
-                                <span class="original-price">$${data.original_price.toFixed(2)}</span>
+                                <span class="current-price">$${parseFloat(data.price).toFixed(2)}</span>
+                                <span class="original-price">$${parseFloat(data.original_price).toFixed(2)}</span>
                             </div>`;
                     }
+                    
+                    // Ensure description is not undefined
+                    const description = data.description || 'No description available';
                     
                     quickViewContent.innerHTML = `
                         <div class="quick-view">
                             <div class="quick-view-image">
                                 ${badges}
-                                <img src="${data.image_url}" alt="${data.name}">
+                                <img src="${data.image_url}" alt="${data.name}" onerror="this.src='/assets/images/placeholder-product.png'">
                             </div>
                             
                             <div class="quick-view-details">
@@ -637,7 +642,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                                 
                                 <div class="product-description">
-                                    <p>${data.description}</p>
+                                    <p>${description}</p>
                                 </div>
                                 
                                 <form action="/cart/add" method="post" class="quick-view-form" id="quickAddToCartForm">
@@ -678,11 +683,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     setupQuickAddToCart();
                 })
                 .catch(error => {
-                    console.error('Error fetching product:', error);
+                    console.error('Error fetching product details:', error);
                     quickViewContent.innerHTML = `
                         <div class="error">
                             <i class="fas fa-exclamation-circle"></i>
                             <p>Failed to load product details</p>
+                            <p class="error-message">${error.message}</p>
                             <button class="btn outline" data-close>Close</button>
                         </div>`;
                 });

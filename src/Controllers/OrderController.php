@@ -75,19 +75,76 @@ class OrderController
         
         // Cast the ID to integer to ensure it's treated properly
         $orderId = (int)$id;
+        
+        // Get order details
         $orderDetails = Order::getOrderDetails($orderId);
-
-        // Verify the order belongs to the user
-        if (empty($orderDetails) || $orderDetails[0]['customer_email'] !== Session::get('user_email')) {
+        
+        // Debug information to help diagnose issues
+        if (empty($orderDetails)) {
+            // Order not found
             Session::flash('error', 'Order not found');
-            header('Location: /orders/history');
-            exit;
+            echo View::renderWithLayout('orders/show', 'main', [
+                'title' => 'Order Not Found - Court Kart',
+                'order' => null,
+                'orderItems' => [],
+                'page_css' => 'orders',
+                'page_js' => 'orders',
+                'error' => 'Order not found'
+            ]);
+            return;
+        }
+        
+        // Check if order belongs to the user
+        if ($orderDetails[0]['user_id'] != $userId) {
+            // User doesn't have permission
+            Session::flash('error', 'You do not have permission to view this order');
+            echo View::renderWithLayout('orders/show', 'main', [
+                'title' => 'Access Denied - Court Kart',
+                'order' => null,
+                'orderItems' => [],
+                'page_css' => 'orders',
+                'page_js' => 'orders',
+                'error' => 'You do not have permission to view this order'
+            ]);
+            return;
         }
 
+        // Process order details
+        $order = (object)$orderDetails[0];
+        $orderItems = [];
+        
+        foreach ($orderDetails as $item) {
+            if (isset($item['product_id'])) {
+                $orderItems[] = (object)[
+                    'product_id' => $item['product_id'],
+                    'product_name' => $item['product_name'] ?? 'Unknown Product',
+                    'price' => $item['price'] ?? 0,
+                    'quantity' => $item['quantity'] ?? 0,
+                    'image_url' => $item['image_url'] ?? '',
+                    'subtotal' => ($item['price'] ?? 0) * ($item['quantity'] ?? 0)
+                ];
+            }
+        }
+
+        // Calculate order subtotal, shipping cost, and total
+        $subtotal = 0;
+        foreach ($orderItems as $item) {
+            $subtotal += $item->subtotal;
+        }
+        
+        $shippingCost = 0; // Free shipping
+        $total = $subtotal + $shippingCost;
+        
+        $order->subtotal = $subtotal;
+        $order->shipping_cost = $shippingCost;
+        $order->total = $total;
+        
         echo View::renderWithLayout('orders/show', 'main', [
             'title' => 'Order #' . $id . ' - Court Kart',
-            'orderDetails' => $orderDetails,
-            'page_css' => 'account',
+            'order' => $order,
+            'orderItems' => $orderItems,
+            'page_css' => ['account', 'orders'],
+            'page_js' => 'orders',
         ]);
     }
 
