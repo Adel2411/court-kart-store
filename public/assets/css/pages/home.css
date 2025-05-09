@@ -2,14 +2,14 @@
 
 /* Hero Section - Merged styles from both classes */
 .hero-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: var(--space-xl);
   position: relative;
   min-height: 650px;
   overflow: hidden;
-  background-color: var(--secondary-dark);
-  margin-top: -20px; /* Remove any default spacing */
 }
 
 .hero-overlay {
@@ -26,19 +26,11 @@
   z-index: 1;
 }
 
-.hero-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-xl);
-  position: relative;
-  z-index: 2;
-  min-height: 650px;
-}
-
 .hero-content {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   padding: var(--space-xxl) 0;
   z-index: 2;
 }
@@ -64,7 +56,6 @@
   font-size: 3.8rem;
   line-height: 1.1;
   margin-bottom: var(--space-md);
-  color: var(--white);
   font-weight: 800;
   letter-spacing: -1px;
   animation: fadeInUp 1s ease forwards;
@@ -74,7 +65,6 @@
   font-size: 1.2rem;
   line-height: 1.6;
   margin-bottom: var(--space-lg);
-  color: var(--light);
   max-width: 520px;
   animation: fadeInUp 1.2s ease forwards;
 }
@@ -103,23 +93,14 @@
 .stat-number {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--white);
   margin-bottom: 4px;
 }
 
 .stat-label {
   margin: 0;
   font-size: 0.9rem;
-  color: var(--light);
+  color: var (--light);
   font-weight: 500;
-}
-
-.hero-image-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
 }
 
 .hero-main-image {
@@ -128,6 +109,7 @@
   object-fit: cover;
   object-position: center;
   animation: scaleIn 1.5s ease forwards;
+  border: 8px solid black;
 }
 
 .hero-floating-card {
@@ -627,7 +609,7 @@
   .hero-section {
     text-align: center;
   }
-  
+
   .hero-container {
     grid-template-columns: 1fr;
     text-align: center;
@@ -636,11 +618,6 @@
   .hero-content {
     order: 2;
     padding: var(--space-xl) 0;
-  }
-
-  .hero-image-container {
-    order: 1;
-    height: 400px;
   }
 
   .hero-description {
@@ -1384,11 +1361,6 @@
     padding: var(--space-xl) 0;
   }
 
-  .hero-image-container {
-    order: 1;
-    height: 400px;
-  }
-
   .hero-description {
     margin-left: auto;
     margin-right: auto;
@@ -1484,3 +1456,183 @@
     justify-content: center;
   }
 }
+
+/* Clean, Centered Hero Section - Fixed Alignment */
+.hero-section.centered-hero {
+  position: relative;
+  padding: 120px 0 80px;
+  background-color: var(--white);
+  overflow: hidden;
+  margin-top: -20px; /* Adjust for header */
+  text-align: center; /* Ensure all text is centered by default */
+}
+
+.centered-hero .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.centered-hero .hero-content {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center all content horizontally */
+  text-align: center; /* Center text content */
+}
+
+.centered-hero .hero-badge-container {
+  margin-bottom: var(--space-md);
+  width: auto;
+  display: inline-block;
+}
+
+.centered-hero .hero-badge {
+  display: inline-block;
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-light) 100%
+  );
+  color: var(--white);
+  font-weight: 700;
+  padding: 10px 24px;
+  border-radius: var(--radius-pill);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+}
+
+.centered-hero .hero-title {
+  font-size: 4rem;
+  line-height: 1.1;
+  margin-bottom: var(--space-lg);
+  color: var(--secondary-dark);
+  font-weight: 900;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  text-align: center; /* Ensure title is centered */
+  width: 100%; /* Full width for proper centering */
+}
+
+.centered-hero .text-highlight {
+  color: var(--primary);
+  position: relative;
+  display: inline-block;
+}
+
+.centered-hero .text-highlight::after {
+  content: "";
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background-color: rgba(var(--primary-rgb), 0.2);
+  z-index: -1;
+}
+
+.centered-hero .hero-description {
+  font-size: 1.2rem;
+  line-height: 1.7;
+  margin-bottom: var(--space-xl);
+  color: var(--secondary);
+  max-width: 700px;
+  font-weight: 400;
+  text-align: center; /* Ensure description is centered */
+}
+
+.centered-hero .hero-buttons {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+  justify-content: center; /* Center buttons horizontally */
+  width: 100%; /* Full width container */
+}
+
+.centered-hero .btn-lg {
+  padding: 15px 32px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  display: inline-flex; /* Changed to inline-flex for better centering */
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.centered-hero .btn-outline {
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+
+.centered-hero .btn-outline:hover {
+  background-color: rgba(var(--primary-rgb), 0.05);
+  transform: translateY(-2px);
+}
+
+.centered-hero .pulse-animation {
+  animation: pulse 2s infinite;
+  box-shadow: 0 0 0 rgba(var(--primary-rgb), 0.4);
+}
+
+.centered-hero .hero-stats {
+  display: flex;
+  gap: var(--space-xl);
+  padding-top: var(--space-lg);
+  margin-top: var(--space-md);
+  border-top: 1px solid var(--light-gray);
+  justify-content: center; /* Center stats horizontally */
+  width: 100%; /* Full width for proper alignment */
+}
+
+.centered-hero .hero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center stat content */
+  text-align: center; /* Ensure stats text is centered */
+}
+
+.centered-hero .stat-number {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--secondary-dark);
+  line-height: 1;
+  display: inline-block;
+}
+
+.centered-hero .stat-plus {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary);
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 2px;
+}
+
+.centered-hero .stat-label {
+  margin: 8px 0 0;
+  font-size: 1rem;
+  color: var(--secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.centered-hero .hero-scroll-indicator {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+  text-align: center; /* Center scroll indicator text */
+}
+
+/* ...existing code... */

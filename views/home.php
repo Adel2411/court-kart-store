@@ -1,50 +1,56 @@
-<!-- Hero Section - Full-Width Modern Design -->
-<div class="hero-section">
-    <div class="hero-overlay"></div>
-    <div class="container hero-container">
-        <div class="hero-content">
-            <div class="hero-badge-container">
-                <span class="hero-badge">Premium Basketball Gear</span>
-            </div>
-            <h1 class="hero-title">FIND GEAR THAT MATCHES<br>YOUR STYLE & PERFORMANCE</h1>
-            <p class="hero-description">Discover our expertly curated collection of premium basketball products designed for athletes who demand excellence on and off the court.</p>
-            <div class="hero-buttons">
-                <a href="/shop" class="btn btn-primary btn-lg">Shop Collection</a>
-                <a href="#categories" class="btn btn-outline btn-lg">Explore Categories</a>
-            </div>
-            <div class="hero-stats">
-                <div class="hero-stat">
-                    <span class="stat-number">200+</span>
-                    <p class="stat-label">Products</p>
-                </div>
-                <div class="hero-stat">
-                    <span class="stat-number">2,000+</span>
-                    <p class="stat-label">Happy Players</p>
-                </div>
-                <div class="hero-stat">
-                    <span class="stat-number">Free</span>
-                    <p class="stat-label">Premium Shipping</p>
-                </div>
-            </div>
+<!-- Enhanced Hero Section with Image -->
+<section class="hero-section">
+    <div class="hero-content" data-animation="fade-in">
+        <div class="hero-badge-container">
+            <span class="hero-badge">Premium Basketball Gear</span>
         </div>
-        <div class="hero-image-container">
-            <img src="/assets/images/hero-image.jpg" alt="Basketball players in premium CourtKart gear" class="hero-main-image">
-            <div class="hero-floating-card">
-                <div class="floating-card-badge">Most Popular</div>
-                <div class="floating-card-product">
-                    <img src="/assets/images/products/featured-shoe.png" alt="Featured basketball shoe">
-                    <div class="floating-card-info">
-                        <h4>Pro Court Elite</h4>
-                        <span class="floating-card-price">$129.99</span>
-                    </div>
-                </div>
+        
+        <h1 class="hero-title" data-animation="slide-up">
+            TIES THE BASKETBALL <span class="text-highlight">COURT</span><br>
+            TO YOUR SHOPPING <span class="text-highlight">JOURNEY</span>
+        </h1>
+        
+        <p class="hero-description" data-animation="slide-up">
+            Discover our expertly curated collection of premium basketball products 
+            designed for athletes who demand excellence on and off the court.
+        </p>
+        
+        <div class="hero-buttons">
+            <a href="/shop" class="btn btn-primary btn-lg pulse">
+                <span>Shop Collection</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+            <a href="#categories" class="btn btn-outline btn-lg">
+                <span>Explore Categories</span>
+            </a>
+        </div>
+        
+        <div class="hero-stats">
+            <div class="stat">
+                <span class="stat-number" data-counter="200">0</span><span class="stat-plus">+</span>
+                <p class="stat-label">Products</p>
+            </div>
+            <div class="stat">
+                <span class="stat-number" data-counter="2000">0</span><span class="stat-plus">+</span>
+                <p class="stat-label">Happy Players</p>
+            </div>
+            <div class="stat">
+                <span class="stat-number">Free</span>
+                <p class="stat-label">Premium Shipping</p>
             </div>
         </div>
     </div>
-</div>
+    
+    <div class="scroll-indicator">
+        <a href="#brands-section">
+            <span>Scroll to explore</span>
+            <i class="fas fa-arrow-down"></i>
+        </a>
+    </div>
+</section>
 
 <!-- Premium Brands Section -->
-<div class="brands-section">
+<div id="brands-section" class="brands-section">
     <div class="container">
         <div class="brands-header">
             <h3 class="section-subtitle">PARTNERED WITH THE BEST</h3>
@@ -73,7 +79,7 @@
         </div>
         
         <div class="product-grid modern-grid">
-            <?php if (isset($newProducts) && !empty($newProducts)) { ?>
+            <?php if (isset($newProducts) && ! empty($newProducts)) { ?>
                 <?php foreach (array_slice($newProducts, 0, 4) as $product) { ?>
                     <div class="product-card modern-card">
                         <div class="product-image">
@@ -206,7 +212,7 @@
         </div>
         
         <div class="product-grid modern-grid">
-            <?php if (isset($topProducts) && !empty($topProducts)) { ?>
+            <?php if (isset($topProducts) && ! empty($topProducts)) { ?>
                 <?php foreach (array_slice($topProducts, 0, 4) as $product) { ?>
                     <div class="product-card modern-card">
                         <div class="product-image">
