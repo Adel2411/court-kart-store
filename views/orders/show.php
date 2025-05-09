@@ -5,12 +5,11 @@
 ?>
 
 <div class="order-details-container">
-    <!-- Breadcrumb navigation -->
-    <nav class="breadcrumb">
+    <nav class="breadcrumb" aria-label="breadcrumb">
         <a href="/">Home</a>
-        <span class="separator"><i class="fas fa-chevron-right"></i></span>
+        <span class="separator">/</span>
         <a href="/orders">My Orders</a>
-        <span class="separator"><i class="fas fa-chevron-right"></i></span>
+        <span class="separator">/</span>
         <span class="current">Order #<?= htmlspecialchars($order->id ?? 'N/A') ?></span>
     </nav>
 
@@ -28,14 +27,17 @@
                 <a href="/shop" class="btn btn-outline">Continue Shopping</a>
             </div>
         </div>
-    <?php elseif ($order): ?>
+    <?php elseif (isset($order)): ?>
         <!-- Order header section -->
         <div class="order-header">
             <div class="order-title">
                 <h1>Order #<?= htmlspecialchars($order->id ?? 'N/A') ?></h1>
-                <span class="order-date">
-                    <i class="far fa-calendar-alt"></i> Placed on <?= date('F j, Y', strtotime($order->created_at ?? 'now')) ?>
-                </span>
+                <div class="order-meta">
+                    <span class="order-date">
+                        <i class="far fa-calendar-alt"></i> 
+                        Placed on <?= date('F j, Y', strtotime($order->created_at ?? 'now')) ?>
+                    </span>
+                </div>
             </div>
             
             <div class="order-actions">
@@ -44,7 +46,7 @@
                 </button>
                 <?php if (($order->status ?? '') !== 'cancelled' && ($order->status ?? '') !== 'delivered'): ?>
                     <form action="/orders/<?= htmlspecialchars($order->id ?? '') ?>/cancel" method="POST" class="cancel-order-form">
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this order? This action cannot be undone.')">
+                        <button type="submit" class="btn btn-danger">
                             <i class="fas fa-times"></i> Cancel Order
                         </button>
                     </form>
@@ -56,44 +58,20 @@
         <div class="order-status-card">
             <div class="status-header">
                 <h2>Order Status</h2>
-                <?php
-                $statusClass = '';
-                $statusIcon = '';
-                switch ($order->status ?? '') {
-                    case 'pending':
-                        $statusClass = 'status-pending';
-                        $statusIcon = 'clock';
-                        $statusText = 'Your order has been received and is awaiting confirmation.';
-                        break;
-                    case 'confirmed':
-                        $statusClass = 'status-confirmed';
-                        $statusIcon = 'check-circle';
-                        $statusText = 'Your order has been confirmed and is being processed.';
-                        break;
-                    case 'shipped':
-                        $statusClass = 'status-shipped';
-                        $statusIcon = 'truck';
-                        $statusText = 'Your order has been shipped and is on its way.';
-                        break;
-                    case 'delivered':
-                        $statusClass = 'status-delivered';
-                        $statusIcon = 'box-open';
-                        $statusText = 'Your order has been delivered.';
-                        break;
-                    case 'cancelled':
-                        $statusClass = 'status-cancelled';
-                        $statusIcon = 'times-circle';
-                        $statusText = 'Your order has been cancelled.';
-                        break;
-                    default:
-                        $statusClass = 'status-pending';
-                        $statusIcon = 'circle';
-                        $statusText = 'Your order is being processed.';
-                        break;
-                }
-                ?>
-                <div class="status-badge <?= $statusClass ?>">
-                    <i class="fas fa-<?= $statusIcon ?>"></i> <?= ucfirst($order->status ?? 'Processing') ?>
+                <div class="status-badge status-<?= strtolower($order->status ?? 'pending') ?>">
+                    <?php
+                    $statusIcon = '';
+                    switch ($order->status ?? '') {
+                        case 'pending': $statusIcon = 'clock'; break;
+                        case 'confirmed': $statusIcon = 'check-circle'; break;
+                        case 'shipped': $statusIcon = 'truck'; break;
+                        case 'delivered': $statusIcon = 'box-open'; break;
+                        case 'cancelled': $statusIcon = 'times-circle'; break;
+                        default: $statusIcon = 'circle';
+                    }
+                    ?>
+                    <i class="fas fa-<?= $statusIcon ?>"></i>
+                    <?= ucfirst($order->status ?? 'Processing') ?>
                 </div>
             </div>
 
@@ -134,6 +112,27 @@
                         </div>
                     </div>
                 </div>
+                
+                <?php
+                $statusText = '';
+                switch ($order->status ?? '') {
+                    case 'pending': 
+                        $statusText = 'Your order has been received and is awaiting confirmation.'; 
+                        break;
+                    case 'confirmed': 
+                        $statusText = 'Your order has been confirmed and is being processed.'; 
+                        break;
+                    case 'shipped': 
+                        $statusText = 'Your order has been shipped and is on its way.'; 
+                        break;
+                    case 'delivered': 
+                        $statusText = 'Your order has been delivered.'; 
+                        break;
+                    default: 
+                        $statusText = 'Your order is being processed.'; 
+                        break;
+                }
+                ?>
                 <p class="status-message"><?= $statusText ?></p>
             <?php else: ?>
                 <div class="cancelled-message">
@@ -156,7 +155,7 @@
                                 <li class="order-item">
                                     <div class="item-image">
                                         <img src="<?= htmlspecialchars($item->image_url) ?>" alt="<?= htmlspecialchars($item->product_name) ?>" 
-                                             onerror="this.onerror=null; this.src='/assets/images/placeholder-product.png';">
+                                             onerror="this.src='/assets/images/placeholder-product.png'">
                                     </div>
                                     <div class="item-details">
                                         <h3 class="item-name"><?= htmlspecialchars($item->product_name) ?></h3>
@@ -171,7 +170,6 @@
                                 </li>
                             <?php endforeach; ?>
                         </ul>
-                        
                     <?php else: ?>
                         <div class="empty-state">
                             <i class="fas fa-box-open"></i>
@@ -238,7 +236,7 @@
                 </div>
                 
                 <!-- Continue Shopping -->
-                <div class="continue-shopping"></div>
+                <div class="continue-shopping">
                     <a href="/shop" class="btn btn-primary btn-block">
                         <i class="fas fa-shopping-bag"></i> Continue Shopping
                     </a>
@@ -248,14 +246,14 @@
         
     <?php else: ?>
         <div class="alert alert-warning">
-            <div class="alert-icon"></div>
+            <div class="alert-icon">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
             <div class="alert-content">
                 <h3>Order Not Found</h3>
                 <p>We couldn't find the order you're looking for.</p>
             </div>
-            <div class="alert-actions"></div>
+            <div class="alert-actions">
                 <a href="/orders" class="btn btn-primary">View All Orders</a>
                 <a href="/shop" class="btn btn-outline">Continue Shopping</a>
             </div>
