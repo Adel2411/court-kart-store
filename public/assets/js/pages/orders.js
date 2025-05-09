@@ -4,6 +4,8 @@
  */
 
 document.addEventListener("DOMContentLoaded", function () {
+  console.log("Orders page script loaded"); // Debugging
+  
   // Initialize order details page functionality
   initOrderDetails();
   
@@ -28,11 +30,15 @@ document.addEventListener("DOMContentLoaded", function () {
  * Handles animations and interactive elements
  */
 function initOrderDetails() {
+  console.log("Initializing order details"); // Debugging
+  
   // Animate progress bar with delayed start for better visual effect
   const progressBar = document.querySelector('.timeline-track .progress-bar');
   const timelineSteps = document.querySelectorAll('.timeline-steps .step');
   
   if (progressBar) {
+    console.log("Progress bar found, animating"); // Debugging
+    
     // Store the target width set in the inline style
     const targetWidth = progressBar.style.width;
     // Start at 0 width
@@ -45,6 +51,8 @@ function initOrderDetails() {
   }
   
   if (timelineSteps.length) {
+    console.log("Timeline steps found: " + timelineSteps.length); // Debugging
+    
     // Staggered animation for steps
     timelineSteps.forEach((step, index) => {
       if (step.classList.contains('completed')) {
@@ -83,21 +91,20 @@ function animateOnScroll(element) {
  * Initialize order row highlighting
  */
 function initOrderRowHighlighting() {
-  const orderRows = document.querySelectorAll(".orders-table tbody tr");
+  const orderRows = document.querySelectorAll('.orders-table tbody tr');
   
-  orderRows.forEach((row) => {
-    row.addEventListener("click", function (event) {
-      // Only trigger if we didn't click on a button or link
-      if (!event.target.closest("a") && !event.target.closest("button")) {
-        const orderId = this.querySelector("td:first-child").textContent.replace(/\D/g, "");
-        
-        // Add click animation
-        this.classList.add('row-clicked');
-        
-        // Navigate to order details page after animation
-        setTimeout(() => {
-          window.location.href = `/orders/${orderId}`;
-        }, 150);
+  orderRows.forEach(row => {
+    row.addEventListener('click', function() {
+      // Remove clicked class from all rows
+      orderRows.forEach(r => r.classList.remove('row-clicked'));
+      
+      // Add clicked class to this row
+      this.classList.add('row-clicked');
+      
+      // Get the order details link and navigate to it
+      const detailsLink = this.querySelector('a[href^="/orders/"]');
+      if (detailsLink) {
+        window.location.href = detailsLink.getAttribute('href');
       }
     });
   });
@@ -107,18 +114,12 @@ function initOrderRowHighlighting() {
  * Initialize print order functionality
  */
 function initPrintOrderButton() {
-  const printOrderBtn = document.querySelector(".print-order-btn");
-  if (printOrderBtn) {
-    printOrderBtn.addEventListener("click", function (event) {
-      event.preventDefault();
-      
-      // Show print feedback
-      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparing...';
-      
-      setTimeout(() => {
-        window.print();
-        this.innerHTML = '<i class="fas fa-print"></i> Print';
-      }, 300);
+  const printBtn = document.querySelector('.print-order-btn');
+  
+  if (printBtn) {
+    console.log("Print button found, adding event listener"); // Debugging
+    printBtn.addEventListener('click', function() {
+      window.print();
     });
   }
 }
@@ -127,27 +128,21 @@ function initPrintOrderButton() {
  * Initialize cancel order confirmation
  */
 function initCancelOrderConfirmation() {
-  const cancelOrderForm = document.querySelector(".cancel-order-form");
-  if (cancelOrderForm) {
-    cancelOrderForm.addEventListener("submit", function (event) {
-      event.preventDefault();
+  const cancelForms = document.querySelectorAll('.cancel-order-form');
+  
+  if (cancelForms.length) {
+    console.log("Cancel forms found: " + cancelForms.length); // Debugging
+  }
+  
+  cancelForms.forEach(form => {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
       
-      // Show a better styled confirmation dialog
-      if (confirm("Are you sure you want to cancel this order? This action cannot be undone.")) {
-        const submitBtn = this.querySelector('button[type="submit"]');
-        
-        if (submitBtn) {
-          submitBtn.disabled = true;
-          submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        }
-        
-        // Submit the form after showing loading state
-        setTimeout(() => {
-          this.submit();
-        }, 300);
+      if (confirm('Are you sure you want to cancel this order? This action cannot be undone.')) {
+        this.submit();
       }
     });
-  }
+  });
 }
 
 /**
@@ -213,8 +208,7 @@ function filterOrders(status) {
  * Update the count of filtered orders
  */
 function updateFilteredCount(count) {
-  const countElement = document.querySelector('.orders-count');
-  
+  const countElement = document.querySelector('.filtered-count');
   if (countElement) {
     countElement.textContent = count;
   }
@@ -227,7 +221,7 @@ function toggleEmptyState(count) {
   const tableContainer = document.querySelector('.table-responsive');
   const emptyState = document.querySelector('.empty-filtered-state');
   
-  if (count === 0) {
+  if (count === 0 && tableContainer) {
     if (!emptyState) {
       const emptyStateDiv = document.createElement('div');
       emptyStateDiv.className = 'empty-filtered-state';
@@ -250,7 +244,9 @@ function toggleEmptyState(count) {
     if (emptyState) {
       emptyState.remove();
     }
-    tableContainer.style.display = '';
+    if (tableContainer) {
+      tableContainer.style.display = '';
+    }
   }
 }
 
@@ -314,36 +310,40 @@ document.addEventListener('DOMContentLoaded', () => {
       transform: translateY(-3px);
     }
     
-    .animated {
-      animation: fadeInUp 0.6s ease forwards;
+    .print-styles {
+      display: none;
     }
     
-    .row-clicked {
-      animation: clickPulse 0.3s ease;
-    }
-    
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
+    @media print {
+      body * {
+        visibility: hidden;
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
+      
+      .order-details-container,
+      .order-details-container * {
+        visibility: visible;
       }
-    }
-    
-    @keyframes clickPulse {
-      0% {
-        transform: scale(1);
+      
+      .order-details-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
       }
-      50% {
-        transform: scale(0.98);
+      
+      .order-actions, 
+      .help-card, 
+      .continue-shopping,
+      .back-to-top {
+        display: none !important;
       }
-      100% {
-        transform: scale(1);
+      
+      .order-content-grid {
+        grid-template-columns: 1fr !important;
       }
     }
   `;
   document.head.appendChild(style);
+  
+  console.log("Orders script fully initialized"); // Debugging
 });

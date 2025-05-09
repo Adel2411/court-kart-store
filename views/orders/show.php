@@ -1,10 +1,12 @@
 <?php
 /**
  * Enhanced Order Details View
+ * Provides a professional UI for customers to view their order details
  */
 ?>
 
 <div class="order-details-container">
+    <!-- Breadcrumb Navigation -->
     <nav class="breadcrumb" aria-label="breadcrumb">
         <a href="/">Home</a>
         <span class="separator">/</span>
@@ -28,129 +30,127 @@
             </div>
         </div>
     <?php elseif (isset($order)): ?>
-        <!-- Order header section -->
-        <div class="order-header">
-            <div class="order-title">
-                <h1>Order #<?= htmlspecialchars($order->id ?? 'N/A') ?></h1>
-                <div class="order-meta">
-                    <span class="order-date">
-                        <i class="far fa-calendar-alt"></i> 
-                        Placed on <?= date('F j, Y', strtotime($order->created_at ?? 'now')) ?>
-                    </span>
-                </div>
-            </div>
-            
-            <div class="order-actions">
-                <button type="button" class="btn btn-outline-secondary print-order-btn">
-                    <i class="fas fa-print"></i> Print
-                </button>
-                <?php if (($order->status ?? '') !== 'cancelled' && ($order->status ?? '') !== 'delivered'): ?>
-                    <form action="/orders/<?= htmlspecialchars($order->id ?? '') ?>/cancel" method="POST" class="cancel-order-form">
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-times"></i> Cancel Order
-                        </button>
-                    </form>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <!-- Order status section -->
-        <div class="order-status-card">
-            <div class="status-header">
-                <h2>Order Status</h2>
-                <div class="status-badge status-<?= strtolower($order->status ?? 'pending') ?>">
-                    <?php
-                    $statusIcon = '';
-                    switch ($order->status ?? '') {
-                        case 'pending': $statusIcon = 'clock'; break;
-                        case 'confirmed': $statusIcon = 'check-circle'; break;
-                        case 'shipped': $statusIcon = 'truck'; break;
-                        case 'delivered': $statusIcon = 'box-open'; break;
-                        case 'cancelled': $statusIcon = 'times-circle'; break;
-                        default: $statusIcon = 'circle';
-                    }
-                    ?>
-                    <i class="fas fa-<?= $statusIcon ?>"></i>
-                    <?= ucfirst($order->status ?? 'Processing') ?>
-                </div>
-            </div>
-
-            <?php if (($order->status ?? '') !== 'cancelled'): ?>
-                <div class="order-timeline">
-                    <div class="timeline-track">
-                        <div class="progress-bar" style="width: 
-                            <?php 
-                            $progress = 0;
-                            switch ($order->status ?? '') {
-                                case 'pending': $progress = 25; break;
-                                case 'confirmed': $progress = 50; break;
-                                case 'shipped': $progress = 75; break;
-                                case 'delivered': $progress = 100; break;
-                                default: $progress = 0;
-                            }
-                            echo $progress . '%';
-                            ?>">
+        <!-- Main Content Grid -->
+        <div class="order-content-grid">
+            <div class="order-main-column">
+                <!-- Order Header with Actions -->
+                <div class="order-header">
+                    <div class="order-title">
+                        <h1>Order #<?= htmlspecialchars($order->id ?? 'N/A') ?></h1>
+                        <div class="order-meta">
+                            <span class="order-date">
+                                <i class="far fa-calendar-alt"></i> 
+                                Placed on <?= date('F j, Y', strtotime($order->created_at ?? 'now')) ?>
+                            </span>
                         </div>
                     </div>
                     
-                    <div class="timeline-steps">
-                        <div class="step <?= in_array($order->status, ['pending', 'confirmed', 'shipped', 'delivered']) ? 'completed' : '' ?>">
-                            <div class="step-icon"><i class="fas fa-shopping-cart"></i></div>
-                            <div class="step-label">Order Placed</div>
-                        </div>
-                        <div class="step <?= in_array($order->status, ['confirmed', 'shipped', 'delivered']) ? 'completed' : '' ?>">
-                            <div class="step-icon"><i class="fas fa-check"></i></div>
-                            <div class="step-label">Confirmed</div>
-                        </div>
-                        <div class="step <?= in_array($order->status, ['shipped', 'delivered']) ? 'completed' : '' ?>">
-                            <div class="step-icon"><i class="fas fa-truck"></i></div>
-                            <div class="step-label">Shipped</div>
-                        </div>
-                        <div class="step <?= in_array($order->status, ['delivered']) ? 'completed' : '' ?>">
-                            <div class="step-icon"><i class="fas fa-box-open"></i></div>
-                            <div class="step-label">Delivered</div>
+                    <div class="order-actions">
+                        <button type="button" class="btn btn-outline-secondary print-order-btn">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                        <?php if (($order->status ?? '') !== 'cancelled' && ($order->status ?? '') !== 'delivered'): ?>
+                            <form action="/orders/<?= htmlspecialchars($order->id ?? '') ?>/cancel" method="POST" class="cancel-order-form">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-times"></i> Cancel Order
+                                </button>
+                            </form>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- Order Status Card -->
+                <div class="order-status-card">
+                    <div class="status-header">
+                        <h2>Order Status</h2>
+                        <?php
+                        $statusIcon = '';
+                        $statusClass = '';
+                        switch ($order->status ?? '') {
+                            case 'pending':
+                                $statusIcon = 'clock';
+                                $statusClass = 'pending';
+                                break;
+                            case 'confirmed':
+                                $statusIcon = 'check-circle';
+                                $statusClass = 'confirmed';
+                                break;
+                            case 'shipped':
+                                $statusIcon = 'truck';
+                                $statusClass = 'shipped';
+                                break;
+                            case 'delivered':
+                                $statusIcon = 'box-open';
+                                $statusClass = 'delivered';
+                                break;
+                            case 'cancelled':
+                                $statusIcon = 'times-circle';
+                                $statusClass = 'cancelled';
+                                break;
+                            default:
+                                $statusIcon = 'circle';
+                                $statusClass = 'pending';
+                        }
+                        ?>
+                        <div class="status-badge status-<?= $statusClass ?>">
+                            <i class="fas fa-<?= $statusIcon ?>"></i>
+                            <?= ucfirst($order->status ?? 'Processing') ?>
                         </div>
                     </div>
+
+                    <?php if (($order->status ?? '') !== 'cancelled'): ?>
+                        <div class="order-timeline">
+                            <div class="timeline-track">
+                                <?php 
+                                $progress = 0;
+                                switch ($order->status ?? '') {
+                                    case 'pending': $progress = 25; break;
+                                    case 'confirmed': $progress = 50; break;
+                                    case 'shipped': $progress = 75; break;
+                                    case 'delivered': $progress = 100; break;
+                                    default: $progress = 0;
+                                }
+                                ?>
+                                <div class="progress-bar" style="width: <?= $progress ?>%"></div>
+                            </div>
+                            
+                            <div class="timeline-steps">
+                                <div class="step <?= in_array($order->status, ['pending', 'confirmed', 'shipped', 'delivered']) ? 'completed' : '' ?>">
+                                    <div class="step-icon"><i class="fas fa-shopping-cart"></i></div>
+                                    <div class="step-label">Order Placed</div>
+                                    <div class="step-date"><?= date('M d', strtotime($order->created_at ?? 'now')) ?></div>
+                                </div>
+                                <div class="step <?= in_array($order->status, ['confirmed', 'shipped', 'delivered']) ? 'completed' : '' ?>">
+                                    <div class="step-icon"><i class="fas fa-check"></i></div>
+                                    <div class="step-label">Confirmed</div>
+                                    <div class="step-date"><?= in_array($order->status, ['confirmed', 'shipped', 'delivered']) ? date('M d', strtotime('+1 day', strtotime($order->created_at ?? 'now'))) : '' ?></div>
+                                </div>
+                                <div class="step <?= in_array($order->status, ['shipped', 'delivered']) ? 'completed' : '' ?>">
+                                    <div class="step-icon"><i class="fas fa-truck"></i></div>
+                                    <div class="step-label">Shipped</div>
+                                    <div class="step-date"><?= in_array($order->status, ['shipped', 'delivered']) ? date('M d', strtotime('+3 days', strtotime($order->created_at ?? 'now'))) : '' ?></div>
+                                </div>
+                                <div class="step <?= ($order->status ?? '') === 'delivered' ? 'completed' : '' ?>">
+                                    <div class="step-icon"><i class="fas fa-box-open"></i></div>
+                                    <div class="step-label">Delivered</div>
+                                    <div class="step-date"><?= ($order->status ?? '') === 'delivered' ? date('M d', strtotime('+5 days', strtotime($order->created_at ?? 'now'))) : '' ?></div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <div class="cancelled-notice">
+                            <i class="fas fa-ban"></i>
+                            <p>This order was cancelled on <?= date('F j, Y', strtotime($order->updated_at ?? $order->created_at ?? 'now')) ?></p>
+                        </div>
+                    <?php endif; ?>
                 </div>
                 
-                <?php
-                $statusText = '';
-                switch ($order->status ?? '') {
-                    case 'pending': 
-                        $statusText = 'Your order has been received and is awaiting confirmation.'; 
-                        break;
-                    case 'confirmed': 
-                        $statusText = 'Your order has been confirmed and is being processed.'; 
-                        break;
-                    case 'shipped': 
-                        $statusText = 'Your order has been shipped and is on its way.'; 
-                        break;
-                    case 'delivered': 
-                        $statusText = 'Your order has been delivered.'; 
-                        break;
-                    default: 
-                        $statusText = 'Your order is being processed.'; 
-                        break;
-                }
-                ?>
-                <p class="status-message"><?= $statusText ?></p>
-            <?php else: ?>
-                <div class="cancelled-message">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <p>This order was cancelled and will not be processed further.</p>
-                </div>
-            <?php endif; ?>
-        </div>
-
-        <!-- Order content in two column layout -->
-        <div class="order-content">
-            <div class="order-details-column">
-                <!-- Order Items List -->
+                <!-- Order Items Section -->
                 <div class="order-section">
-                    <h2>Products Ordered</h2>
+                    <h2>Order Items</h2>
                     
-                    <?php if (!empty($orderItems)): ?>
-                        <ul class="order-items-list">
+                    <?php if (isset($orderItems) && !empty($orderItems)): ?>
+                        <ul class="order-items">
                             <?php foreach ($orderItems as $item): ?>
                                 <li class="order-item">
                                     <div class="item-image">
@@ -202,34 +202,41 @@
                     
                     <div class="summary-row">
                         <span>Subtotal</span>
-                        <span>$<?= number_format($order->subtotal, 2) ?></span>
+                        <span>$<?= number_format($order->subtotal ?? 0, 2) ?></span>
                     </div>
                     <div class="summary-row">
                         <span>Shipping</span>
-                        <span><?= $order->shipping_cost > 0 ? '$' . number_format($order->shipping_cost, 2) : 'Free' ?></span>
+                        <span><?= ($order->shipping ?? 0) > 0 ? '$'.number_format($order->shipping, 2) : 'Free' ?></span>
                     </div>
-                    <div class="summary-divider"></div>
+                    <?php if (isset($order->tax) && $order->tax > 0): ?>
+                    <div class="summary-row">
+                        <span>Tax</span>
+                        <span>$<?= number_format($order->tax, 2) ?></span>
+                    </div>
+                    <?php endif; ?>
                     <div class="summary-row total">
                         <span>Total</span>
-                        <span>$<?= number_format($order->total, 2) ?></span>
+                        <span>$<?= number_format($order->total_price ?? 0, 2) ?></span>
                     </div>
                     
                     <div class="payment-info">
-                        <h3>Payment Information</h3>
-                        <p>
-                            <i class="fas fa-credit-card"></i>
-                            <?= htmlspecialchars(ucfirst($order->payment_method ?? 'Credit Card')) ?>
-                        </p>
+                        <div class="payment-method">
+                            <span class="label">Payment Method:</span>
+                            <span class="value"><?= htmlspecialchars(ucfirst($order->payment_method ?? 'Credit Card')) ?></span>
+                        </div>
+                        <div class="payment-status <?= ($order->status === 'cancelled') ? 'cancelled' : 'paid' ?>">
+                            <?= ($order->status === 'cancelled') ? 'Cancelled' : 'Paid' ?>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Support Information -->
-                <div class="support-card">
+                <!-- Need Help Section -->
+                <div class="help-card">
                     <h3>Need Help?</h3>
-                    <p>If you have any questions about your order, our support team is here to help.</p>
-                    <div class="support-actions">
-                        <a href="mailto:support@courtkart.com" class="btn btn-outline btn-block">
-                            <i class="fas fa-envelope"></i> Email Support
+                    <p>If you have any questions about your order, please contact our customer service team.</p>
+                    <div class="help-actions">
+                        <a href="tel:+1234567890" class="btn btn-link btn-block">
+                            <i class="fas fa-phone"></i> Call Support
                         </a>
                         <a href="/contact" class="btn btn-link btn-block">Contact Us</a>
                     </div>

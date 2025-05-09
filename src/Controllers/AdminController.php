@@ -149,6 +149,90 @@ class AdminController
     }
 
     /**
+     * Display single order details
+     * 
+     * @param int $id Order ID
+     */
+    public function showOrder($id)
+    {
+        // Get order details
+        $orderDetails = Order::getOrderDetails($id);
+        
+        if (empty($orderDetails)) {
+            Session::set('error', 'Order not found');
+            header('Location: /admin/orders');
+            exit;
+        }
+        
+        // Process order details for view
+        $order = (object)$orderDetails[0];
+        $orderItems = [];
+        
+        foreach ($orderDetails as $item) {
+            if (isset($item['product_id'])) {
+                $orderItems[] = (object)[
+                    'product_id' => $item['product_id'],
+                    'product_name' => $item['product_name'] ?? 'Unknown Product',
+                    'price' => $item['price'] ?? 0,
+                    'quantity' => $item['quantity'] ?? 0,
+                    'image_url' => $item['image_url'] ?? '',
+                    'subtotal' => ($item['price'] ?? 0) * ($item['quantity'] ?? 0)
+                ];
+            }
+        }
+
+        // Calculate order subtotal, shipping cost, and total
+        $subtotal = 0;
+        foreach ($orderItems as $item) {
+            $subtotal += $item->subtotal;
+        }
+        
+        $shippingCost = 0; // Free shipping
+        $total = $subtotal + $shippingCost;
+        
+        $order->subtotal = $subtotal;
+        $order->shipping_cost = $shippingCost;
+        $order->total = $total;
+        
+        echo View::renderWithLayout('admin/order-detail', 'admin', [
+            'title' => 'Order #' . $id . ' - Admin - Court Kart',
+            'order' => $order,
+            'orderItems' => $orderItems,
+            'page_css' => ['admin', 'orders'],
+        ]);
+    }
+
+    /**
+     * Update order status
+     */
+    public function updateOrderStatus()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /admin/orders');
+            exit;
+        }
+        
+        $orderId = $_POST['order_id'] ?? 0;
+        $status = $_POST['status'] ?? '';
+        
+        if (!$orderId || !$status) {
+            Session::set('error', 'Invalid order ID or status');
+            header('Location: /admin/orders');
+            exit;
+        }
+        
+        if (Order::updateStatus($orderId, $status)) {
+            Session::set('success', 'Order status updated successfully');
+        } else {
+            Session::set('error', 'Failed to update order status');
+        }
+        
+        // Redirect back to order details
+        header("Location: /admin/orders/{$orderId}");
+        exit;
+    }
+
+    /**
      * Display users management page
      */
     public function users()

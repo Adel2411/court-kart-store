@@ -7,9 +7,15 @@
     <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="/assets/css/layouts.css">
     <link rel="stylesheet" href="/assets/css/components.css">
-    <?php if (isset($page_css)) { ?>
-        <link rel="stylesheet" href="/assets/css/pages/<?= $page_css ?>.css">
-    <?php } ?>
+    <?php if (isset($page_css)) { 
+        if(is_array($page_css)) {
+            foreach($page_css as $css_file) { ?>
+                <link rel="stylesheet" href="/assets/css/pages/<?= $css_file ?>.css">
+            <?php }
+        } else { ?>
+            <link rel="stylesheet" href="/assets/css/pages/<?= $page_css ?>.css">
+        <?php }
+    } ?>
 </head>
 <body>
     <header>
@@ -113,8 +119,14 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="/assets/js/main.js"></script>
-    <?php if (isset($page_js)) { ?>
-        <script src="/assets/js/pages/<?= $page_js ?>.js"></script>
-    <?php } ?>
+    <?php if (isset($page_js)) {
+        if(is_array($page_js)) {
+            foreach($page_js as $js_file) { ?>
+                <script src="/assets/js/pages/<?= $js_file ?>.js"></script>
+            <?php }
+        } else { ?>
+            <script src="/assets/js/pages/<?= $page_js ?>.js"></script>
+        <?php }
+    } ?>
 </body>
 </html>

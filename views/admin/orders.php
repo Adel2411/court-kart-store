@@ -95,9 +95,9 @@
                                 </span>
                             </td>
                             <td class="actions">
-                                <button class="btn btn-sm btn-outline view-order" data-id="<?= $order['id'] ?>">
+                                <a href="/admin/orders/<?= $order['id'] ?>" class="btn btn-sm btn-outline">
                                     <i class="fas fa-eye"></i>
-                                </button>
+                                </a>
                                 <button class="btn btn-sm btn-primary update-status" data-id="<?= $order['id'] ?>">
                                     <i class="fas fa-edit"></i>
                                 </button>

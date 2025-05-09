@@ -79,7 +79,6 @@ class OrderController
         // Get order details
         $orderDetails = Order::getOrderDetails($orderId);
         
-        // Debug information to help diagnose issues
         if (empty($orderDetails)) {
             // Order not found
             Session::flash('error', 'Order not found');
@@ -143,7 +142,7 @@ class OrderController
             'title' => 'Order #' . $id . ' - Court Kart',
             'order' => $order,
             'orderItems' => $orderItems,
-            'page_css' => ['account', 'orders'],
+            'page_css' => 'orders',
             'page_js' => 'orders',
         ]);
     }

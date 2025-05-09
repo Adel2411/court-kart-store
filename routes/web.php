@@ -38,6 +38,8 @@ $router->get('/admin/products', 'AdminController@products', 'admin');
 $router->post('/admin/products/save', 'AdminController@saveProduct', 'admin');
 $router->post('/admin/products/delete', 'AdminController@deleteProduct', 'admin');
 $router->get('/admin/orders', 'AdminController@orders', 'admin');
+$router->get('/admin/orders/{id}', 'AdminController@showOrder', 'admin');
+$router->post('/admin/orders/update-status', 'AdminController@updateOrderStatus', 'admin');
 $router->get('/admin/users', 'AdminController@users', 'admin');
 
 // Error handlers
