@@ -6,7 +6,7 @@ header {
   box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 1000;
   transition: box-shadow var(--transition-normal);
 }
 
