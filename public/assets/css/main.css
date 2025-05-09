@@ -4,37 +4,41 @@
 :root {
   /* Basketball Theme Colors */
   /* Primary: NBA-inspired red */
-  --primary: #E63946;
-  --primary-dark: #C1272D;
-  --primary-light: #FFCCCB;
+  --primary: #e63946;
+  --primary-dark: #c1272d;
+  --primary-light: #ffcccb;
   --primary-rgb: 230, 57, 70;
-  
+
   /* Secondary: Deep court blue/navy */
-  --secondary: #1D3557;
-  --secondary-dark: #0D1B2A;
-  
+  --secondary: #1d3557;
+  --secondary-dark: #0d1b2a;
+
   /* Accent: Championship gold */
-  --accent: #FFB800;
-  
+  --accent: #ffb800;
+
   /* Neutral Colors inspired by modern court aesthetics */
   --white: #ffffff;
-  --light: #F8F9FA; /* Clean off-white for backgrounds */
-  --light-gray: #E9ECEF; /* Modern light gray */
-  --gray: #ADB5BD; /* Balanced medium gray */
+  --light: #f8f9fa; /* Clean off-white for backgrounds */
+  --light-gray: #e9ecef; /* Modern light gray */
+  --gray: #adb5bd; /* Balanced medium gray */
   --dark-gray: #495057; /* Readable dark gray for text */
   --dark: #212529; /* Near-black for emphasis */
   --black: #000814;
-  
+
   /* Feedback Colors - sports themed */
-  --success: #4CAF50; /* Clear green */
-  --warning: #FF9800; /* Basketball orange for warnings */
-  --danger: #F44336; /* Bold red for errors */
-  --info: #2196F3; /* Team blue */
-  
+  --success: #4caf50;
+  --warning: #ff9800;
+  --danger: #f44336;
+  --info: #2196f3;
+
   /* Typography */
-  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-headings: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  
+  --font-primary:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  --font-headings:
+    "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+
   /* Spacing */
   --space-xxs: 0.25rem;
   --space-xs: 0.5rem;
@@ -43,26 +47,26 @@
   --space-lg: 1.5rem;
   --space-xl: 2rem;
   --space-xxl: 3rem;
-  
+
   /* Border Radius */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
   --radius-pill: 9999px;
-  
+
   /* Shadows */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
-  
+
   /* Transitions */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   /* Container widths */
   --container-sm: 640px;
   --container-md: 768px;
@@ -71,9 +75,22 @@
   --container-max: 1440px;
 
   /* Additional color theme enhancements */
-  --accent-light: rgba(255, 87, 51, 0.1); /* Light version of accent color for backgrounds */
-  --primary-gradient: linear-gradient(45deg, var(--primary), var(--primary-dark));
-  --secondary-gradient: linear-gradient(45deg, var(--secondary), var(--secondary-dark));
+  --accent-light: rgba(
+    255,
+    87,
+    51,
+    0.1
+  ); /* Light version of accent color for backgrounds */
+  --primary-gradient: linear-gradient(
+    45deg,
+    var(--primary),
+    var(--primary-dark)
+  );
+  --secondary-gradient: linear-gradient(
+    45deg,
+    var(--secondary),
+    var(--secondary-dark)
+  );
 }
 
 /* Global Reset */
@@ -101,7 +118,12 @@ body {
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-headings);
   line-height: 1.3;
   color: var(--secondary-dark);
@@ -247,11 +269,11 @@ a:hover {
     padding-left: var(--space-md);
     padding-right: var(--space-md);
   }
-  
+
   h1 {
     font-size: 2rem;
   }
-  
+
   h2 {
     font-size: 1.6rem;
   }
@@ -261,12 +283,12 @@ a:hover {
   html {
     font-size: 13px;
   }
-  
+
   .container {
     padding-left: var(--space-sm);
     padding-right: var(--space-sm);
   }
-  
+
   h1 {
     font-size: 1.8rem;
   }
@@ -299,7 +321,11 @@ a:hover {
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
     transform: translateY(0);
   }
   40% {
@@ -335,7 +361,7 @@ a:hover {
 }
 
 .tooltip::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 100%;
   left: 50%;
@@ -346,15 +372,21 @@ a:hover {
 }
 
 /* Hero section initial state for animations */
-.hero-content, .hero-image {
+.hero-content,
+.hero-image {
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
 }
 
 /* Button hover effects */
 .btn {
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .btn:hover {

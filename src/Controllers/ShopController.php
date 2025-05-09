@@ -12,28 +12,69 @@ class ShopController
      */
     public function index()
     {
-        // Get filter parameters
-        $search = $_GET['search'] ?? '';
-        $category = $_GET['category'] ?? '';
-        $minPrice = $_GET['min_price'] ?? null;
-        $maxPrice = $_GET['max_price'] ?? null;
-        $sort = $_GET['sort'] ?? 'name_asc';
-
-        // Fetch filtered products from the database
-        $products = Product::getFiltered([
-            'search' => $search,
-            'category' => $category,
-            'min_price' => $minPrice,
-            'max_price' => $maxPrice,
-            'sort' => $sort,
-        ]);
-
+        // Get filters from request
+        $filters = [
+            'search' => $_GET['search'] ?? null,
+            'category' => $_GET['category'] ?? null,
+            'min_price' => $_GET['min_price'] ?? null,
+            'max_price' => $_GET['max_price'] ?? null,
+            'sort' => $_GET['sort'] ?? 'newest'
+        ];
+        
+        // Get current page from request, default to 1
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        
+        // Get products with pagination
+        $result = Product::getFiltered($filters, $page, 9);
+        $products = $result['products'];
+        $pagination = $result['pagination'];
+        
+        // Preserve filters in pagination links
+        $pagination['query_string'] = $this->buildQueryString($filters);
+        
         echo View::renderWithLayout('shop/index', 'main', [
             'title' => 'Shop - Court Kart',
             'products' => $products,
-            'page_css' => 'shop',
-            'page_js' => 'shop',
+            'pagination' => $pagination,
+            'page_css' => ['shop'],
+            'page_js' => ['shop']
         ]);
+    }
+
+    /**
+     * Build query string for pagination links that preserves filters
+     */
+    private function buildQueryString($filters)
+    {
+        $query = [];
+        
+        if (!empty($filters['search'])) {
+            $query['search'] = $filters['search'];
+        }
+        
+        if (!empty($filters['category'])) {
+            if (is_array($filters['category'])) {
+                foreach ($filters['category'] as $category) {
+                    $query['category'][] = $category;
+                }
+            } else {
+                $query['category'] = $filters['category'];
+            }
+        }
+        
+        if (!empty($filters['min_price'])) {
+            $query['min_price'] = $filters['min_price'];
+        }
+        
+        if (!empty($filters['max_price'])) {
+            $query['max_price'] = $filters['max_price'];
+        }
+        
+        if (!empty($filters['sort'])) {
+            $query['sort'] = $filters['sort'];
+        }
+        
+        return http_build_query($query);
     }
 
     /**
