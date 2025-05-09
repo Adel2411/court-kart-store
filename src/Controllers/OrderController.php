@@ -72,7 +72,10 @@ class OrderController
         }
 
         $userId = Session::get('user_id');
-        $orderDetails = Order::getOrderDetails($id);
+        
+        // Cast the ID to integer to ensure it's treated properly
+        $orderId = (int)$id;
+        $orderDetails = Order::getOrderDetails($orderId);
 
         // Verify the order belongs to the user
         if (empty($orderDetails) || $orderDetails[0]['customer_email'] !== Session::get('user_email')) {
@@ -81,9 +84,10 @@ class OrderController
             exit;
         }
 
-        return $this->view->render('orders/show', [
+        echo View::renderWithLayout('orders/show', 'main', [
+            'title' => 'Order #' . $id . ' - Court Kart',
             'orderDetails' => $orderDetails,
-            'pageTitle' => 'Order #' . $id
+            'page_css' => 'account',
         ]);
     }
 
@@ -159,8 +163,9 @@ class OrderController
         }
 
         $userId = Session::get('user_id');
+        $orderId = (int)$id;
         
-        if (Order::cancelOrder($id, $userId)) {
+        if (Order::cancelOrder($orderId, $userId)) {
             Session::flash('success', 'Order cancelled successfully');
         } else {
             Session::flash('error', 'Failed to cancel order');

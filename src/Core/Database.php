@@ -206,6 +206,16 @@ class Database
         return $this->pdo->rollBack();
     }
 
+    /**
+     * Check if a transaction is currently active
+     *
+     * @return bool True if a transaction is active, false otherwise
+     */
+    public function inTransaction(): bool
+    {
+        return $this->pdo->inTransaction();
+    }
+
     public function getPdo(): PDO
     {
         return $this->pdo;

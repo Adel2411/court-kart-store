@@ -79,13 +79,34 @@ class Router
      */
     private function matchRoute(string $pattern, string $uri)
     {
-        // Convert route pattern with parameters to regex
-        $pattern = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '([^/]+)', $pattern);
-        $pattern = '#^'.$pattern.'$#';
+        // Extract parameter names from the pattern
+        $paramNames = [];
+        if (preg_match_all('/\{([a-zA-Z0-9_]+)\}/', $pattern, $matches)) {
+            $paramNames = $matches[1];
+        }
 
-        if (preg_match($pattern, $uri, $matches)) {
+        // Convert route pattern with parameters to regex for matching
+        // Improved regex to be more flexible with different param types
+        $patternRegex = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '([^/]+)', $pattern);
+        $patternRegex = '#^'.$patternRegex.'$#';
+
+        if (preg_match($patternRegex, $uri, $matches)) {
             array_shift($matches); // Remove the full match
-
+            
+            // Enhanced parameter handling
+            $params = [];
+            if (!empty($paramNames) && count($paramNames) === count($matches)) {
+                foreach ($paramNames as $index => $name) {
+                    // Convert numeric parameters to integers when appropriate
+                    if (is_numeric($matches[$index]) && (int)$matches[$index] == $matches[$index]) {
+                        $params[$name] = (int)$matches[$index];
+                    } else {
+                        $params[$name] = $matches[$index];
+                    }
+                }
+                return $params;
+            }
+            
             return $matches;
         }
 
@@ -137,20 +158,49 @@ class Router
                     // Route matched, execute callback with parameters
                     if (is_callable($callback)) {
                         call_user_func_array($callback, $params);
-
                         return;
                     } elseif (is_string($callback)) {
                         // Handle controller@method format
                         if (strpos($callback, '@') !== false) {
                             [$controller, $method] = explode('@', $callback);
                             $controllerClass = "App\\Controllers\\$controller";
-
+                            
                             if (class_exists($controllerClass)) {
                                 $controllerInstance = new $controllerClass;
                                 if (method_exists($controllerInstance, $method)) {
-                                    call_user_func_array([$controllerInstance, $method], $params);
-
-                                    return;
+                                    try {
+                                        // Enhanced parameter handling with type conversion
+                                        if (count($params) > 0 && array_keys($params) !== range(0, count($params) - 1)) {
+                                            $reflection = new \ReflectionMethod($controllerClass, $method);
+                                            $methodParams = [];
+                                            
+                                            foreach ($reflection->getParameters() as $param) {
+                                                $paramName = $param->getName();
+                                                if (isset($params[$paramName])) {
+                                                    $methodParams[] = $params[$paramName];
+                                                } elseif ($param->isDefaultValueAvailable()) {
+                                                    $methodParams[] = $param->getDefaultValue();
+                                                } else {
+                                                    $methodParams[] = null;
+                                                }
+                                            }
+                                            
+                                            call_user_func_array([$controllerInstance, $method], $methodParams);
+                                        } else {
+                                            // Original behavior for non-named parameters
+                                            call_user_func_array([$controllerInstance, $method], $params);
+                                        }
+                                        return;
+                                    } catch (\Exception $e) {
+                                        // Log the error
+                                        error_log($e->getMessage());
+                                        
+                                        // Display appropriate error page
+                                        header('HTTP/1.1 500 Internal Server Error');
+                                        echo '<h1>500 - Internal Server Error</h1>';
+                                        echo '<p>Error details: ' . htmlspecialchars($e->getMessage()) . '</p>';
+                                        return;
+                                    }
                                 }
                             }
                         }

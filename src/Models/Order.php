@@ -139,7 +139,7 @@ class Order
 
     /**
      * Get detailed information about a specific order including all items
-     * Uses the GetOrderDetails stored procedure
+     * Uses direct SQL queries instead of stored procedure
      *
      * @param  int  $orderId  Order ID
      * @return array Detailed order information
@@ -147,19 +147,52 @@ class Order
     public static function getOrderDetails(int $orderId): array
     {
         $db = Database::getInstance();
-        $pdo = $db->getPdo();
-
-        $stmt = $pdo->prepare('CALL GetOrderDetails(?)');
-        $stmt->bindParam(1, $orderId, PDO::PARAM_INT);
-        $stmt->execute();
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Get order header information
+        $orderSql = "SELECT o.*, u.name as customer_name, u.email as customer_email 
+                    FROM orders o 
+                    JOIN users u ON o.user_id = u.id 
+                    WHERE o.id = ?";
+        
+        $orderDetails = $db->fetchRow($orderSql, [$orderId]);
+        
+        if (!$orderDetails) {
+            return [];
+        }
+        
+        // Get order items
+        $itemsSql = "SELECT oi.*, p.name as product_name, p.image_url 
+                    FROM order_items oi 
+                    JOIN products p ON oi.product_id = p.id 
+                    WHERE oi.order_id = ?";
+        
+        $items = $db->fetchRows($itemsSql, [$orderId]);
+        
+        // Format the return to match the expected structure
+        $result = [];
+        foreach ($items as $item) {
+            $orderWithItems = array_merge($orderDetails, [
+                'product_id' => $item['product_id'],
+                'product_name' => $item['product_name'],
+                'quantity' => $item['quantity'],
+                'price' => $item['price'],
+                'image_url' => $item['image_url'],
+                'subtotal' => $item['price'] * $item['quantity']
+            ]);
+            $result[] = $orderWithItems;
+        }
+        
+        // If no items found, return just the order header
+        if (empty($result)) {
+            $result[] = $orderDetails;
+        }
+        
+        return $result;
     }
 
     /**
      * Finalize an order by confirming it and emptying the cart
-     * Uses the FinalizeOrder stored procedure
-     * Triggers: AfterOrderConfirmed will automatically reduce product stock
+     * Replace stored procedure with direct SQL queries
      *
      * @param  int  $orderId  Order ID
      * @param  int  $userId  User ID
@@ -171,17 +204,41 @@ class Order
     {
         try {
             $db = Database::getInstance();
-            $pdo = $db->getPdo();
-
-            $stmt = $pdo->prepare('CALL FinalizeOrder(?, ?)');
-            $stmt->bindParam(1, $orderId, PDO::PARAM_INT);
-            $stmt->bindParam(2, $userId, PDO::PARAM_INT);
-            $stmt->execute();
-
+            
+            // Begin transaction
+            $db->beginTransaction();
+            
+            // 1. Verify order exists and belongs to user
+            $orderSql = "SELECT id, status FROM orders WHERE id = ? AND user_id = ?";
+            $order = $db->fetchRow($orderSql, [$orderId, $userId]);
+            
+            if (!$order) {
+                throw new Exception("Order not found or does not belong to user");
+            }
+            
+            if ($order['status'] !== 'pending') {
+                throw new Exception("Order is not in pending status");
+            }
+            
+            // 2. Update order status to confirmed
+            $updateSql = "UPDATE orders SET status = 'confirmed' WHERE id = ?";
+            $db->execute($updateSql, [$orderId]);
+            
+            // 3. Clear user's cart
+            $clearCartSql = "DELETE FROM cart WHERE user_id = ?";
+            $db->execute($clearCartSql, [$userId]);
+            
+            // Commit transaction
+            $db->commit();
+            
             return true;
         } catch (Exception $e) {
-            // Capture the MySQL error message
-            throw new Exception($e->getMessage());
+            // Rollback transaction on error
+            if (isset($db) && $db->inTransaction()) {
+                $db->rollBack();
+            }
+            // Pass exception up
+            throw $e;
         }
     }
 
