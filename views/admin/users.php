@@ -165,5 +165,62 @@
     </div>
 </div>
 
+<!-- User Edit Modal -->
+<div class="admin-modal" id="editUserModal">
+    <div class="admin-modal-content">
+        <div class="admin-modal-header">
+            <h2>Edit User</h2>
+            <button type="button" class="close" id="closeEditModal">&times;</button>
+        </div>
+        <div class="admin-modal-body">
+            <form id="editUserForm" action="/admin/users/update" method="post">
+                <input type="hidden" name="user_id" id="editUserId">
+                
+                <div class="admin-form-group">
+                    <label for="editName">Full Name</label>
+                    <div class="input-icon-wrapper">
+                        <input type="text" id="editName" name="name" class="form-control" required>
+                        <i class="fas fa-user form-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="admin-form-group">
+                    <label for="editEmail">Email Address</label>
+                    <div class="input-icon-wrapper">
+                        <input type="email" id="editEmail" name="email" class="form-control" required>
+                        <i class="fas fa-envelope form-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="admin-form-group">
+                    <label for="editRole">Role</label>
+                    <div class="input-icon-wrapper">
+                        <select id="editRole" name="role" class="form-control" required>
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        <i class="fas fa-user-shield form-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="admin-form-group">
+                    <label for="editPassword">Password (Leave blank to keep unchanged)</label>
+                    <div class="input-icon-wrapper">
+                        <input type="password" id="editPassword" name="password" class="form-control">
+                        <i class="fas fa-lock form-icon"></i>
+                        <button type="button" class="toggle-password" aria-label="Toggle password visibility">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="admin-modal-footer">
+            <button type="button" class="btn btn-outline" id="cancelEditBtn">Cancel</button>
+            <button type="button" class="btn btn-primary" id="saveEditBtn">Save Changes</button>
+        </div>
+    </div>
+</div>
+
 <!-- Include the JavaScript file -->
 <script src="/assets/js/pages/admin-users.js"></script>

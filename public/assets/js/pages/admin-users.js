@@ -12,8 +12,14 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize view user modal
   initViewModal();
   
+  // Initialize edit user modal
+  initEditModal();
+  
   // Initialize delete user modal
   initDeleteModal();
+  
+  // Initialize password toggles
+  initPasswordToggles();
 });
 
 /**
@@ -154,6 +160,68 @@ function initViewModal() {
 }
 
 /**
+ * Initialize edit user modal
+ */
+function initEditModal() {
+  const editButtons = document.querySelectorAll('.edit-user');
+  const editModal = document.getElementById('editUserModal');
+  const closeEditModal = document.getElementById('closeEditModal');
+  const cancelEditBtn = document.getElementById('cancelEditBtn');
+  const editUserForm = document.getElementById('editUserForm');
+  const saveEditBtn = document.getElementById('saveEditBtn');
+  
+  if (!editModal) return;
+  
+  editButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const userId = this.getAttribute('data-id');
+      const row = this.closest('tr');
+      
+      // Fetch user details from the row
+      const userName = row.querySelector('.user-name').textContent;
+      const userEmail = row.querySelector('td:nth-child(3)').textContent;
+      const userRole = row.querySelector('.role-badge').textContent.toLowerCase().trim();
+      
+      // Populate the form fields
+      document.getElementById('editUserId').value = userId;
+      document.getElementById('editName').value = userName;
+      document.getElementById('editEmail').value = userEmail;
+      document.getElementById('editRole').value = userRole;
+      document.getElementById('editPassword').value = ''; // Clear password field
+      
+      // Show modal
+      editModal.classList.add('active');
+    });
+  });
+  
+  // Close modal functionality
+  const closeEditModalFn = function() {
+    editModal.classList.remove('active');
+  };
+  
+  if (closeEditModal) closeEditModal.addEventListener('click', closeEditModalFn);
+  if (cancelEditBtn) cancelEditBtn.addEventListener('click', closeEditModalFn);
+  
+  // Save changes functionality
+  if (saveEditBtn && editUserForm) {
+    saveEditBtn.addEventListener('click', function() {
+      if (editUserForm.checkValidity()) {
+        // Add form submission handling with error prevention
+        try {
+          editUserForm.submit();
+        } catch (error) {
+          console.error('Error submitting edit user form:', error);
+          alert('Failed to update user. Please try again.');
+        }
+      } else {
+        // Trigger HTML5 validation
+        editUserForm.reportValidity();
+      }
+    });
+  }
+}
+
+/**
  * Initialize delete confirmation modal
  */
 function initDeleteModal() {
@@ -164,6 +232,7 @@ function initDeleteModal() {
   const deleteUserForm = document.getElementById('deleteUserForm');
   const deleteUserId = document.getElementById('deleteUserId');
   const deleteUserName = document.getElementById('deleteUserName');
+  const confirmDeleteBtn = document.querySelector('#deleteUserForm button[type="submit"]');
   
   if (!deleteModal) return;
   
@@ -189,6 +258,46 @@ function initDeleteModal() {
   
   if (closeDeleteModal) closeDeleteModal.addEventListener('click', closeDeleteModalFn);
   if (cancelDeleteBtn) cancelDeleteBtn.addEventListener('click', closeDeleteModalFn);
+  
+  // Add submit handler for delete form
+  if (confirmDeleteBtn && deleteUserForm) {
+    confirmDeleteBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      if (confirm('Are you absolutely sure you want to delete this user? This action cannot be undone.')) {
+        try {
+          deleteUserForm.submit();
+        } catch (error) {
+          console.error('Error submitting delete user form:', error);
+          alert('Failed to delete user. Please try again.');
+        }
+      }
+    });
+  }
+}
+
+/**
+ * Initialize password visibility toggles
+ */
+function initPasswordToggles() {
+  const toggleButtons = document.querySelectorAll('.toggle-password');
+  
+  toggleButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const passwordField = this.previousElementSibling;
+      const eyeIcon = this.querySelector('i');
+      
+      if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+      } else {
+        passwordField.type = 'password';
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+      }
+    });
+  });
 }
 
 /**

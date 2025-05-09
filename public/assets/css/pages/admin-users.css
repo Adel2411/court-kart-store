@@ -218,6 +218,63 @@
   margin-bottom: var(--space-md);
 }
 
+/* Edit user form styles */
+.admin-form-group {
+  margin-bottom: var(--space-md);
+}
+
+.admin-form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: var(--space-xs);
+  color: var(--dark);
+}
+
+.admin-form-group .input-icon-wrapper {
+  position: relative;
+}
+
+.admin-form-group .form-control {
+  width: 100%;
+  padding: var(--space-sm) var(--space-sm) var(--space-sm) var(--space-lg);
+  border: 1px solid var(--light-gray);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  transition: all var(--transition-fast);
+}
+
+.admin-form-group .form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+  outline: none;
+}
+
+.admin-form-group .form-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray);
+  font-size: 0.9rem;
+}
+
+.admin-form-group .toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--gray);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+}
+
+.admin-form-group .toggle-password:hover {
+  color: var(--primary);
+}
+
 /* Responsive adjustments */
 @media screen and (max-width: 992px) {
   .users-table th:nth-child(1),

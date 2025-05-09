@@ -41,6 +41,8 @@ $router->get('/admin/orders', 'AdminController@orders', 'admin');
 $router->get('/admin/orders/{id}', 'AdminController@showOrder', 'admin');
 $router->post('/admin/orders/update-status', 'AdminController@updateOrderStatus', 'admin');
 $router->get('/admin/users', 'AdminController@users', 'admin');
+$router->post('/admin/users/update', 'AdminController@updateUser', 'admin');
+$router->post('/admin/users/delete', 'AdminController@deleteUser', 'admin');
 
 // Error handlers
 $router->get('/unauthorized', function () {

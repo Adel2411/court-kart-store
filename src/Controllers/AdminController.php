@@ -7,9 +7,23 @@ use App\Core\View;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\AuthService;
 
 class AdminController
 {
+    protected $authService;
+
+    public function __construct()
+    {
+        $this->authService = new AuthService();
+        
+        // This check should be redundant with middleware, but adding as a safeguard
+        if (!$this->authService->isAdmin()) {
+            header('Location: /login');
+            exit;
+        }
+    }
+
     /**
      * Display the admin dashboard
      */
@@ -248,5 +262,140 @@ class AdminController
             'page_css' => 'admin-users',
             'page_js' => 'admin-users',
         ]);
+    }
+
+    /**
+     * Update a user
+     */
+    public function updateUser()
+    {
+        // Check if admin is logged in
+        if (!$this->authService->isAdmin()) {
+            header('Location: /login');
+            exit;
+        }
+
+        // Get form data
+        $userId = $_POST['user_id'] ?? '';
+        $name = $_POST['name'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $role = $_POST['role'] ?? '';
+        $password = $_POST['password'] ?? '';
+
+        // Validate input
+        if (empty($userId) || empty($name) || empty($email) || empty($role)) {
+            Session::set('error', 'All fields are required except password.');
+            header('Location: /admin/users');
+            exit;
+        }
+
+        // Check if email already exists for different user
+        $db = \App\Core\Database::getInstance();
+        $existingUser = $db->fetchRow(
+            'SELECT id FROM users WHERE email = ? AND id != ?',
+            [$email, $userId]
+        );
+
+        if ($existingUser) {
+            Session::set('error', 'Email is already in use by another user.');
+            header('Location: /admin/users');
+            exit;
+        }
+
+        // Prevent changing own role from admin
+        if ($userId == $_SESSION['user_id'] && $role != 'admin') {
+            Session::set('error', 'You cannot change your own admin role.');
+            header('Location: /admin/users');
+            exit;
+        }
+
+        // Update user
+        try {
+            if (!empty($password)) {
+                // Update with new password
+                $hashedPassword = \App\Helpers\Security::hashPassword($password);
+                $db->execute(
+                    'UPDATE users SET name = ?, email = ?, role = ?, password = ? WHERE id = ?',
+                    [$name, $email, $role, $hashedPassword, $userId]
+                );
+            } else {
+                // Update without changing password
+                $db->execute(
+                    'UPDATE users SET name = ?, email = ?, role = ? WHERE id = ?',
+                    [$name, $email, $role, $userId]
+                );
+            }
+
+            // Log user update
+            $db->execute(
+                'INSERT INTO logs (action, user_id, message) VALUES (?, ?, ?)',
+                ['USER_UPDATE', $_SESSION['user_id'], 'User updated: ' . $email]
+            );
+
+            Session::set('success', 'User updated successfully.');
+        } catch (\Exception $e) {
+            Session::set('error', 'Failed to update user. ' . $e->getMessage());
+        }
+
+        header('Location: /admin/users');
+        exit;
+    }
+
+    /**
+     * Delete a user
+     */
+    public function deleteUser()
+    {
+        // Check if admin is logged in
+        if (!$this->authService->isAdmin()) {
+            header('Location: /login');
+            exit;
+        }
+
+        // Get user ID
+        $userId = $_POST['user_id'] ?? '';
+
+        if (empty($userId)) {
+            Session::set('error', 'Invalid user ID.');
+            header('Location: /admin/users');
+            exit;
+        }
+
+        // Prevent self-deletion
+        if ($userId == $_SESSION['user_id']) {
+            Session::set('error', 'You cannot delete your own account.');
+            header('Location: /admin/users');
+            exit;
+        }
+
+        // Delete user
+        try {
+            $db = \App\Core\Database::getInstance();
+            
+            // First, get user email for logging
+            $user = $db->fetchRow('SELECT email FROM users WHERE id = ?', [$userId]);
+            
+            if (!$user) {
+                Session::set('error', 'User not found.');
+                header('Location: /admin/users');
+                exit;
+            }
+            
+            // Delete user
+            $db->execute('DELETE FROM users WHERE id = ?', [$userId]);
+            
+            // Log user deletion
+            $db->execute(
+                'INSERT INTO logs (action, user_id, message) VALUES (?, ?, ?)',
+                ['USER_DELETE', $_SESSION['user_id'], 'User deleted: ' . $user['email']]
+            );
+
+            Session::set('success', 'User deleted successfully.');
+        } catch (\Exception $e) {
+            Session::set('error', 'Failed to delete user. ' . $e->getMessage());
+        }
+
+        header('Location: /admin/users');
+        exit;
     }
 }
