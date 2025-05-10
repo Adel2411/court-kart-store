@@ -1,220 +1,582 @@
 /**
- * Shop Page Functionality
+ * Shop page JavaScript functionality
+ * Handles filtering, modals, cart interactions and more
  */
 
-document.addEventListener("DOMContentLoaded", function () {
-  // Initialize product card interactions
-  initProductCards();
-  
-  // Initialize search and filter functionality
-  initFilters();
-  
-  // Quick add-to-cart functionality
-  initQuickAddToCart();
-});
-
-/**
- * Initialize product card hover effects and interactions
- */
-function initProductCards() {
-  const productCards = document.querySelectorAll(".product-card");
-  
-  productCards.forEach((card) => {
-    // Add hover effects or additional interaction if needed
-    card.addEventListener("mouseenter", function() {
-      const button = this.querySelector(".btn-primary");
-      if (button) {
-        button.style.transform = "translateY(-3px)";
-      }
-    });
+document.addEventListener('DOMContentLoaded', function() {
+    // DOM element references
+    const filterToggle = document.querySelector('.filters-toggle');
+    const mobileFilterToggle = document.querySelector('.mobile-filters-toggle');
+    const filterClose = document.querySelector('.filters-close');
+    const filtersElement = document.querySelector('.filters');
+    const filtersBackdrop = document.querySelector('.filters-backdrop');
+    const quickViewModal = document.getElementById('quickViewModal');
+    const quickViewContent = document.getElementById('quickViewContent');
+    const cartNotification = document.getElementById('cartNotification');
+    const minPriceInput = document.getElementById('min-price');
+    const maxPriceInput = document.getElementById('max-price');
+    const productsGrid = document.getElementById('products-grid');
+    const filtersForm = document.getElementById('filters-form');
     
-    card.addEventListener("mouseleave", function() {
-      const button = this.querySelector(".btn-primary");
-      if (button) {
-        button.style.transform = "translateY(0)";
-      }
-    });
-  });
-}
-
-/**
- * Initialize search and filter functionality
- */
-function initFilters() {
-  const searchForm = document.querySelector(".search-form");
-  const clearFiltersBtn = document.querySelector(".btn-link");
-  
-  // Debounce function to limit how often the filter function runs
-  function debounce(func, wait) {
-    let timeout;
-    return function() {
-      const context = this;
-      const args = arguments;
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(context, args), wait);
-    };
-  }
-  
-  // Auto-submit form when select inputs change
-  const selectInputs = searchForm?.querySelectorAll("select");
-  if (selectInputs) {
-    selectInputs.forEach((select) => {
-      select.addEventListener("change", debounce(function() {
-        searchForm.submit();
-      }, 300));
-    });
-  }
-  
-  // Price range validation
-  const minPriceInput = searchForm?.querySelector("[name='min_price']");
-  const maxPriceInput = searchForm?.querySelector("[name='max_price']");
-  
-  if (minPriceInput && maxPriceInput) {
-    // When min price changes, ensure max price is greater than min price
-    minPriceInput.addEventListener("change", function() {
-      if (this.value && maxPriceInput.value && parseFloat(this.value) > parseFloat(maxPriceInput.value)) {
-        maxPriceInput.value = this.value;
-      }
-    });
+    // Initialize the page components
+    initFilterAccordions();
+    initMobileFilters();
+    initActiveFilters();
+    initPriceRange();
+    initClearFilters();
+    initViewSwitcher();
+    initQuickView();
+    initModalHandlers();
     
-    // When max price changes, ensure min price is less than max price
-    maxPriceInput.addEventListener("change", function() {
-      if (this.value && minPriceInput.value && parseFloat(this.value) < parseFloat(minPriceInput.value)) {
-        minPriceInput.value = this.value;
-      }
-    });
-  }
-  
-  // Handle category pills if present
-  const categoryPills = document.querySelectorAll(".category-pill");
-  categoryPills.forEach((pill) => {
-    pill.addEventListener("click", function(e) {
-      if (!this.classList.contains("active")) {
-        // Remove active class from all pills
-        categoryPills.forEach((p) => p.classList.remove("active"));
-        
-        // Add active class to clicked pill
-        this.classList.add("active");
-        
-        // If this pill has a data-category attribute, set it in the form
-        if (this.dataset.category) {
-          const categorySelect = searchForm?.querySelector("[name='category']");
-          if (categorySelect) {
-            categorySelect.value = this.dataset.category;
-            searchForm.submit();
-          }
-        }
-      }
-      
-      // If pill has no category (All Products), clear the category filter
-      if (this.dataset.category === "") {
-        const categorySelect = searchForm?.querySelector("[name='category']");
-        if (categorySelect) {
-          categorySelect.value = "";
-          searchForm.submit();
-        }
-      }
-    });
-  });
-}
-
-/**
- * Add to cart functionality directly from product listings
- */
-function initQuickAddToCart() {
-  const addToCartForms = document.querySelectorAll(".add-to-cart-form");
-  
-  addToCartForms.forEach((form) => {
-    form.addEventListener("submit", function(e) {
-      e.preventDefault();
-      
-      const productId = this.querySelector("[name='product_id']").value;
-      const quantity = this.querySelector("[name='quantity']")?.value || 1;
-      
-      // Show loading state
-      const submitBtn = this.querySelector("button[type='submit']");
-      const originalText = submitBtn.textContent;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-      submitBtn.disabled = true;
-      
-      // Send AJAX request to add item to cart
-      fetch('/cart/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: `product_id=${productId}&quantity=${quantity}`
-      })
-      .then(response => response.ok ? response.json() : Promise.reject('Network response was not ok'))
-      .then(data => {
-        // Show success indicator
-        submitBtn.innerHTML = '<i class="fas fa-check"></i> Added';
-        submitBtn.classList.add("btn-success");
-        
-        // Update cart count with animation
-        updateCartCount();
-        
-        // Show cart notification if available
-        if (window.showCartNotification) {
-          showCartNotification();
-        }
-        
-        // Reset button after delay
-        setTimeout(() => {
-          submitBtn.textContent = originalText;
-          submitBtn.disabled = false;
-          submitBtn.classList.remove("btn-success");
-        }, 2000);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        submitBtn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed';
-        submitBtn.classList.add("btn-danger");
-        
-        // Reset button after delay
-        setTimeout(() => {
-          submitBtn.textContent = originalText;
-          submitBtn.disabled = false;
-          submitBtn.classList.remove("btn-danger");
-        }, 2000);
-      });
-    });
-  });
-}
-
-/**
- * Update the cart count in the header
- */
-function updateCartCount() {
-  // Call the global updateCartCount function from main.js
-  if (window.updateCartCount) {
-    window.updateCartCount();
-  } else {
-    fetch('/cart/count', {
-      method: 'GET',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    })
-    .then(response => response.ok ? response.json() : Promise.reject('Failed to get cart count'))
-    .then(data => {
-      if (data.count !== undefined) {
-        const cartCountElements = document.querySelectorAll('.cart-count');
-        cartCountElements.forEach(el => {
-          // Update the text
-          el.textContent = data.count;
-          
-          // Simple animation
-          el.style.transform = 'scale(1.5)';
-          setTimeout(() => {
-            el.style.transform = 'scale(1)';
-          }, 300);
+    /**
+     * Initialize filter accordion functionality
+     */
+    function initFilterAccordions() {
+        document.querySelectorAll('.filter-title').forEach(title => {
+            title.addEventListener('click', function() {
+                // The details element handles open/close state automatically
+                const details = this.parentNode;
+                const isOpen = details.hasAttribute('open');
+                
+                // Toggle icon if needed
+                const icon = this.querySelector('.toggle-icon');
+                if (icon) {
+                    icon.className = isOpen 
+                        ? 'fas fa-chevron-down toggle-icon' 
+                        : 'fas fa-chevron-up toggle-icon';
+                }
+            });
         });
-      }
-    })
-    .catch(error => {
-      console.error('Error updating cart count:', error);
-    });
-  }
-}
+    }
+    
+    /**
+     * Initialize mobile filter panel functionality
+     */
+    function initMobileFilters() {
+        function openFilters() {
+            filtersElement.classList.add('active');
+            filtersBackdrop.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeFilters() {
+            filtersElement.classList.remove('active');
+            filtersBackdrop.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        if (filterToggle) {
+            filterToggle.addEventListener('click', closeFilters);
+        }
+        
+        if (mobileFilterToggle) {
+            mobileFilterToggle.addEventListener('click', openFilters);
+        }
+        
+        if (filterClose) {
+            filterClose.addEventListener('click', closeFilters);
+        }
+        
+        if (filtersBackdrop) {
+            filtersBackdrop.addEventListener('click', closeFilters);
+        }
+        
+        // Handle window resize events
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 992 && filtersElement.classList.contains('active')) {
+                closeFilters();
+            }
+        });
+        
+        // Close filters on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && filtersElement.classList.contains('active')) {
+                closeFilters();
+            }
+        });
+    }
+    
+    /**
+     * Initialize active filters functionality
+     */
+    function initActiveFilters() {
+        const activeFilters = document.getElementById('active-filters');
+        
+        function updateActiveFilters() {
+            activeFilters.innerHTML = '';
+            let hasFilters = false;
+            
+            // Search filter tag
+            const searchValue = document.getElementById('search').value.trim();
+            if (searchValue) {
+                const tag = createFilterTag('search', searchValue, 'fa-search');
+                activeFilters.appendChild(tag);
+                hasFilters = true;
+            }
+            
+            // Category filter tags
+            document.querySelectorAll('input[name="category[]"]:checked').forEach(input => {
+                const tag = createFilterTag('category', input.value, 'fa-tag', input.value);
+                activeFilters.appendChild(tag);
+                hasFilters = true;
+            });
+            
+            // Price range filter tag
+            const minPrice = parseInt(minPriceInput.value);
+            const maxPrice = parseInt(maxPriceInput.value);
+            if (minPrice > 0 || maxPrice < 1000) {
+                const tag = createFilterTag('price', `$${minPrice} - $${maxPrice}`, 'fa-dollar-sign');
+                activeFilters.appendChild(tag);
+                hasFilters = true;
+            }
+            
+            // Show/hide the active filters container
+            activeFilters.style.display = hasFilters ? 'flex' : 'none';
+        }
+        
+        function createFilterTag(type, text, icon, value = null) {
+            const tag = document.createElement('div');
+            tag.className = 'filter-tag';
+            
+            tag.innerHTML = `
+                <i class="fas ${icon}"></i> 
+                <span>${text}</span>
+                <button type="button" class="remove-tag" data-filter="${type}" ${value ? `data-value="${value}"` : ''} aria-label="Remove filter">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            return tag;
+        }
+        
+        // Initialize active filters
+        updateActiveFilters();
+        
+        // Filter form controls change events
+        document.querySelectorAll('#filters-form input, #filters-form select').forEach(input => {
+            input.addEventListener('change', updateActiveFilters);
+        });
+        
+        // Remove filter tag handler
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-tag')) {
+                const button = e.target.closest('.remove-tag');
+                const filterType = button.getAttribute('data-filter');
+                
+                if (filterType === 'search') {
+                    document.getElementById('search').value = '';
+                } else if (filterType === 'category') {
+                    const value = button.getAttribute('data-value');
+                    const checkbox = document.querySelector(`input[name="category[]"][value="${value}"]`);
+                    if (checkbox) {
+                        checkbox.checked = false;
+                    }
+                    filtersForm.submit();
+                } else if (filterType === 'price') {
+                    minPriceInput.value = 0;
+                    maxPriceInput.value = 1000;
+                }
+                
+                updateActiveFilters();
+            }
+        });
+    }
+    
+    /**
+     * Initialize price range inputs
+     */
+    function initPriceRange() {
+        if (minPriceInput && maxPriceInput) {
+            minPriceInput.addEventListener('change', function() {
+                if (parseInt(this.value) > parseInt(maxPriceInput.value)) {
+                    maxPriceInput.value = this.value;
+                }
+                updateActiveFilters();
+            });
+            
+            maxPriceInput.addEventListener('change', function() {
+                if (parseInt(this.value) < parseInt(minPriceInput.value)) {
+                    minPriceInput.value = this.value;
+                }
+                updateActiveFilters();
+            });
+        }
+    }
+    
+    /**
+     * Initialize clear filters button
+     */
+    function initClearFilters() {
+        const clearFiltersBtn = document.getElementById('clear-filters');
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', function() {
+                document.getElementById('search').value = '';
+                
+                document.querySelectorAll('input[name="category[]"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                
+                minPriceInput.value = 0;
+                maxPriceInput.value = 500;
+                
+                document.querySelectorAll('input[name="sort"]')[0].checked = true;
+                
+                updateActiveFilters();
+            });
+        }
+    }
+    
+    /**
+     * Initialize product grid view switcher
+     */
+    function initViewSwitcher() {
+        const viewButtons = document.querySelectorAll('.view-btn');
+        
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                viewButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const view = this.getAttribute('data-view');
+                productsGrid.className = view === 'list' ? 'product-list' : 'product-grid';
+            });
+        });
+    }
+    
+    /**
+     * Initialize quick view functionality
+     */
+    function initQuickView() {
+        document.querySelectorAll('[data-action="quickview"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-id');
+                
+                // Show loading state with animation
+                quickViewContent.innerHTML = '<div class="loader"><i class="fas fa-basketball-ball fa-spin"></i><p>Loading product details...</p></div>';
+                quickViewModal.setAttribute('aria-hidden', 'false');
+                
+                // Fetch product data with proper error handling
+                fetchProductDetails(productId);
+            });
+        });
+    }
+    
+    /**
+     * Fetch product details for quick view
+     * @param {string} productId The ID of the product to fetch
+     */
+    function fetchProductDetails(productId) {
+        fetch(`/api/products/${productId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                renderQuickView(data);
+            })
+            .catch(error => {
+                console.error('Error fetching product details:', error);
+                quickViewContent.innerHTML = `
+                    <div class="error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Failed to load product details</p>
+                        <p class="error-message">${error.message}</p>
+                        <button class="btn outline" data-close>Close</button>
+                    </div>`;
+            });
+    }
+    
+    /**
+     * Render the quick view modal with product data
+     * @param {object} data The product data
+     */
+    function renderQuickView(data) {
+        // Create stock status indicator
+        let stockStatus = '';
+        if (data.stock > 10) {
+            stockStatus = `<span class="stock-status in-stock"><i class="fas fa-check-circle"></i> In Stock (${data.stock} available)</span>`;
+        } else if (data.stock > 0) {
+            stockStatus = `<span class="stock-status low-stock"><i class="fas fa-exclamation-circle"></i> Low Stock (${data.stock} left)</span>`;
+        } else {
+            stockStatus = '<span class="stock-status out-of-stock"><i class="fas fa-times-circle"></i> Out of Stock</span>';
+        }
+        
+        // Create rating stars
+        const rating = data.rating || 0;
+        const reviewCount = data.reviews_count || 0;
+        let stars = '';
+        for (let i = 1; i <= 5; i++) {
+            stars += `<i class="${i <= rating ? 'fas' : 'far'} fa-star"></i>`;
+        }
+        
+        // Create badges for special product statuses
+        let badges = '';
+        if (data.is_new) {
+            badges += '<span class="badge new">New</span>';
+        }
+        if (data.discount > 0) {
+            badges += `<span class="badge sale">-${data.discount}%</span>`;
+        }
+        
+        // Format original price if there's a discount
+        let priceDisplay = `<div class="quick-view-price">$${parseFloat(data.price).toFixed(2)}</div>`;
+        if (data.original_price && data.original_price > data.price) {
+            priceDisplay = `
+                <div class="quick-view-price">
+                    <span class="current-price">$${parseFloat(data.price).toFixed(2)}</span>
+                    <span class="original-price">$${parseFloat(data.original_price).toFixed(2)}</span>
+                </div>`;
+        }
+        
+        // Ensure description is not undefined
+        const description = data.description || 'No description available';
+        
+        quickViewContent.innerHTML = `
+            <div class="quick-view">
+                <div class="quick-view-image">
+                    ${badges}
+                    <img src="${data.image_url}" alt="${data.name}" onerror="this.src='/assets/images/placeholder-product.png'">
+                </div>
+                
+                <div class="quick-view-details">
+                    <h3>${data.name}</h3>
+                    
+                    <div class="product-meta">
+                        <span class="product-category"><i class="fas fa-tag"></i> ${data.category}</span>
+                        <div class="product-rating">
+                            ${stars}
+                            <span>(${reviewCount})</span>
+                        </div>
+                    </div>
+                    
+                    ${priceDisplay}
+                    
+                    <div class="availability">
+                        ${stockStatus}
+                    </div>
+                    
+                    <div class="product-description">
+                        <p>${description}</p>
+                    </div>
+                    
+                    <form action="/cart/add" method="post" class="quick-view-form" id="quickAddToCartForm">
+                        <input type="hidden" name="product_id" value="${data.id}">
+                        
+                        <div class="quantity-control">
+                            <label for="quantity">Quantity</label>
+                            <div class="quantity-wrapper">
+                                <button type="button" class="quantity-btn" data-action="decrease">−</button>
+                                <input type="number" id="quantity" name="quantity" value="1" min="1" max="${data.stock}" ${data.stock < 1 ? 'disabled' : ''}>
+                                <button type="button" class="quantity-btn" data-action="increase" ${data.stock < 1 ? 'disabled' : ''}>+</button>
+                            </div>
+                        </div>
+                        
+                        <div class="quick-view-actions">
+                            <button type="submit" class="btn primary" ${data.stock < 1 ? 'disabled' : ''}>
+                                <i class="fas fa-shopping-cart"></i> Add to Cart
+                            </button>
+                            <button type="button" class="btn outline wishlist-btn">
+                                <i class="far fa-heart"></i> Add to Wishlist
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="product-links">
+                        <a href="/shop/product/${data.id}" class="view-details">
+                            <i class="fas fa-external-link-alt"></i> View Full Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Initialize quantity controls
+        initQuantityControls();
+        
+        // Set up Ajax form submission
+        setupQuickAddToCart();
+    }
+    
+    /**
+     * Initialize modal close handlers
+     */
+    function initModalHandlers() {
+        // Modal close handlers
+        document.querySelectorAll('[data-close]').forEach(element => {
+            element.addEventListener('click', function() {
+                quickViewModal.setAttribute('aria-hidden', 'true');
+            });
+        });
+        
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && quickViewModal.getAttribute('aria-hidden') === 'false') {
+                quickViewModal.setAttribute('aria-hidden', 'true');
+            }
+        });
+        
+        // Add close button functionality for cart notification
+        const closeBtn = cartNotification.querySelector('.toast-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                cartNotification.classList.remove('active');
+            });
+        }
+    }
+    
+    /**
+     * Initialize quantity control buttons
+     */
+    function initQuantityControls() {
+        document.querySelectorAll('.quantity-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const input = this.parentNode.querySelector('input');
+                const currentValue = parseInt(input.value);
+                const action = this.getAttribute('data-action');
+                
+                if (action === 'decrease' && currentValue > parseInt(input.min)) {
+                    input.value = currentValue - 1;
+                } else if (action === 'increase' && currentValue < parseInt(input.max)) {
+                    input.value = currentValue + 1;
+                }
+            });
+        });
+    }
+    
+    /**
+     * Setup Ajax cart submission for quick view
+     */
+    function setupQuickAddToCart() {
+        const form = document.getElementById('quickAddToCartForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                
+                // Show loading state
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+                submitBtn.disabled = true;
+                
+                fetch('/cart/add', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to add product');
+                    return response.json();
+                })
+                .then(data => {
+                    // Close modal
+                    quickViewModal.setAttribute('aria-hidden', 'true');
+                    
+                    // Show success notification
+                    showCartNotification();
+                    
+                    // Update cart count in header if available
+                    updateCartCount();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    submitBtn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed';
+                    submitBtn.classList.add('btn-danger');
+                    
+                    // Reset button after delay
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('btn-danger');
+                    }, 2000);
+                });
+            });
+        }
+    }
+    
+    /**
+     * Show cart notification
+     */
+    function showCartNotification() {
+        cartNotification.classList.add('active');
+        
+        // Auto-hide notification after 3 seconds
+        setTimeout(() => {
+            cartNotification.classList.remove('active');
+        }, 3000);
+    }
+    
+    /**
+     * Update cart count in header
+     */
+    function updateCartCount() {
+        const cartCountElem = document.querySelector('.cart-count');
+        if (cartCountElem) {
+            const currentCount = parseInt(cartCountElem.textContent) || 0;
+            cartCountElem.textContent = currentCount + 1;
+            
+            // Add animation
+            cartCountElem.classList.add('pulse');
+            setTimeout(() => {
+                cartCountElem.classList.remove('pulse');
+            }, 500);
+        }
+    }
+    
+    /**
+     * Update active filters - defined as global function
+     * to be called from various event handlers
+     */
+    function updateActiveFilters() {
+        const activeFilters = document.getElementById('active-filters');
+        activeFilters.innerHTML = '';
+        let hasFilters = false;
+        
+        // Search filter tag
+        const searchValue = document.getElementById('search').value.trim();
+        if (searchValue) {
+            const tag = createFilterTag('search', searchValue, 'fa-search');
+            activeFilters.appendChild(tag);
+            hasFilters = true;
+        }
+        
+        // Category filter tags
+        document.querySelectorAll('input[name="category[]"]:checked').forEach(input => {
+            const tag = createFilterTag('category', input.value, 'fa-tag', input.value);
+            activeFilters.appendChild(tag);
+            hasFilters = true;
+        });
+        
+        // Price range filter tag
+        const minPrice = parseInt(minPriceInput.value);
+        const maxPrice = parseInt(maxPriceInput.value);
+        if (minPrice > 0 || maxPrice < 1000) {
+            const tag = createFilterTag('price', `$${minPrice} - $${maxPrice}`, 'fa-dollar-sign');
+            activeFilters.appendChild(tag);
+            hasFilters = true;
+        }
+        
+        // Show/hide the active filters container
+        activeFilters.style.display = hasFilters ? 'flex' : 'none';
+    }
+    
+    /**
+     * Create a filter tag element
+     */
+    function createFilterTag(type, text, icon, value = null) {
+        const tag = document.createElement('div');
+        tag.className = 'filter-tag';
+        
+        tag.innerHTML = `
+            <i class="fas ${icon}"></i> 
+            <span>${text}</span>
+            <button type="button" class="remove-tag" data-filter="${type}" ${value ? `data-value="${value}"` : ''} aria-label="Remove filter">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        
+        return tag;
+    }
+});
