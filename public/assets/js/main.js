@@ -124,22 +124,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Function to update cart count
 function updateCartCount() {
-  const cartCountElement = document.querySelector(".cart-count");
-  if (cartCountElement) {
-    // Simulate AJAX call to get cart count
-    // In a real application, you would make an actual AJAX call to your server
-    fetch("/cart/count")
-      .then((response) => response.json())
-      .then((data) => {
-        if (data && data.count !== undefined) {
-          cartCountElement.textContent = data.count;
-        }
-      })
-      .catch(() => {
-        // Fallback: leave as is or set to a default
-        console.log("Could not update cart count");
-      });
-  }
+  const cartCountElements = document.querySelectorAll(".cart-count");
+  
+  if (cartCountElements.length === 0) return;
+  
+  // Make AJAX call to get cart count
+  fetch("/cart/count")
+    .then((response) => response.json())
+    .then((data) => {
+      if (data && data.count !== undefined) {
+        cartCountElements.forEach(element => {
+          // Update the text
+          element.textContent = data.count;
+          
+          // Add a simple pulse animation
+          element.style.transform = 'scale(1.5)';
+          setTimeout(() => {
+            element.style.transform = 'scale(1)';
+          }, 300);
+        });
+      }
+    })
+    .catch((error) => {
+      console.error("Could not update cart count:", error);
+    });
 }
 
 // Function to initialize tooltips

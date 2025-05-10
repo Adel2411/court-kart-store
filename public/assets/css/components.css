@@ -104,6 +104,7 @@
 
 .btn-outline:hover {
   background-color: var(--primary-light);
+  color: var(--white) !important;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(53, 99, 233, 0.1);
 }
@@ -744,6 +745,7 @@
   border: none;
   padding: 0.5rem 0;
   font-size: 0.95rem;
+  appearance: textfield;
   -moz-appearance: textfield;
 }
 
@@ -875,6 +877,7 @@
   justify-content: center;
   font-size: 0.75rem;
   font-weight: bold;
+  transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
 /* Tooltips */

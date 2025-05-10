@@ -111,6 +111,7 @@
 
 .logo-container {
   margin-bottom: 2rem;
+  border: 2px solid var(--white);
 }
 
 .auth-logo {

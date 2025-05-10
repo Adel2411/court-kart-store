@@ -17,11 +17,6 @@
                     <h2 class="brand-tagline">Gear Up<br>For Greatness</h2>
                     <p class="brand-description">Premium basketball equipment for players who demand excellence on and off the court.</p>
                     
-                    <div class="auth-decoration">
-                        <div class="basketball-graphic">
-                            <img src="/assets/images/basketball-hero.png" alt="Basketball">
-                        </div>
-                    </div>
                 </div>
             </div>
             

@@ -220,22 +220,27 @@ function showTooltip(element, text) {
  * Update the cart count in the header
  */
 function updateCartCount() {
-    // Fetch the updated cart count
+  // Call the global updateCartCount function from main.js
+  if (window.updateCartCount) {
+    window.updateCartCount();
+  } else {
+    // Fallback implementation
     fetch('/cart/count')
-        .then(response => response.json())
-        .then(data => {
-            const cartCountElement = document.querySelector('.cart-count');
-            if (cartCountElement) {
-                cartCountElement.textContent = data.count || 0;
-                
-                // Add animation effect
-                cartCountElement.classList.add('cart-count-updated');
-                setTimeout(() => {
-                    cartCountElement.classList.remove('cart-count-updated');
-                }, 700);
-            }
-        })
-        .catch(error => {
-            console.error('Error updating cart count:', error);
+      .then(response => response.json())
+      .then(data => {
+        const cartCountElements = document.querySelectorAll('.cart-count');
+        cartCountElements.forEach(element => {
+          element.textContent = data.count || 0;
+          
+          // Simple animation
+          element.style.transform = 'scale(1.5)';
+          setTimeout(() => {
+            element.style.transform = 'scale(1)';
+          }, 300);
         });
+      })
+      .catch(error => {
+        console.error('Error updating cart count:', error);
+      });
+  }
 }

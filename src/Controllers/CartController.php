@@ -50,6 +50,11 @@ class CartController
         
         // Validate input
         if (!$productId || $quantity < 1) {
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Invalid product or quantity.']);
+                exit;
+            }
             Session::set('error', 'Invalid product or quantity.');
             header('Location: /shop');
             exit;
@@ -58,12 +63,22 @@ class CartController
         // Check product exists and has enough stock
         $product = Product::getById($productId);
         if (!$product) {
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Product not found.']);
+                exit;
+            }
             Session::set('error', 'Product not found.');
             header('Location: /shop');
             exit;
         }
         
         if ($quantity > $product['stock']) {
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Not enough stock available.']);
+                exit;
+            }
             Session::set('error', 'Not enough stock available.');
             header('Location: /shop/product/' . $productId);
             exit;
@@ -72,6 +87,19 @@ class CartController
         // Add to cart
         $success = Cart::addItem($userId, $productId, $quantity);
         
+        // Handle AJAX requests
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            header('Content-Type: application/json');
+            $cartCount = Cart::getItemCount($userId);
+            echo json_encode([
+                'success' => $success,
+                'message' => $success ? 'Product added to your cart.' : 'Failed to add product to cart.',
+                'count' => $cartCount
+            ]);
+            exit;
+        }
+        
+        // Handle regular requests
         if ($success) {
             Session::set('success', 'Product added to your cart.');
         } else {
@@ -151,6 +179,19 @@ class CartController
         }
         
         header('Location: /cart');
+        exit;
+    }
+
+    /**
+     * Get the current cart item count (for AJAX requests)
+     */
+    public function count()
+    {
+        $userId = Session::get('user_id');
+        $count = Cart::getItemCount($userId);
+        
+        header('Content-Type: application/json');
+        echo json_encode(['count' => $count]);
         exit;
     }
 }

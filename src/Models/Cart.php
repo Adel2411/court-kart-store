@@ -22,13 +22,13 @@ class Cart
      * Get total number of items in a user's cart
      * 
      * @param int $userId User ID
-     * @return int Number of items
+     * @return int Number of distinct items (not total quantity)
      */
     public static function getItemCount($userId)
     {
         $db = Database::getInstance();
         $result = $db->fetchRow('SELECT COUNT(*) as count FROM cart_items WHERE user_id = ?', [$userId]);
-        return $result['count'] ?? 0;
+        return (int)($result['count'] ?? 0);
     }
     
     /**

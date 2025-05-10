@@ -44,9 +44,15 @@
                                 <a href="/admin">Admin Dashboard</a>
                             <?php } ?>
                             
-                            <a href="/cart" class="cart-icon">
-                                <i class="fa fa-shopping-cart"></i>
-                                <span class="cart-count">0</span>
+                            <a href="/cart" class="nav-link cart-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                                <?php
+                                $cartCount = 0;
+                                if (\App\Core\Session::get('user_id')) {
+                                    $cartCount = \App\Models\Cart::getItemCount(\App\Core\Session::get('user_id'));
+                                }
+                                ?>
+                                <span class="cart-count"><?= $cartCount ?></span>
                             </a>
                             <a href="/orders">My Orders</a>
                             <div class="dropdown">

@@ -142,6 +142,7 @@ function initQuickAddToCart() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
+          'X-Requested-With': 'XMLHttpRequest'
         },
         body: `product_id=${productId}&quantity=${quantity}`
       })
@@ -151,8 +152,13 @@ function initQuickAddToCart() {
         submitBtn.innerHTML = '<i class="fas fa-check"></i> Added';
         submitBtn.classList.add("btn-success");
         
-        // Update cart count
+        // Update cart count with animation
         updateCartCount();
+        
+        // Show cart notification if available
+        if (window.showCartNotification) {
+          showCartNotification();
+        }
         
         // Reset button after delay
         setTimeout(() => {
@@ -181,28 +187,34 @@ function initQuickAddToCart() {
  * Update the cart count in the header
  */
 function updateCartCount() {
-  fetch('/cart/count', {
-    method: 'GET',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest'
-    }
-  })
-  .then(response => response.ok ? response.json() : Promise.reject('Failed to get cart count'))
-  .then(data => {
-    if (data.count !== undefined) {
-      const cartCountElements = document.querySelectorAll('.cart-count');
-      cartCountElements.forEach(el => {
-        el.textContent = data.count;
-        
-        // Animate the count update with a small bounce effect
-        el.style.transform = 'scale(1.5)';
-        setTimeout(() => {
-          el.style.transform = 'scale(1)';
-        }, 300);
-      });
-    }
-  })
-  .catch(error => {
-    console.error('Error updating cart count:', error);
-  });
+  // Call the global updateCartCount function from main.js
+  if (window.updateCartCount) {
+    window.updateCartCount();
+  } else {
+    fetch('/cart/count', {
+      method: 'GET',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(response => response.ok ? response.json() : Promise.reject('Failed to get cart count'))
+    .then(data => {
+      if (data.count !== undefined) {
+        const cartCountElements = document.querySelectorAll('.cart-count');
+        cartCountElements.forEach(el => {
+          // Update the text
+          el.textContent = data.count;
+          
+          // Simple animation
+          el.style.transform = 'scale(1.5)';
+          setTimeout(() => {
+            el.style.transform = 'scale(1)';
+          }, 300);
+        });
+      }
+    })
+    .catch(error => {
+      console.error('Error updating cart count:', error);
+    });
+  }
 }
