@@ -45,7 +45,7 @@
         <ul>
             <li>We're preparing your order for shipment.</li>
             <li>You'll receive updates about your order status via email.</li>
-            <li>You can track your order anytime in your <a href="/account/orders">order history</a>.</li>
+            <li>You can track your order anytime in your <a href="/orders">order history</a>.</li>
         </ul>
     </div>
     

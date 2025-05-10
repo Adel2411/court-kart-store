@@ -225,7 +225,7 @@ class Order
 
     /**
      * Get a customer's order history with item counts and product names
-     * Uses a direct SQL query instead of a stored procedure
+     * Uses the GetCustomerOrderHistory stored procedure
      *
      * @param  int  $userId  User ID
      * @return array Customer's order history
@@ -234,18 +234,21 @@ class Order
     {
         $db = Database::getInstance();
 
-        // Get orders for this user
-        $sql = 'SELECT o.*, u.email as customer_email 
-                FROM orders o 
-                JOIN users u ON o.user_id = u.id 
-                WHERE o.user_id = ? 
-                ORDER BY o.created_at DESC';
+        // Call the stored procedure to get customer orders with item counts
+        $orders = $db->fetchRows("CALL GetCustomerOrderHistory(?)", [$userId]);
 
-        $orders = $db->fetchRows($sql, [$userId]);
-
-        // Get item count for each order
+        // Format the result to match expected structure
         foreach ($orders as &$order) {
-            $order['items_count'] = self::getItemsCount($order['id']);
+            // Rename fields to match existing code expectations
+            if (isset($order['order_id'])) {
+                $order['id'] = $order['order_id'];
+            }
+            if (isset($order['order_date'])) {
+                $order['created_at'] = $order['order_date'];
+            }
+            if (isset($order['item_count'])) {
+                $order['items_count'] = $order['item_count'];
+            }
         }
 
         return $orders;
