@@ -1,5 +1,5 @@
 /**
- * Admin Products JS - Handles admin product page functionality
+ * Admin Products Page Functionality
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -24,5 +24,43 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
+  // Product filter functionality
+  initProductFilters();
+  
   // Existing code for product form modal...
 });
+
+/**
+ * Initialize product filters
+ */
+function initProductFilters() {
+  // Auto-submit on category and sort change
+  const autoSubmitFilters = document.querySelectorAll('#categoryFilter, #sortFilter');
+  autoSubmitFilters.forEach(filter => {
+    filter.addEventListener('change', function() {
+      this.closest('form').submit();
+    });
+  });
+  
+  // Clear search button functionality
+  const clearSearchBtn = document.querySelector('.clear-search');
+  if (clearSearchBtn) {
+    clearSearchBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const searchInput = document.getElementById('searchFilter');
+      if (searchInput) {
+        searchInput.value = '';
+        this.closest('form').submit();
+      }
+    });
+  }
+  
+  // Handle filter reset
+  const resetBtn = document.querySelector('.filter-actions .btn-outline');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.location.href = '/admin/products';
+    });
+  }
+}

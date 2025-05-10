@@ -360,4 +360,41 @@ class Order
             return false;
         }
     }
+
+    /**
+     * Get all orders from the database filtered by status
+     *
+     * @param  string  $status  Status to filter by
+     * @param  int  $limit  Optional limit of orders to fetch
+     * @return array Array of filtered orders
+     */
+    public static function getAllByStatus(string $status, int $limit = 20): array
+    {
+        $db = Database::getInstance();
+
+        $validStatus = self::validateStatus($status);
+        $limit = (int) $limit;
+        
+        $sql = "SELECT o.*, u.name as customer_name, u.email as customer_email  
+                FROM orders o 
+                JOIN users u ON o.user_id = u.id 
+                WHERE o.status = ? 
+                ORDER BY o.id DESC 
+                LIMIT $limit";
+
+        return $db->fetchRows($sql, [$validStatus]);
+    }
+    
+    /**
+     * Validate order status to prevent SQL injection
+     *
+     * @param  string  $status  Status to validate
+     * @return string Validated status
+     */
+    private static function validateStatus(string $status): string
+    {
+        $validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
+        
+        return in_array($status, $validStatuses) ? $status : 'pending';
+    }
 }

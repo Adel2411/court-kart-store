@@ -7,6 +7,7 @@ use App\Core\View;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\Category; // Add this import
 use App\Services\AuthService;
 
 class AdminController
@@ -54,12 +55,30 @@ class AdminController
      */
     public function products()
     {
-        // Get all products from database
-        $products = Product::getAll();
+        // Get filter parameters
+        $category = $_GET['category'] ?? 'all';
+        $sort = $_GET['sort'] ?? 'name_asc';
+        $search = $_GET['search'] ?? '';
+        
+        // Get all products with filters
+        $products = Product::getAllFiltered($category, $sort, $search);
+        
+        try {
+            // Get all categories for the filter dropdown
+            $categories = Category::getAll();
+        } catch (\Exception $e) {
+            // Handle error if categories can't be loaded
+            $categories = [];
+            Session::flash('error', 'Failed to load categories');
+        }
 
         echo View::renderWithLayout('admin/products', 'admin', [
             'title' => 'Product Management - Court Kart',
             'products' => $products,
+            'categories' => $categories,
+            'currentCategory' => $category,
+            'currentSort' => $sort,
+            'currentSearch' => $search,
             'page_css' => 'admin',
             'page_js' => 'admin_products',
         ]);
@@ -148,8 +167,13 @@ class AdminController
      */
     public function orders()
     {
-        // Get real orders data from database
-        $orders = Order::getAll(10);
+        // Get status filter from query string
+        $status = $_GET['status'] ?? 'all';
+        
+        // Get orders based on status filter
+        $orders = ($status === 'all') 
+            ? Order::getAll(50)  // Get all orders
+            : Order::getAllByStatus($status, 50);  // Get filtered orders
 
         // Get items count for each order
         foreach ($orders as &$order) {
@@ -159,6 +183,7 @@ class AdminController
         echo View::renderWithLayout('admin/orders', 'admin', [
             'title' => 'Order Management - Court Kart',
             'orders' => $orders,
+            'currentStatus' => $status, // Pass current status to view
         ]);
     }
 

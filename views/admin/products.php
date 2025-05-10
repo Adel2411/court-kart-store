@@ -10,6 +10,54 @@
         </div>
     </div>
     
+    <!-- Product filtering section -->
+    <div class="admin-filters-bar">
+        <form action="/admin/products" method="get" class="product-filters-form">
+            <div class="filter-group">
+                <label for="categoryFilter">Category:</label>
+                <select name="category" id="categoryFilter" class="form-control">
+                    <option value="all" <?= ($currentCategory ?? 'all') === 'all' ? 'selected' : '' ?>>All Categories</option>
+                    <?php foreach ($categories as $cat): ?>
+                    <!-- Since we're using the category name as the ID -->
+                    <option value="<?= htmlspecialchars($cat['id']) ?>" <?= ($currentCategory ?? 'all') == $cat['id'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($cat['name']) ?>
+                    </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="sortFilter">Sort By:</label>
+                <select name="sort" id="sortFilter" class="form-control">
+                    <option value="name_asc" <?= ($currentSort ?? 'name_asc') === 'name_asc' ? 'selected' : '' ?>>Name (A-Z)</option>
+                    <option value="name_desc" <?= ($currentSort ?? 'name_asc') === 'name_desc' ? 'selected' : '' ?>>Name (Z-A)</option>
+                    <option value="price_asc" <?= ($currentSort ?? 'name_asc') === 'price_asc' ? 'selected' : '' ?>>Price (Low-High)</option>
+                    <option value="price_desc" <?= ($currentSort ?? 'name_asc') === 'price_desc' ? 'selected' : '' ?>>Price (High-Low)</option>
+                    <option value="newest" <?= ($currentSort ?? 'name_asc') === 'newest' ? 'selected' : '' ?>>Newest First</option>
+                </select>
+            </div>
+            
+            <div class="filter-group search-group">
+                <label for="searchFilter">Search:</label>
+                <div class="search-input-wrapper">
+                    <input type="text" name="search" id="searchFilter" class="form-control" placeholder="Search products..." value="<?= htmlspecialchars($currentSearch ?? '') ?>">
+                    <?php if (!empty($currentSearch)): ?>
+                    <a href="?category=<?= $currentCategory ?? 'all' ?>&sort=<?= $currentSort ?? 'name_asc' ?>" class="clear-search">
+                        <i class="fas fa-times"></i>
+                    </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+            
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">Apply Filters</button>
+                <?php if (($currentCategory ?? 'all') !== 'all' || ($currentSort ?? 'name_asc') !== 'name_asc' || !empty($currentSearch ?? '')): ?>
+                <a href="/admin/products" class="btn btn-outline">Reset</a>
+                <?php endif; ?>
+            </div>
+        </form>
+    </div>
+    
     <div class="admin-table-wrapper">
         <table class="admin-table">
             <thead>
@@ -239,8 +287,75 @@ document.addEventListener('DOMContentLoaded', function() {
             productForm.dispatchEvent(submitEvent);
         }
     });
+
+    // Make filters apply on change
+    const autoSubmitFilters = document.querySelectorAll('#categoryFilter, #sortFilter');
+    autoSubmitFilters.forEach(filter => {
+        filter.addEventListener('change', function() {
+            this.closest('form').submit();
+        });
+    });
 });
 </script>
+
+<style>
+.admin-filters-bar {
+    background-color: var(--light);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.product-filters-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    font-size: 0.85rem;
+    color: var(--secondary);
+}
+
+.search-group {
+    grid-column: span 2;
+}
+
+.search-input-wrapper {
+    position: relative;
+}
+
+.clear-search {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    color: var(--gray);
+    cursor: pointer;
+}
+
+.filter-actions {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+@media (max-width: 992px) {
+    .product-filters-form {
+        grid-template-columns: 1fr;
+    }
+    
+    .search-group {
+        grid-column: span 1;
+    }
+}
+</style>
 
 <div class="db-connection-success">
     <p style="color: green; font-weight: bold;">Database connection successful! Product data loaded from database.</p>

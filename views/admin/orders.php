@@ -7,16 +7,26 @@
                     <i class="fas fa-filter"></i> Filter by Status
                 </button>
                 <div id="filterDropdown" style="display: none; position: absolute; top: 100%; right: 0; z-index: 10; background: white; box-shadow: var(--shadow-md); border-radius: var(--radius-md); min-width: 180px; margin-top: 4px;">
-                    <a href="/admin/orders?status=all" style="display: block; padding: 8px 16px; text-decoration: none; color: var(--secondary);">All Orders</a>
-                    <a href="/admin/orders?status=pending" style="display: block; padding: 8px 16px; text-decoration: none; color: var(--secondary);">Pending</a>
-                    <a href="/admin/orders?status=confirmed" style="display: block; padding: 8px 16px; text-decoration: none; color: var(--secondary);">Confirmed</a>
-                    <a href="/admin/orders?status=shipped" style="display: block; padding: 8px 16px; text-decoration: none; color: var(--secondary);">Shipped</a>
-                    <a href="/admin/orders?status=delivered" style="display: block; padding: 8px 16px; text-decoration: none; color: var(--secondary);">Delivered</a>
-                    <a href="/admin/orders?status=cancelled" style="display: block; padding: 8px 16px; text-decoration: none; color: var(--secondary);">Cancelled</a>
+                    <a href="/admin/orders?status=all" style="display: block; padding: 8px 16px; text-decoration: none; color: var(--secondary); <?= ($currentStatus ?? '') === 'all' ? 'background-color: var(--light); font-weight: bold;' : '' ?>">All Orders</a>
+                    <a href="/admin/orders?status=pending" style="display: block; padding: 8px 16px; text-decoration: none; color: var(--secondary); <?= ($currentStatus ?? '') === 'pending' ? 'background-color: var(--light); font-weight: bold;' : '' ?>">Pending</a>
+                    <a href="/admin/orders?status=confirmed" style="display: block; padding: 8px 16px; text-decoration: none; color: var(--secondary); <?= ($currentStatus ?? '') === 'confirmed' ? 'background-color: var(--light); font-weight: bold;' : '' ?>">Confirmed</a>
+                    <a href="/admin/orders?status=shipped" style="display: block; padding: 8px 16px; text-decoration: none; color: var(--secondary); <?= ($currentStatus ?? '') === 'shipped' ? 'background-color: var(--light); font-weight: bold;' : '' ?>">Shipped</a>
+                    <a href="/admin/orders?status=delivered" style="display: block; padding: 8px 16px; text-decoration: none; color: var(--secondary); <?= ($currentStatus ?? '') === 'delivered' ? 'background-color: var(--light); font-weight: bold;' : '' ?>">Delivered</a>
+                    <a href="/admin/orders?status=cancelled" style="display: block; padding: 8px 16px; text-decoration: none; color: var(--secondary); <?= ($currentStatus ?? '') === 'cancelled' ? 'background-color: var(--light); font-weight: bold;' : '' ?>">Cancelled</a>
                 </div>
             </div>
         </div>
     </div>
+    
+    <!-- Status indicator for filtered view -->
+    <?php if (($currentStatus ?? 'all') !== 'all'): ?>
+    <div class="filter-status-indicator" style="padding: 0.5rem 1.5rem; background: var(--light); border-radius: var(--radius-sm); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <i class="fas fa-filter"></i> Showing only <strong><?= ucfirst($currentStatus ?? 'all') ?></strong> orders
+        </div>
+        <a href="/admin/orders?status=all" class="btn btn-sm btn-outline">Clear Filter</a>
+    </div>
+    <?php endif; ?>
     
     <div class="admin-table-wrapper">
         <table class="admin-table">

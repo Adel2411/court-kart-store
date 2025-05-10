@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Core\Database;
+use Exception;
 
 class Product
 {
@@ -298,5 +299,57 @@ class Product
         }
 
         return $db->fetchRows($sql);
+    }
+
+    /**
+     * Get all products with filters
+     *
+     * @param  string  $category  Category name filter (or 'all')
+     * @param  string  $sort  Sort order (name_asc, name_desc, price_asc, price_desc, newest)
+     * @param  string  $search  Search term
+     * @return array Array of filtered products
+     */
+    public static function getAllFiltered(string $category = 'all', string $sort = 'name_asc', string $search = ''): array
+    {
+        $db = Database::getInstance();
+        $params = [];
+        
+        // Start building the query
+        $sql = "SELECT * FROM products WHERE 1=1";
+        
+        // Add category filter if not 'all'
+        if ($category !== 'all') {
+            $sql .= " AND category = ?";
+            $params[] = $category;
+        }
+        
+        // Add search filter if provided
+        if (!empty($search)) {
+            $sql .= " AND (name LIKE ? OR description LIKE ?)";
+            $params[] = "%$search%";
+            $params[] = "%$search%";
+        }
+        
+        // Add sorting
+        switch ($sort) {
+            case 'name_desc':
+                $sql .= " ORDER BY name DESC";
+                break;
+            case 'price_asc':
+                $sql .= " ORDER BY price ASC";
+                break;
+            case 'price_desc':
+                $sql .= " ORDER BY price DESC";
+                break;
+            case 'newest':
+                $sql .= " ORDER BY created_at DESC";
+                break;
+            case 'name_asc':
+            default:
+                $sql .= " ORDER BY name ASC";
+                break;
+        }
+        
+        return $db->fetchRows($sql, $params);
     }
 }
