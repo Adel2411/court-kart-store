@@ -1,3 +1,9 @@
+-- Clean up: remove procedures if they exist
+-- DROP PROCEDURE IF EXISTS GetOrderDetails;
+-- DROP PROCEDURE IF EXISTS FinalizeOrder;
+-- DROP PROCEDURE IF EXISTS GetCustomerOrderHistory;
+
+
 DELIMITER $$
 
 -- Procedure 1: Display detailed information about a specific order including total amount
@@ -11,7 +17,9 @@ BEGIN
         o.status,
         u.name AS customer_name,
         u.email AS customer_email,
+        p.id AS product_id,
         p.name AS product_name,
+        p.image_url,
         oi.quantity,
         oi.price AS unit_price,
         (oi.quantity * oi.price) AS subtotal,

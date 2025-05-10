@@ -138,107 +138,88 @@ class Order
     }
 
     /**
-     * Get detailed information about a specific order including all items
-     * Uses direct SQL queries instead of stored procedure
+     * Get detailed information about a specific order
      *
-     * @param  int  $orderId  Order ID
-     * @return array Detailed order information
+     * @param int $orderId Order ID
+     * @return array|null Order details or null if not found
      */
-    public static function getOrderDetails(int $orderId): array
+    public static function getOrderDetails(int $orderId): ?array
     {
         $db = Database::getInstance();
         
-        // Get order header information
-        $orderSql = "SELECT o.*, u.name as customer_name, u.email as customer_email 
-                    FROM orders o 
-                    JOIN users u ON o.user_id = u.id 
-                    WHERE o.id = ?";
-        
-        $orderDetails = $db->fetchRow($orderSql, [$orderId]);
-        
-        if (!$orderDetails) {
-            return [];
+        try {
+            // Get order header information
+            $orderSql = "SELECT o.*, u.name as customer_name, u.email as customer_email 
+                        FROM orders o 
+                        JOIN users u ON o.user_id = u.id 
+                        WHERE o.id = ?";
+            
+            $orderDetails = $db->fetchRow($orderSql, [$orderId]);
+            
+            if (!$orderDetails) {
+                return null;
+            }
+            
+            // Call the stored procedure to get order items
+            $items = $db->fetchRows("CALL GetOrderDetails(?)", [$orderId]);
+            
+            // Format the return to match the expected structure
+            $result = [];
+            foreach ($items as $item) {
+                $orderWithItems = array_merge([
+                    'id' => $orderDetails['id'],
+                    'user_id' => $orderDetails['user_id'],
+                    'total_price' => $orderDetails['total_price'],
+                    'status' => $orderDetails['status'],
+                    'created_at' => $orderDetails['created_at'],
+                    'updated_at' => $orderDetails['updated_at'],
+                    'customer_name' => $orderDetails['customer_name'],
+                    'customer_email' => $orderDetails['customer_email']
+                ], [
+                    'product_id' => $item['product_id'] ?? null,
+                    'product_name' => $item['product_name'] ?? null,
+                    'quantity' => $item['quantity'] ?? null,
+                    'price' => $item['unit_price'] ?? null,
+                    'image_url' => $item['image_url'] ?? null, 
+                    'subtotal' => $item['subtotal'] ?? null
+                ]);
+                $result[] = $orderWithItems;
+            }
+            
+            // If no items found, return just the order header
+            if (empty($result)) {
+                $result[] = $orderDetails;
+            }
+            
+            return $result;
+        } catch (Exception $e) {
+            // Log the error
+            error_log('Error getting order details: ' . $e->getMessage());
+            return null;
         }
-        
-        // Get order items
-        $itemsSql = "SELECT oi.*, p.name as product_name, p.image_url 
-                    FROM order_items oi 
-                    JOIN products p ON oi.product_id = p.id 
-                    WHERE oi.order_id = ?";
-        
-        $items = $db->fetchRows($itemsSql, [$orderId]);
-        
-        // Format the return to match the expected structure
-        $result = [];
-        foreach ($items as $item) {
-            $orderWithItems = array_merge($orderDetails, [
-                'product_id' => $item['product_id'],
-                'product_name' => $item['product_name'],
-                'quantity' => $item['quantity'],
-                'price' => $item['price'],
-                'image_url' => $item['image_url'],
-                'subtotal' => $item['price'] * $item['quantity']
-            ]);
-            $result[] = $orderWithItems;
-        }
-        
-        // If no items found, return just the order header
-        if (empty($result)) {
-            $result[] = $orderDetails;
-        }
-        
-        return $result;
     }
 
     /**
      * Finalize an order by confirming it and emptying the cart
-     * Replace stored procedure with direct SQL queries
+     * Using stored procedure instead of direct SQL queries
      *
      * @param  int  $orderId  Order ID
      * @param  int  $userId  User ID
      * @return bool Success status
-     *
-     * @throws Exception If order does not exist or is not pending
      */
     public static function finalizeOrder(int $orderId, int $userId): bool
     {
         try {
             $db = Database::getInstance();
             
-            // Begin transaction
-            $db->beginTransaction();
-            
-            // 1. Verify order exists and belongs to user
-            $orderSql = "SELECT id, status FROM orders WHERE id = ? AND user_id = ?";
-            $order = $db->fetchRow($orderSql, [$orderId, $userId]);
-            
-            if (!$order) {
-                throw new Exception("Order not found or does not belong to user");
-            }
-            
-            if ($order['status'] !== 'pending') {
-                throw new Exception("Order is not in pending status");
-            }
-            
-            // 2. Update order status to confirmed
-            $updateSql = "UPDATE orders SET status = 'confirmed' WHERE id = ?";
-            $db->execute($updateSql, [$orderId]);
-            
-            // 3. Clear user's cart
-            $clearCartSql = "DELETE FROM cart WHERE user_id = ?";
-            $db->execute($clearCartSql, [$userId]);
-            
-            // Commit transaction
-            $db->commit();
+            // Call the stored procedure to finalize the order
+            $db->execute("CALL FinalizeOrder(?, ?)", [$orderId, $userId]);
             
             return true;
         } catch (Exception $e) {
-            // Rollback transaction on error
-            if (isset($db) && $db->inTransaction()) {
-                $db->rollBack();
-            }
-            // Pass exception up
-            throw $e;
+            // Log the error message which could come from the procedure
+            error_log('Order finalization failed: ' . $e->getMessage());
+            return false;
         }
     }
 
