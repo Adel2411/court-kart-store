@@ -101,9 +101,6 @@ h3 {
   color: var(--white);
   padding: var(--space-xxl) 0;
   margin-bottom: var(--space-xl);
-  background-image:
-    linear-gradient(135deg, rgba(230, 57, 70, 0.95), rgba(193, 39, 45, 0.9)),
-    url("https://images.unsplash.com/photo-1518641198277-e15e132a954d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80");
   background-size: cover;
   background-position: center;
   position: relative;
@@ -1061,7 +1058,9 @@ details:not([open]) .filter-title::after {
   z-index: 98; /* Reduced from 899 to be more reasonable */
   opacity: 0;
   visibility: hidden;
-  transition: opacity var(--transition-normal), visibility var(--transition-normal);
+  transition:
+    opacity var(--transition-normal),
+    visibility var(--transition-normal);
 }
 
 .filters-backdrop.active {
@@ -1109,7 +1108,7 @@ details:not([open]) .filter-title::after {
   .filters.active {
     transform: translateX(0);
   }
-  
+
   .filters-header {
     padding-right: var(--space-md);
   }
@@ -1117,15 +1116,15 @@ details:not([open]) .filter-title::after {
   .filters-toggle {
     display: none;
   }
-  
+
   .filters-close {
     display: flex;
   }
-  
+
   .mobile-filters-toggle {
     display: flex;
   }
-  
+
   .filter-actions {
     position: sticky;
     bottom: 0;
@@ -1204,7 +1203,7 @@ details:not([open]) .filter-title::after {
     position: relative;
     scroll-behavior: smooth;
   }
-  
+
   .pagination-links::-webkit-scrollbar {
     display: none; /* Hide scrollbar for Chrome/Safari/Edge */
   }
@@ -1217,7 +1216,7 @@ details:not([open]) .filter-title::after {
     font-weight: 600;
     font-size: 0.95rem;
   }
-  
+
   .page-link.active {
     box-shadow: var(--shadow-sm);
     transform: translateY(-2px);
@@ -1278,7 +1277,7 @@ details:not([open]) .filter-title::after {
     width: 100%;
     max-width: none;
   }
-  
+
   .mobile-filters-toggle {
     width: auto;
     bottom: 15px;
@@ -1291,7 +1290,7 @@ details:not([open]) .filter-title::after {
     margin-bottom: var(--space-lg);
     position: relative;
   }
-  
+
   .pagination::before,
   .pagination::after {
     content: "";
@@ -1302,21 +1301,29 @@ details:not([open]) .filter-title::after {
     pointer-events: none;
     z-index: 2;
   }
-  
+
   .pagination::before {
     left: 0;
-    background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 1),
+      rgba(255, 255, 255, 0)
+    );
   }
-  
+
   .pagination::after {
     right: 0;
-    background: linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+    background: linear-gradient(
+      to left,
+      rgba(255, 255, 255, 1),
+      rgba(255, 255, 255, 0)
+    );
   }
-  
+
   .pagination-links {
     padding: var(--space-xs) var(--space-md);
   }
-  
+
   .pagination-info {
     text-align: center;
     margin-top: var(--space-sm);
@@ -1333,32 +1340,32 @@ details:not([open]) .filter-title::after {
   .product-grid {
     grid-template-columns: 1fr; /* Single column for very small devices */
   }
-  
+
   .product-info {
     padding: var(--space-sm);
   }
-  
+
   .shop-header h1 {
     font-size: 1.5rem;
   }
-  
+
   .products-header h2 {
     font-size: 1.25rem;
   }
-  
+
   .btn {
     padding: var (--space-xs) var(--space-md);
   }
-  
+
   .pagination {
     margin-top: var(--space-md);
   }
-  
+
   .page-link {
     min-width: 38px;
     height: 38px;
   }
-  
+
   .btn {
     padding: var(--space-xs) var(--space-md);
   }
@@ -1386,8 +1393,12 @@ details:not([open]) .filter-title::after {
 }
 
 @keyframes bounce {
-  from { transform: translateY(-10px) rotate(0deg); }
-  to { transform: translateY(10px) rotate(360deg); }
+  from {
+    transform: translateY(-10px) rotate(0deg);
+  }
+  to {
+    transform: translateY(10px) rotate(360deg);
+  }
 }
 
 .quick-view {
@@ -1577,7 +1588,9 @@ details:not([open]) .filter-title::after {
   gap: var(--space-md);
   transform: translateY(150%);
   opacity: 0;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
   z-index: 1000;
 }
 
@@ -1665,9 +1678,15 @@ details:not([open]) .filter-title::after {
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .wishlist-btn:hover .far.fa-heart {

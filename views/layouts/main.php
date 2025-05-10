@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="/assets/css/layouts.css">
     <link rel="stylesheet" href="/assets/css/components.css">
+    <?php 
+    // Add auth stylesheet for login and register pages
+    $current_page = $_SERVER['REQUEST_URI'];
+    if (in_array($current_page, ['/login', '/register', '/forgot-password', '/reset-password'])) {
+        echo '<link rel="stylesheet" href="/assets/css/auth.css">';
+    }
+    ?>
     <?php if (isset($page_css)) { 
         if(is_array($page_css)) {
             foreach($page_css as $css_file) { ?>

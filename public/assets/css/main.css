@@ -3,15 +3,16 @@
 
 :root {
   /* Basketball Theme Colors */
-  /* Primary: NBA-inspired red */
-  --primary: #e63946;
-  --primary-dark: #c1272d;
-  --primary-light: #ffcccb;
-  --primary-rgb: 230, 57, 70;
+  /* Primary: Orange theme from auth.css */
+  --primary: #ff6b00;
+  --primary-dark: #e05a00;
+  --primary-light: #ff8a3d;
+  --primary-rgb: 255, 107, 0;
 
   /* Secondary: Deep court blue/navy */
-  --secondary: #1d3557;
+  --secondary: #1e3a8a;
   --secondary-dark: #0d1b2a;
+  --secondary-rgb: 30, 58, 138;
 
   /* Accent: Championship gold */
   --accent: #ffb800;
@@ -26,10 +27,14 @@
   --black: #000814;
 
   /* Feedback Colors - sports themed */
-  --success: #4caf50;
+  --success: #2ecc71;
+  --success-rgb: 46, 204, 113;
   --warning: #ff9800;
-  --danger: #f44336;
-  --info: #2196f3;
+  --warning-rgb: 255, 152, 0;
+  --danger: #e74c3c;
+  --danger-rgb: 231, 76, 60;
+  --info: #3498db;
+  --info-rgb: 52, 152, 219;
 
   /* Typography */
   --font-primary:
@@ -77,8 +82,8 @@
   /* Additional color theme enhancements */
   --accent-light: rgba(
     255,
-    87,
-    51,
+    107,
+    0,
     0.1
   ); /* Light version of accent color for backgrounds */
   --primary-gradient: linear-gradient(
