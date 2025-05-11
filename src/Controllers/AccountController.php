@@ -111,6 +111,7 @@ class AccountController
         $email = $_POST['email'] ?? '';
         $currentPassword = $_POST['current_password'] ?? '';
         $newPassword = $_POST['new_password'] ?? '';
+        $profileImage = $_POST['profile_image'] ?? '';
         $confirmPassword = $_POST['confirm_password'] ?? '';
         
         // Validate input
@@ -169,14 +170,15 @@ class AccountController
         } else {
             // Update user data without changing password
             $db->execute(
-                'UPDATE users SET name = ?, email = ? WHERE id = ?',
-                [$name, $email, $userId]
+                'UPDATE users SET name = ?, email = ?, profile_image = ? WHERE id = ?',
+                [$name, $email, $profileImage, $userId]
             );
         }
         
         // Update session data
         Session::set('user_name', $name);
         Session::set('user_email', $email);
+        Session::set('profile_image', $profileImage);
         
         Session::set('success', 'Your profile has been updated successfully.');
         header('Location: /account');

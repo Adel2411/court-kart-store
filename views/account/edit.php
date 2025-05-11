@@ -64,6 +64,26 @@
                                 <input type="email" id="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" class="form-control" required>
                             </div>
                         </div>
+                        
+                        <div class="form-group">
+                            <label for="profile_image">Profile Image URL</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-image input-icon"></i>
+                                <input type="url" id="profile_image" name="profile_image" value="<?= htmlspecialchars($user['profile_image'] ?? '') ?>" class="form-control" placeholder="https://example.com/your-image.jpg">
+                            </div>
+                            <p class="form-note">Enter a URL to your profile picture (leave empty to use initials)</p>
+                            
+                            <div class="profile-image-preview">
+                                <div class="image-preview-container" id="profileImagePreview">
+                                    <?php if (!empty($user['profile_image'])): ?>
+                                        <img src="<?= htmlspecialchars($user['profile_image']) ?>" alt="Profile Preview" id="previewImg">
+                                    <?php else: ?>
+                                        <?= strtoupper(substr($user['name'] ?? 'A', 0, 1)) ?>
+                                    <?php endif; ?>
+                                </div>
+                                <p class="preview-placeholder" id="previewPlaceholder">Image preview</p>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="form-section">
@@ -304,6 +324,49 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 10000);
             }
         });
+    }
+    
+    // Profile image preview functionality
+    const profileImageInput = document.getElementById('profile_image');
+    const profileImagePreview = document.getElementById('profileImagePreview');
+    const previewPlaceholder = document.getElementById('previewPlaceholder');
+    
+    if (profileImageInput && profileImagePreview) {
+        profileImageInput.addEventListener('input', updateProfileImagePreview);
+        
+        // Initial call to set up the preview
+        updateProfileImagePreview();
+        
+        function updateProfileImagePreview() {
+            const imageUrl = profileImageInput.value.trim();
+            const userName = document.getElementById('name').value;
+            const initial = userName ? userName.charAt(0).toUpperCase() : 'A';
+            
+            if (imageUrl) {
+                // Create a new image to test loading
+                const testImage = new Image();
+                testImage.onload = function() {
+                    // Image loaded successfully
+                    profileImagePreview.innerHTML = `<img src="${imageUrl}" alt="Profile Preview" id="previewImg">`;
+                    profileImagePreview.classList.remove('preview-error');
+                    previewPlaceholder.textContent = 'Image preview';
+                };
+                
+                testImage.onerror = function() {
+                    // Image failed to load
+                    profileImagePreview.innerHTML = initial;
+                    profileImagePreview.classList.add('preview-error');
+                    previewPlaceholder.textContent = 'Invalid image URL';
+                };
+                
+                testImage.src = imageUrl;
+            } else {
+                // No URL provided, show initial
+                profileImagePreview.innerHTML = initial;
+                profileImagePreview.classList.remove('preview-error');
+                previewPlaceholder.textContent = 'No image URL provided';
+            }
+        }
     }
 });
 </script>

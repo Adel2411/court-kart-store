@@ -69,6 +69,9 @@
                             </a>
                             
                             <a href="/account" class="nav-link user-profile-link">
+                                <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin') { ?>
+                                    <span class="user-badge admin">Admin</span>
+                                <?php } ?>
                                 <?php 
                                 $profile_image = isset($_SESSION['profile_image']) && !empty($_SESSION['profile_image']) 
                                     ? $_SESSION['profile_image'] 
@@ -81,13 +84,7 @@
                                         <?= strtoupper(substr($_SESSION['user_name'] ?? 'U', 0, 1)) ?>
                                     </div>
                                 <?php } ?>
-                                <span><?= htmlspecialchars($_SESSION['user_name'] ?? 'User') ?></span>
-                                <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin') { ?>
-                                    <span class="user-badge admin">Admin</span>
-                                <?php } ?>
                             </a>
-                            
-                            <a href="/logout" class="nav-link">Logout</a>
                         <?php } else { ?>
                             <a href="/login" class="btn btn-primary">Login</a>
                             <a href="/register" class="btn btn-outline">Register</a>

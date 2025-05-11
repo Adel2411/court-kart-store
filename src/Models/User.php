@@ -61,4 +61,42 @@ class User
 
         return (int) ($result['count'] ?? 0);
     }
+
+    /**
+     * Update user information
+     *
+     * @param int $id User ID
+     * @param array $data User data to update
+     * @return bool Success status
+     */
+    public static function update($id, array $data): bool
+    {
+        $db = Database::getInstance();
+        
+        $sql = 'UPDATE users SET 
+                name = ?, 
+                email = ?';
+        
+        $params = [
+            $data['name'],
+            $data['email']
+        ];
+        
+        // Add profile_image to the update if provided
+        if (isset($data['profile_image'])) {
+            $sql .= ', profile_image = ?';
+            $params[] = $data['profile_image'];
+        }
+        
+        // Add password to the update if provided
+        if (isset($data['password'])) {
+            $sql .= ', password = ?';
+            $params[] = $data['password'];
+        }
+        
+        $sql .= ' WHERE id = ?';
+        $params[] = $id;
+        
+        return $db->execute($sql, $params);
+    }
 }
