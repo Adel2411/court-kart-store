@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop - Court Kart</title>
+    <link rel="icon" type="image/x-icon" href="public/assets/images/court-kart-logo-dark.ico">
     <link rel="stylesheet" href="/assets/css/pages/shop.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>

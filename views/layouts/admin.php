@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?? 'Admin - Court Kart' ?></title>
+    <link rel="icon" type="image/x-icon" href="public/assets/images/court-kart-logo-dark.ico">
     <!-- Load main CSS files -->
     <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="/assets/css/components.css">
