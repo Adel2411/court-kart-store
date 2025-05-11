@@ -115,18 +115,26 @@ function initViewModal() {
       const row = this.closest('tr');
       
       // Populate modal with data from the row
-      const userName = row.querySelector('.user-name').textContent;
       const userEmail = row.querySelector('td:nth-child(3)').textContent;
+      const userName = userEmail.split('@')[0]; // Extract name from email as fallback
       const userRole = row.querySelector('.role-badge').textContent;
       const userCreatedAt = row.querySelector('.date').textContent + ' at ' + 
                             row.querySelector('.time').textContent;
+      const profileImage = row.querySelector('.user-avatar-img')?.src || '';
       
       document.getElementById('userName').textContent = userName;
       document.getElementById('userEmail').textContent = userEmail;
       document.getElementById('userRole').textContent = userRole;
       document.getElementById('userRole').className = 'badge role-badge role-' + userRole.toLowerCase();
       document.getElementById('userCreatedAt').textContent = userCreatedAt;
-      document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
+      
+      // Set user avatar (either image or initials)
+      const userAvatarElement = document.getElementById('userAvatar');
+      if (profileImage) {
+        userAvatarElement.innerHTML = `<img src="${profileImage}" alt="${userName}" class="user-avatar-img">`;
+      } else {
+        userAvatarElement.textContent = userName.charAt(0).toUpperCase();
+      }
       
       // Set edit button data
       editUserBtn.setAttribute('data-id', userId);

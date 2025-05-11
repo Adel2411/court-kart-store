@@ -40,6 +40,7 @@ class AuthController
             'csrf_token' => $csrfToken,
             'error' => Session::flash('error'),
             'success' => Session::flash('success'),
+            'page_css' => 'auth' // Explicitly set auth CSS
         ]);
     }
 
@@ -93,6 +94,7 @@ class AuthController
             'title' => 'Register - Court Kart',
             'csrf_token' => $csrfToken,
             'error' => Session::flash('error'),
+            'page_css' => 'auth' // Explicitly set auth CSS
         ]);
     }
 

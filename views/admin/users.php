@@ -57,7 +57,6 @@
                                         <?= strtoupper(substr($user['name'], 0, 1)) ?>
                                     </div>
                                 <?php } ?>
-                                <div class="user-name"><?= htmlspecialchars($user['name']) ?></div>
                             </td>
                             <td><?= htmlspecialchars($user['email']) ?></td>
                             <td>

@@ -30,6 +30,8 @@ $router->get('/orders', 'OrderController@index', 'auth');
 $router->get('/orders/{id}', 'OrderController@show', 'auth');
 $router->post('/orders/{id}/cancel', 'OrderController@cancel', 'auth');
 $router->get('/account', 'AccountController@index', 'auth');
+$router->get('/account/edit', 'AccountController@edit', 'auth');
+$router->post('/account/update', 'AccountController@update', 'auth');
 $router->get('/logout', 'AuthController@logout', 'auth');
 
 // Admin routes

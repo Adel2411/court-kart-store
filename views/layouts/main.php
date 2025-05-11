@@ -3,26 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?? 'Court Kart' ?></title>
+    <title><?= $title ?? 'Court Kart - Basketball Equipment Store' ?></title>
+    
+    <!-- Load main CSS files -->
     <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="stylesheet" href="/assets/css/layouts.css">
     <link rel="stylesheet" href="/assets/css/components.css">
-    <?php 
-    // Add auth stylesheet for login and register pages
-    $current_page = $_SERVER['REQUEST_URI'];
-    if (in_array($current_page, ['/login', '/register', '/forgot-password', '/reset-password'])) {
-        echo '<link rel="stylesheet" href="/assets/css/auth.css">';
-    }
-    ?>
-    <?php if (isset($page_css)) { 
-        if(is_array($page_css)) {
-            foreach($page_css as $css_file) { ?>
-                <link rel="stylesheet" href="/assets/css/pages/<?= $css_file ?>.css">
-            <?php }
-        } else { ?>
+    <link rel="stylesheet" href="/assets/css/layouts.css">
+    
+    <!-- Authentication pages CSS -->
+    <?php if (strpos($_SERVER['REQUEST_URI'], '/login') === 0 || strpos($_SERVER['REQUEST_URI'], '/register') === 0) { ?>
+        <link rel="stylesheet" href="/assets/css/auth.css">
+        <link rel="stylesheet" href="/assets/css/pages/auth.css">
+    <?php } ?>
+    
+    <!-- Account pages CSS -->
+    <?php if (strpos($_SERVER['REQUEST_URI'], '/account') === 0) { ?>
+        <link rel="stylesheet" href="/assets/css/pages/account.css">
+    <?php } ?>
+    
+    <!-- Include page-specific CSS when available -->
+    <?php if (isset($page_css)) { ?>
+        <?php if (is_array($page_css)) { ?>
+            <?php foreach ($page_css as $css) { ?>
+                <link rel="stylesheet" href="/assets/css/pages/<?= $css ?>.css">
+            <?php } ?>
+        <?php } else { ?>
             <link rel="stylesheet" href="/assets/css/pages/<?= $page_css ?>.css">
-        <?php }
-    } ?>
+        <?php } ?>
+    <?php } ?>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <header>
@@ -138,16 +149,42 @@
         </div>
     </footer>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- JavaScript -->
     <script src="/assets/js/main.js"></script>
-    <?php if (isset($page_js)) {
-        if(is_array($page_js)) {
-            foreach($page_js as $js_file) { ?>
-                <script src="/assets/js/pages/<?= $js_file ?>.js"></script>
-            <?php }
-        } else { ?>
+    
+    <!-- Include page-specific JS when available -->
+    <?php if (isset($page_js)) { ?>
+        <?php if (is_array($page_js)) { ?>
+            <?php foreach ($page_js as $js) { ?>
+                <script src="/assets/js/pages/<?= $js ?>.js"></script>
+            <?php } ?>
+        <?php } else { ?>
             <script src="/assets/js/pages/<?= $page_js ?>.js"></script>
-        <?php }
-    } ?>
+        <?php } ?>
+    <?php } ?>
+
+    <?php if (isset($_GET['debug_css']) && $_GET['debug_css'] === '1') { ?>
+    <div style="position:fixed; bottom:0; left:0; background:#000; color:#fff; padding:5px; font-size:12px; z-index:9999;">
+        <p>CSS Files:</p>
+        <ul style="margin:0; padding-left:20px;">
+            <?php if (isset($page_css)) { ?>
+                <?php if (is_array($page_css)) { ?>
+                    <?php foreach ($page_css as $css) { ?>
+                        <li>/assets/css/pages/<?= $css ?>.css</li>
+                    <?php } ?>
+                <?php } else { ?>
+                    <li>/assets/css/pages/<?= $page_css ?>.css</li>
+                <?php } ?>
+            <?php } ?>
+            <?php if (strpos($_SERVER['REQUEST_URI'], '/login') === 0 || strpos($_SERVER['REQUEST_URI'], '/register') === 0) { ?>
+                <li>/assets/css/auth.css</li>
+                <li>/assets/css/pages/auth.css</li>
+            <?php } ?>
+            <?php if (strpos($_SERVER['REQUEST_URI'], '/account') === 0) { ?>
+                <li>/assets/css/pages/account.css</li>
+            <?php } ?>
+        </ul>
+    </div>
+    <?php } ?>
 </body>
 </html>
