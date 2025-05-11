@@ -57,11 +57,11 @@
             <p class="section-description">Trusted by professional athletes and teams worldwide</p>
         </div>
         <div class="brands-grid">
-            <div class="brand-item"><img src="/assets/images/court-kart-logo.svg" alt="Brand logo"></div>
-            <div class="brand-item"><img src="/assets/images/court-kart-logo.svg" alt="Brand logo"></div>
-            <div class="brand-item"><img src="/assets/images/court-kart-logo.svg" alt="Brand logo"></div>
-            <div class="brand-item"><img src="/assets/images/court-kart-logo.svg" alt="Brand logo"></div>
-            <div class="brand-item"><img src="/assets/images/court-kart-logo.svg" alt="Brand logo"></div>
+            <div class="brand-item"><img src="/assets/images/nba-logo-black.png" alt="Brand logo"></div>
+            <div class="brand-item"><img src="/assets/images/nike-logo-black.png" alt="Brand logo"></div>
+            <div class="brand-item"><img src="/assets/images/wilson-logo-black.png" alt="Brand logo"></div>
+            <div class="brand-item"><img src="/assets/images/spalding-logo-black.png" alt="Brand logo"></div>
+            <div class="brand-item"><img src="/assets/images/court-kart-logo.png" alt="Brand logo"></div>
         </div>
     </div>
 </div>
