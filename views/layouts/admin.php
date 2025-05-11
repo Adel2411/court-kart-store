@@ -83,9 +83,15 @@
                 <h1 class="admin-title"><?= $title ?? 'Dashboard' ?></h1>
                 <div class="admin-header-actions">
                     <div class="admin-user">
-                        <div class="admin-user-image">
-                            <?= strtoupper(substr($_SESSION['user_name'] ?? 'A', 0, 1)) ?>
-                        </div>
+                        <?php if (isset($_SESSION['profile_image']) && !empty($_SESSION['profile_image'])) { ?>
+                            <div class="admin-user-image">
+                                <img src="<?= htmlspecialchars($_SESSION['profile_image']) ?>" alt="User Profile" class="admin-avatar-img">
+                            </div>
+                        <?php } else { ?>
+                            <div class="admin-user-image">
+                                <?= strtoupper(substr($_SESSION['user_name'] ?? 'A', 0, 1)) ?>
+                            </div>
+                        <?php } ?>
                         <div class="admin-user-info">
                             <div class="admin-user-name"><?= htmlspecialchars($_SESSION['user_name'] ?? 'Admin') ?></div>
                             <div class="admin-user-role">Administrator</div>

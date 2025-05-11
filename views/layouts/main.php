@@ -52,23 +52,31 @@
                                     $cartCount = \App\Models\Cart::getItemCount(\App\Core\Session::get('user_id'));
                                 }
                                 ?>
-                                <span class="cart-count"><?= $cartCount ?></span>
+                                <?php if ($cartCount > 0) { ?>
+                                    <span class="cart-count"><?= $cartCount ?></span>
+                                <?php } ?>
                             </a>
-                            <a href="/orders">My Orders</a>
-                            <div class="dropdown">
-                                <button class="dropdown-btn">
-                                    <?= htmlspecialchars($_SESSION['user_name']) ?>
-                                    <span class="user-badge <?= $_SESSION['user_role'] === 'admin' ? 'admin' : '' ?>">
-                                        <?= ucfirst($_SESSION['user_role']) ?>
-                                    </span>
-                                    <i class="fa fa-caret-down"></i>
-                                </button>
-                                <div class="dropdown-content">
-                                    <a href="/account">My Account</a>
-                                    <a href="/orders">My Orders</a>
-                                    <a href="/logout" class="btn-danger">Logout</a>
-                                </div>
-                            </div>
+                            
+                            <a href="/account" class="nav-link user-profile-link">
+                                <?php 
+                                $profile_image = isset($_SESSION['profile_image']) && !empty($_SESSION['profile_image']) 
+                                    ? $_SESSION['profile_image'] 
+                                    : ''; 
+                                ?>
+                                <?php if ($profile_image) { ?>
+                                    <img src="<?= htmlspecialchars($profile_image) ?>" alt="Profile" class="user-avatar-img">
+                                <?php } else { ?>
+                                    <div class="user-avatar">
+                                        <?= strtoupper(substr($_SESSION['user_name'] ?? 'U', 0, 1)) ?>
+                                    </div>
+                                <?php } ?>
+                                <span><?= htmlspecialchars($_SESSION['user_name'] ?? 'User') ?></span>
+                                <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin') { ?>
+                                    <span class="user-badge admin">Admin</span>
+                                <?php } ?>
+                            </a>
+                            
+                            <a href="/logout" class="nav-link">Logout</a>
                         <?php } else { ?>
                             <a href="/login" class="btn btn-primary">Login</a>
                             <a href="/register" class="btn btn-outline">Register</a>

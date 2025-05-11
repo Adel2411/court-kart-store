@@ -48,9 +48,15 @@
                         <tr data-role="<?= strtolower($user['role']) ?>">
                             <td><?= $user['id'] ?></td>
                             <td class="user-info">
-                                <div class="user-avatar">
-                                    <?= strtoupper(substr($user['name'], 0, 1)) ?>
-                                </div>
+                                <?php if (!empty($user['profile_image'])) { ?>
+                                    <div class="user-avatar">
+                                        <img src="<?= htmlspecialchars($user['profile_image']) ?>" alt="<?= htmlspecialchars($user['name']) ?>" class="user-avatar-img">
+                                    </div>
+                                <?php } else { ?>
+                                    <div class="user-avatar">
+                                        <?= strtoupper(substr($user['name'], 0, 1)) ?>
+                                    </div>
+                                <?php } ?>
                                 <div class="user-name"><?= htmlspecialchars($user['name']) ?></div>
                             </td>
                             <td><?= htmlspecialchars($user['email']) ?></td>
@@ -110,7 +116,9 @@
         <div class="admin-modal-body">
             <div class="user-profile">
                 <div class="user-profile-header">
-                    <div class="large-avatar" id="userAvatar"></div>
+                    <div class="large-avatar" id="userAvatar">
+                        <!-- Will be populated with image or initials via JavaScript -->
+                    </div>
                     <div class="user-profile-info">
                         <h3 id="userName"></h3>
                         <div id="userEmail"></div>

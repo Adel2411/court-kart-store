@@ -102,6 +102,20 @@ nav a.active::after {
   background-color: var(--accent);
 }
 
+.user-avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--light-gray);
+}
+
+.user-profile-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
 /* Mobile menu button */
 .mobile-menu-btn {
   display: none;
