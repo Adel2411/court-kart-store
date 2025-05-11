@@ -175,6 +175,23 @@ class AccountController
             );
         }
         
+        // Update user data in database
+        $success = $db->execute(
+            'UPDATE users SET name = ?, email = ?, profile_image = ? WHERE id = ?',
+            [$name, $email, $profileImage, $userId]
+        );
+        
+        if ($success) {
+            // Update session data with the new user information
+            $_SESSION['user_name'] = $name;
+            $_SESSION['user_email'] = $email;
+            $_SESSION['profile_image'] = $profileImage;
+            
+            Session::set('success', 'Profile updated successfully.');
+            header('Location: /account');
+            exit;
+        }
+        
         // Update session data
         Session::set('user_name', $name);
         Session::set('user_email', $email);
@@ -183,5 +200,45 @@ class AccountController
         Session::set('success', 'Your profile has been updated successfully.');
         header('Location: /account');
         exit;
+    }
+
+    public function updateProfile()
+    {
+        // Make sure user is logged in
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        
+        $userId = $_SESSION['user_id'];
+        $name = $_POST['name'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $currentPassword = $_POST['current_password'] ?? '';
+        $newPassword = $_POST['new_password'] ?? '';
+        $profileImage = $_POST['profile_image'] ?? '';
+
+        // Validation and database update logic here...
+        
+        // After successful database update:
+        $db = \App\Core\Database::getInstance();
+        $success = $db->execute(
+            'UPDATE users SET name = ?, email = ?, profile_image = ? WHERE id = ?',
+            [$name, $email, $profileImage, $userId]
+        );
+        
+        if ($success) {
+            // Update session data with the new user information
+            $_SESSION['user_name'] = $name;
+            $_SESSION['user_email'] = $email;
+            $_SESSION['profile_image'] = $profileImage; // Store profile image in session
+            
+            Session::set('success', 'Profile updated successfully.');
+            header('Location: /account');
+            exit;
+        } else {
+            Session::set('error', 'Failed to update profile. Please try again.');
+            header('Location: /account/edit');
+            exit;
+        }
     }
 }

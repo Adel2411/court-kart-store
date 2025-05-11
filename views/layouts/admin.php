@@ -85,7 +85,7 @@
                     <div class="admin-user">
                         <?php if (isset($_SESSION['profile_image']) && !empty($_SESSION['profile_image'])) { ?>
                             <div class="admin-user-image">
-                                <img src="<?= htmlspecialchars($_SESSION['profile_image']) ?>" alt="User Profile" class="admin-avatar-img">
+                                <img src="<?= htmlspecialchars($_SESSION['profile_image']) ?>" alt="Admin Profile" class="admin-avatar-img">
                             </div>
                         <?php } else { ?>
                             <div class="admin-user-image">

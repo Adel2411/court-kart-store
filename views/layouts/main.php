@@ -72,13 +72,11 @@
                                 <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin') { ?>
                                     <span class="user-badge admin">Admin</span>
                                 <?php } ?>
-                                <?php 
-                                $profile_image = isset($_SESSION['profile_image']) && !empty($_SESSION['profile_image']) 
-                                    ? $_SESSION['profile_image'] 
-                                    : ''; 
-                                ?>
-                                <?php if ($profile_image) { ?>
-                                    <img src="<?= htmlspecialchars($profile_image) ?>" alt="Profile" class="user-avatar-img">
+                                
+                                <?php if (isset($_SESSION['profile_image']) && !empty($_SESSION['profile_image'])) { ?>
+                                    <div class="user-avatar">
+                                        <img src="<?= htmlspecialchars($_SESSION['profile_image']) ?>" alt="Profile" class="user-avatar-img">
+                                    </div>
                                 <?php } else { ?>
                                     <div class="user-avatar">
                                         <?= strtoupper(substr($_SESSION['user_name'] ?? 'U', 0, 1)) ?>

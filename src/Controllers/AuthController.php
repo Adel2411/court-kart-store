@@ -71,10 +71,26 @@ class AuthController
 
         // Attempt login
         if ($this->authService->login($email, $password, $remember)) {
-            // Redirect based on user role
-            $redirect = Session::get('user_role') === 'admin' ? '/admin' : '/';
-            Session::remove('redirect_after_login');
-            header("Location: $redirect");
+            // Fetch user data including profile image
+            $db = \App\Core\Database::getInstance();
+            $user = $db->fetchRow('SELECT id, name, email, role, profile_image FROM users WHERE email = ?', [$email]);
+
+            if ($user) {
+                // Store all necessary user data in session
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_name'] = $user['name'];
+                $_SESSION['user_email'] = $user['email'];
+                $_SESSION['user_role'] = $user['role'];
+                $_SESSION['profile_image'] = $user['profile_image']; // Ensure profile image is stored in session
+
+                // Redirect based on role
+                if ($user['role'] === 'admin') {
+                    header('Location: /admin');
+                } else {
+                    header('Location: /');
+                }
+                exit;
+            }
         } else {
             Session::set('error', 'Invalid email or password.');
             header('Location: /login');
