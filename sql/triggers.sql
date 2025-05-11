@@ -14,7 +14,7 @@ BEGIN
 
     IF OLD.status != 'confirmed' AND NEW.status = 'confirmed' THEN
         INSERT INTO logs (action, user_id, order_id, message)
-        VALUES ('ORDER_CONFIRMED', NEW.user_id, NEW.id, CONCAT('Order #', NEW.id, ' confirmed'));
+        VALUES ('CHECKOUT', NEW.user_id, NEW.id, CONCAT('Order #', NEW.id, ' confirmed'));
 
         OPEN cur;
         read_loop: LOOP
@@ -29,7 +29,7 @@ BEGIN
         CLOSE cur;
         
         INSERT INTO logs (action, user_id, order_id, message)
-        VALUES ('STOCK_UPDATED', NEW.user_id, NEW.id, CONCAT('Stock updated for order #', NEW.id));
+        VALUES ('PRODUCT_UPDATE', NEW.user_id, NEW.id, CONCAT('Stock updated for order #', NEW.id));
     END IF;
 END$$
 
@@ -55,7 +55,7 @@ BEGIN
 
     IF NEW.quantity > available_stock THEN
         INSERT INTO logs (action, user_id, order_id, message)
-        VALUES ('STOCK_UPDATED', v_user_id, NEW.order_id, 
+        VALUES ('PRODUCT_UPDATE', v_user_id, NEW.order_id, 
                 CONCAT('Failed to add product #', NEW.product_id, ' to order #', NEW.order_id, ': Requested ', NEW.quantity, ', Available ', available_stock));
                 
         SIGNAL SQLSTATE '45000'
@@ -82,7 +82,7 @@ BEGIN
     IF OLD.status != 'cancelled' AND NEW.status = 'cancelled' THEN
         -- Log the order cancellation
         INSERT INTO logs (action, user_id, order_id, message)
-        VALUES ('ORDER_CANCELED', NEW.user_id, NEW.id, CONCAT('Order #', NEW.id, ' canceled'));
+        VALUES ('ORDER_CANCEL', NEW.user_id, NEW.id, CONCAT('Order #', NEW.id, ' canceled'));
         
         OPEN cur;
         read_loop: LOOP
@@ -97,7 +97,7 @@ BEGIN
         CLOSE cur;
         
         INSERT INTO logs (action, user_id, order_id, message)
-        VALUES ('STOCK_UPDATED', NEW.user_id, NEW.id, CONCAT('Stock restored for order #', NEW.id));
+        VALUES ('PRODUCT_UPDATE', NEW.user_id, NEW.id, CONCAT('Stock restored for order #', NEW.id));
     END IF;
 END$$
 
@@ -115,7 +115,7 @@ BEGIN
         VALUES (NEW.id, 'Order was canceled by user or admin', NOW());
         
         INSERT INTO logs (action, user_id, order_id, message)
-        VALUES ('ORDER_CANCELED', NEW.user_id, NEW.id, CONCAT('Order #', NEW.id, ' cancellation recorded'));
+        VALUES ('ORDER_CANCEL', NEW.user_id, NEW.id, CONCAT('Order #', NEW.id, ' cancellation recorded'));
     END IF;
 END$$
 

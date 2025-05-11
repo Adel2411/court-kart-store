@@ -343,7 +343,7 @@ class Order
     public static function updateStatus(int $orderId, string $status): bool
     {
         $db = Database::getInstance();
-        $validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
+        $validStatuses = self::getValidStatuses();
 
         if (! in_array($status, $validStatuses)) {
             return false;
@@ -393,8 +393,51 @@ class Order
      */
     private static function validateStatus(string $status): string
     {
-        $validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
+        $validStatuses = self::getValidStatuses();
         
         return in_array($status, $validStatuses) ? $status : 'pending';
     }
+
+    /**
+     * Get valid order statuses from database schema
+     *
+     * @return array Array of valid status values
+     */
+    private static function getValidStatuses(): array
+    {
+        static $statuses = null;
+        
+        if ($statuses === null) {
+            try {
+                $db = Database::getInstance();
+                
+                $sql = "SELECT SUBSTRING(COLUMN_TYPE, 6, LENGTH(COLUMN_TYPE) - 6) as enum_list
+                        FROM INFORMATION_SCHEMA.COLUMNS
+                        WHERE TABLE_SCHEMA = DATABASE()
+                        AND TABLE_NAME = 'orders'
+                        AND COLUMN_NAME = 'status'";
+                
+                $result = $db->fetchRow($sql);
+                
+                if ($result && isset($result['enum_list'])) {
+                    // Parse the enum list which comes in format: 'value1','value2','value3'
+                    $enumList = $result['enum_list'];
+                    
+                    // Remove the first and last quote and then split by ','
+                    $enumList = substr($enumList, 1, -1);
+                    $statuses = explode("','", $enumList);
+                } else {
+                    // Fallback to default values if query fails
+                    $statuses = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
+                }
+            } catch (Exception $e) {
+                error_log('Error fetching valid order statuses: ' . $e->getMessage());
+                // Fallback to default values
+                $statuses = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
+            }
+        }
+        
+        return $statuses;
+    }
 }
+

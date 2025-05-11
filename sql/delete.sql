@@ -16,7 +16,7 @@ SELECT * FROM canceled_orders;
 SELECT * FROM order_items;
 SELECT * FROM orders;
 SELECT * FROM cart_items;
--- SELECT * FROM products;
+SELECT * FROM products;
 SELECT * FROM users;
 
 

@@ -57,7 +57,7 @@ BEGIN
         WHERE user_id = p_user_id;
 
         INSERT INTO logs (action, user_id, order_id, message)
-        VALUES ('ORDER_CONFIRMED', p_user_id, p_order_id, 'Order finalized and cart emptied');
+        VALUES ('CHECKOUT', p_user_id, p_order_id, 'Order finalized and cart emptied');
 
         COMMIT;
     ELSE

@@ -12,17 +12,18 @@ CREATE TABLE users (
 );
 
 -- PRODUCTS table
--- CREATE TABLE products (
---   id INT AUTO_INCREMENT PRIMARY KEY,
---   name VARCHAR(100) NOT NULL,
---   description TEXT NOT NULL,
---   price DECIMAL(10, 2) NOT NULL,
---   stock INT NOT NULL,
---   image_url VARCHAR(255),
---   category ENUM ('Footwear', 'Gear', 'Apparel', 'Accessories', 'Equipment', 'Merchandise') NOT NULL,
---   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
---   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
--- );
+CREATE TABLE products (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  description TEXT NOT NULL,
+  price DECIMAL(10, 2) NOT NULL,
+  stock INT NOT NULL,
+  image_url VARCHAR(255),
+  discount DECIMAL(5, 2) DEFAULT 0.00 CHECK (discount >= 0.00 AND discount <= 1.00),
+  category ENUM ('Footwear', 'Gear', 'Apparel', 'Accessories', 'Equipment', 'Merchandise') NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 
 -- CART_ITEMS table
 CREATE TABLE cart_items (
@@ -67,7 +68,7 @@ CREATE TABLE canceled_orders (
 -- LOGS table
 CREATE TABLE logs (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  action ENUM ('USER_LOGIN', 'USER_LOGOUT', 'CART_ADD', 'CART_REMOVE', 'CHECKOUT', 'ORDER_UPDATE') NOT NULL,
+  action ENUM ('USER_REGISTER', 'USER_LOGIN', 'USER_LOGOUT', 'USER_UPDATE', 'USER_DELETE', 'CART_ADD', 'CART_REMOVE', 'CHECKOUT', 'ORDER_UPDATE', 'ORDER_CANCEL', 'PRODUCT_ADD', 'PRODUCT_UPDATE', 'PRODUCT_DELETE') NOT NULL,
   user_id INT,
   order_id INT,
   message TEXT,

@@ -148,11 +148,15 @@ class AuthController
 
         $userId = $db->getLastInsertId();
 
-        // Log user creation
-        $db->execute(
-            'INSERT INTO logs (action, user_id, message) VALUES (?, ?, ?)',
-            ['USER_REGISTER', $userId, 'New user registered: '.$email]
-        );
+        // Log user creation with error handling
+        try {
+            $db->execute(
+                'INSERT INTO logs (action, user_id, message) VALUES (?, ?, ?)',
+                ['USER_REGISTER', $userId, 'New user registered: '.$email]
+            );
+        } catch (\Exception $e) {
+            error_log('Failed to log user registration: ' . $e->getMessage());
+        }
 
         // Redirect to login with success message
         Session::set('success', 'Registration successful! You can now log in.');
