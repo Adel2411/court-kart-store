@@ -23,13 +23,23 @@ class AccountController
      */
     public function index()
     {
+        if (!Session::get('user_id')) {
+            Session::flash('error', 'Please login to view your account');
+            header('Location: /login');
+            exit;
+        }
+
         $userId = Session::get('user_id');
         $user = User::getById($userId);
-
+        
+        // Fetch user's order history
+        $orders = Order::getCustomerOrderHistory($userId);
+        
         echo View::renderWithLayout('account/index', 'main', [
             'title' => 'My Account - Court Kart',
             'user' => $user,
-            'page_css' => 'account'
+            'orders' => $orders,  // Pass orders to the view
+            'page_css' => 'account',
         ]);
     }
 

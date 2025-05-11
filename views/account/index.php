@@ -73,7 +73,7 @@
                                         <?= ucfirst($order['status']) ?>
                                     </span>
                                 </div>
-                                <div class="order-total">$<?= number_format($order['total'], 2) ?></div>
+                                <div class="order-total">$<?= number_format($order['total_price'], 2) ?></div>
                                 <a href="/orders/<?= $order['id'] ?>" class="btn btn-sm btn-outline">View</a>
                             </div>
                         <?php } ?>

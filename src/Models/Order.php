@@ -233,25 +233,42 @@ class Order
     public static function getCustomerOrderHistory(int $userId): array
     {
         $db = Database::getInstance();
-
-        // Call the stored procedure to get customer orders with item counts
-        $orders = $db->fetchRows("CALL GetCustomerOrderHistory(?)", [$userId]);
-
-        // Format the result to match expected structure
-        foreach ($orders as &$order) {
-            // Rename fields to match existing code expectations
-            if (isset($order['order_id'])) {
-                $order['id'] = $order['order_id'];
+        
+        try {
+            // Call the stored procedure to get customer orders with item counts
+            $orders = $db->fetchRows("CALL GetCustomerOrderHistory(?)", [$userId]);
+            
+            // If stored procedure isn't working, fall back to direct query
+            if (empty($orders)) {
+                $sql = "SELECT o.id, o.total_price, o.status, o.created_at, 
+                       COUNT(oi.id) as items_count
+                       FROM orders o 
+                       LEFT JOIN order_items oi ON o.id = oi.order_id 
+                       WHERE o.user_id = ? 
+                       GROUP BY o.id 
+                       ORDER BY o.created_at DESC";
+                       
+                $orders = $db->fetchRows($sql, [$userId]);
             }
-            if (isset($order['order_date'])) {
-                $order['created_at'] = $order['order_date'];
+            
+            // Format the result to match existing code expectations
+            foreach ($orders as &$order) {
+                // Rename fields to match expected structure if needed
+                if (isset($order['order_id']) && !isset($order['id'])) {
+                    $order['id'] = $order['order_id'];
+                }
+                
+                // Make sure total_price exists and is properly named
+                if (isset($order['total']) && !isset($order['total_price'])) {
+                    $order['total_price'] = $order['total'];
+                }
             }
-            if (isset($order['item_count'])) {
-                $order['items_count'] = $order['item_count'];
-            }
+            
+            return $orders;
+        } catch (Exception $e) {
+            error_log('Error getting customer order history: ' . $e->getMessage());
+            return [];
         }
-
-        return $orders;
     }
 
     /**
