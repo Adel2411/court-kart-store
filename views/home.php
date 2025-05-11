@@ -27,11 +27,11 @@
         
         <div class="hero-stats">
             <div class="stat">
-                <span class="stat-number" data-counter="200">0</span><span class="stat-plus">+</span>
+                <span class="stat-number counter-animation" data-counter="<?= $totalProducts ?? 200 ?>">0</span><span class="stat-plus">+</span>
                 <p class="stat-label">Products</p>
             </div>
             <div class="stat">
-                <span class="stat-number" data-counter="2000">0</span><span class="stat-plus">+</span>
+                <span class="stat-number counter-animation" data-counter="<?= $totalUsers ?? 2000 ?>">0</span><span class="stat-plus">+</span>
                 <p class="stat-label">Happy Players</p>
             </div>
             <div class="stat">

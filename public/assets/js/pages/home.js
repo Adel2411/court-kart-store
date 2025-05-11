@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize newsletter form
     initNewsletterForm();
+    
+    // Initialize counter animations
+    initCounterAnimations();
 });
 
 /**
@@ -191,6 +194,68 @@ function initNewsletterForm() {
             }, 1000);
         });
     }
+}
+
+/**
+ * Initialize counter animations for stat numbers
+ */
+function initCounterAnimations() {
+    // Find all elements with counter-animation class
+    const counters = document.querySelectorAll('.counter-animation');
+    
+    // Process each counter element
+    counters.forEach(counter => {
+        // Get the target value from data-counter attribute
+        const counterValue = counter.getAttribute('data-counter');
+        
+        // Make sure we have a valid number to count to
+        if (!counterValue) {
+            console.error('Missing data-counter attribute on counter element');
+            return;
+        }
+        
+        const target = parseInt(counterValue, 10);
+        
+        // Verify we got a valid number
+        if (isNaN(target)) {
+            console.error('Invalid counter value:', counterValue);
+            return;
+        }
+        
+        // Set initial value to 0
+        counter.textContent = '0';
+        
+        // Configure animation parameters
+        const duration = 2000; // 2 seconds animation
+        const frameDuration = 30; // Update every 30ms
+        const totalFrames = duration / frameDuration;
+        const increment = Math.ceil(target / totalFrames);
+        
+        // Start animation with a small delay
+        setTimeout(() => {
+            let current = 0;
+            
+            // Update function that increments the counter
+            const updateCounter = () => {
+                current += increment;
+                
+                // If we've reached or exceeded the target, set to exact target value
+                if (current >= target) {
+                    counter.textContent = target;
+                } else {
+                    // Otherwise update to current value and continue animation
+                    counter.textContent = current;
+                    // Schedule next update
+                    requestAnimationFrame(() => {
+                        setTimeout(updateCounter, frameDuration);
+                    });
+                }
+            };
+            
+            // Start the counter animation
+            updateCounter();
+        }, 500); // 500ms delay before starting animation
+    });
 }
 
 /**

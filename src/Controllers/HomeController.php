@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\View;
 use App\Models\Product;
+use App\Models\User;
 
 class HomeController
 {
@@ -37,10 +38,16 @@ class HomeController
             }
         }
 
+        // Get the total count of products and users
+        $totalProducts = Product::getCount();
+        $totalUsers = User::getCount();
+
         echo View::renderWithLayout('home', 'main', [
             'title' => 'Court Kart - Premium Basketball Products',
             'newProducts' => $newProducts,
             'topProducts' => $topProducts,
+            'totalProducts' => $totalProducts,
+            'totalUsers' => $totalUsers,
             'page_css' => 'home',
             'page_js' => 'home',
         ]);

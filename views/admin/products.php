@@ -173,11 +173,20 @@
                         <label for="productCategory">Category</label>
                         <select id="productCategory" name="category" class="form-control" required>
                             <option value="">Select a category</option>
-                            <option value="Footwear">Footwear</option>
-                            <option value="Apparel">Apparel</option>
-                            <option value="Equipment">Equipment</option>
-                            <option value="Accessories">Accessories</option>
-                            <option value="Merchandise">Merchandise</option>
+                            <?php
+                            $categories = [
+                                'Footwear' => '<i class="fas fa-shoe-prints"></i>',
+                                'Apparel' => '<i class="fas fa-tshirt"></i>',
+                                'Gear' => '<i class="fas fa-basketball-ball"></i>',
+                                'Equipment' => '<i class="fas fa-dumbbell"></i>',
+                                'Accessories' => '<i class="fas fa-glasses"></i>',
+                                'Merchandise' => '<i class="fas fa-store"></i>',
+                            ];
+                            
+                            foreach ($categories as $category => $icon) {
+                                echo "<option value=\"$category\">$icon $category</option>";
+                            }
+                            ?>
                         </select>
                     </div>
                     

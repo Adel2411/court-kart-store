@@ -62,6 +62,7 @@
                                     'Footwear' => '<i class="fas fa-shoe-prints"></i>',
                                     'Apparel' => '<i class="fas fa-tshirt"></i>',
                                     'Gear' => '<i class="fas fa-basketball-ball"></i>',
+                                    'Equipment' => '<i class="fas fa-dumbbell"></i>',
                                     'Accessories' => '<i class="fas fa-glasses"></i>',
                                     'Merchandise' => '<i class="fas fa-store"></i>',
                                 ];
