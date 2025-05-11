@@ -245,6 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     /**
      * Initialize quick view functionality
+     * Updated to use the modal component
      */
     function initQuickView() {
         document.querySelectorAll('[data-action="quickview"]').forEach(button => {
@@ -253,7 +254,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Show loading state with animation
                 quickViewContent.innerHTML = '<div class="loader"><i class="fas fa-basketball-ball fa-spin"></i><p>Loading product details...</p></div>';
-                quickViewModal.setAttribute('aria-hidden', 'false');
+                
+                // Open modal using our component or fallback
+                if (window.CourtKartModals && window.CourtKartModals.quickViewModal) {
+                    window.CourtKartModals.quickViewModal.open();
+                } else {
+                    quickViewModal.setAttribute('aria-hidden', 'false');
+                }
                 
                 // Fetch product data with proper error handling
                 fetchProductDetails(productId);
@@ -401,23 +408,28 @@ document.addEventListener('DOMContentLoaded', function() {
     
     /**
      * Initialize modal close handlers
+     * Updated to use the modal component
      */
     function initModalHandlers() {
-        // Modal close handlers
-        document.querySelectorAll('[data-close]').forEach(element => {
-            element.addEventListener('click', function() {
-                quickViewModal.setAttribute('aria-hidden', 'true');
+        // Use our modal component if available
+        if (!window.CourtKartModals || !window.CourtKartModals.quickViewModal) {
+            // Fallback - Modal close handlers for direct DOM manipulation
+            document.querySelectorAll('[data-close]').forEach(element => {
+                element.addEventListener('click', function() {
+                    quickViewModal.setAttribute('aria-hidden', 'true');
+                });
             });
-        });
-        
-        // Close modal on escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && quickViewModal.getAttribute('aria-hidden') === 'false') {
-                quickViewModal.setAttribute('aria-hidden', 'true');
-            }
-        });
+            
+            // Close modal on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && quickViewModal.getAttribute('aria-hidden') === 'false') {
+                    quickViewModal.setAttribute('aria-hidden', 'true');
+                }
+            });
+        }
         
         // Add close button functionality for cart notification
+        const cartNotification = document.getElementById('cartNotification');
         const closeBtn = cartNotification.querySelector('.toast-close');
         if (closeBtn) {
             closeBtn.addEventListener('click', function() {

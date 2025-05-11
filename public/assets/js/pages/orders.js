@@ -15,8 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // Print order functionality
   initPrintOrderButton();
   
-  // Cancel order confirmation
-  initCancelOrderConfirmation();
+  // Cancel order modal functionality
+  initCancelOrderModal();
   
   // Status filter
   initStatusFilter();
@@ -125,7 +125,75 @@ function initPrintOrderButton() {
 }
 
 /**
- * Initialize cancel order confirmation
+ * Initialize cancel order modal functionality
+ * Updated to use the central modal component
+ */
+function initCancelOrderModal() {
+  const cancelBtn = document.querySelector('.cancel-order-btn');
+  const cancelOrderForm = document.getElementById('cancelOrderForm');
+  const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+  
+  if (!cancelBtn || !cancelOrderForm) return;
+  
+  // Open modal when cancel button is clicked
+  cancelBtn.addEventListener('click', function() {
+    const orderId = this.getAttribute('data-order-id');
+    cancelOrderForm.action = `/orders/${orderId}/cancel`;
+    
+    // Open modal using our modal component
+    if (window.CourtKartModals && window.CourtKartModals.cancelOrderModal) {
+      window.CourtKartModals.cancelOrderModal.open();
+    } else {
+      // Fallback if modal component isn't available yet
+      document.getElementById('cancelOrderModal').classList.add('active');
+    }
+  });
+  
+  // Handle form submission
+  if (confirmCancelBtn) {
+    confirmCancelBtn.addEventListener('click', function() {
+      const reasonInput = document.getElementById('cancelReason');
+      
+      if (reasonInput.value.trim() === '') {
+        // Show validation error
+        reasonInput.classList.add('is-invalid');
+        
+        // Add error message if not already present
+        let errorMessage = document.querySelector('.cancel-reason-error');
+        if (!errorMessage) {
+          errorMessage = document.createElement('div');
+          errorMessage.className = 'error-message cancel-reason-error';
+          errorMessage.textContent = 'Please provide a reason for cancellation';
+          reasonInput.parentNode.appendChild(errorMessage);
+        }
+        
+        return;
+      }
+      
+      // Remove validation error if exists
+      reasonInput.classList.remove('is-invalid');
+      const errorMessage = document.querySelector('.cancel-reason-error');
+      if (errorMessage) errorMessage.remove();
+      
+      // Submit the form
+      cancelOrderForm.submit();
+    });
+  }
+  
+  // Remove validation error when typing
+  const reasonInput = document.getElementById('cancelReason');
+  if (reasonInput) {
+    reasonInput.addEventListener('input', function() {
+      this.classList.remove('is-invalid');
+      const errorMessage = document.querySelector('.cancel-reason-error');
+      if (errorMessage) errorMessage.remove();
+    });
+  }
+}
+
+/**
+ * Initialize cancel order confirmation - Deprecated in favor of modal
+ * Keeping for backward compatibility
  */
 function initCancelOrderConfirmation() {
   const cancelForms = document.querySelectorAll('.cancel-order-form');
@@ -138,8 +206,17 @@ function initCancelOrderConfirmation() {
     form.addEventListener('submit', function(e) {
       e.preventDefault();
       
-      if (confirm('Are you sure you want to cancel this order? This action cannot be undone.')) {
-        this.submit();
+      // Show the modal instead if it exists
+      const modal = document.getElementById('cancelOrderModal');
+      if (modal) {
+        const orderId = this.getAttribute('action').split('/').pop();
+        document.getElementById('cancelOrderForm').action = `/orders/${orderId}/cancel`;
+        modal.classList.add('active');
+      } else {
+        // Fallback to simple confirmation
+        if (confirm('Are you sure you want to cancel this order? This action cannot be undone.')) {
+          this.submit();
+        }
       }
     });
   });

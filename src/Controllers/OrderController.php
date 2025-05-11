@@ -221,13 +221,16 @@ class OrderController
         $userId = Session::get('user_id');
         $orderId = (int)$id;
         
-        if (Order::cancelOrder($orderId, $userId)) {
+        // Get cancellation reason from the form
+        $reason = isset($_POST['reason']) ? trim($_POST['reason']) : 'No reason provided';
+        
+        if (Order::cancelOrder($orderId, $userId, $reason)) {
             Session::flash('success', 'Order cancelled successfully');
         } else {
             Session::flash('error', 'Failed to cancel order');
         }
         
-        header('Location: /orders/history');
+        header('Location: /orders');
         exit;
     }
 }

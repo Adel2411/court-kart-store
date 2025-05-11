@@ -322,13 +322,16 @@ class Order
      *
      * @param  int  $orderId  Order ID
      * @param  int  $userId  User ID
+     * @param  string  $reason  Cancellation reason
      * @return bool Success status
      */
-    public static function cancelOrder(int $orderId, int $userId): bool
+    public static function cancelOrder(int $orderId, int $userId, string $reason = 'User requested cancellation'): bool
     {
         $db = Database::getInstance();
 
         try {
+            $db->beginTransaction();
+            
             // Verify order belongs to user
             $sql = "SELECT id FROM orders WHERE id = ? AND user_id = ? AND status != 'cancelled'";
             $order = $db->fetchRow($sql, [$orderId, $userId]);
@@ -337,14 +340,22 @@ class Order
                 return false;
             }
 
-            // Update status - triggers will handle stock restoration and logging
+            // Update status - triggers will handle stock restoration
             $sql = "UPDATE orders SET status = 'cancelled' WHERE id = ?";
             $db->execute($sql, [$orderId]);
-
+            
+            // Insert the cancellation reason directly
+            $sql = "INSERT INTO canceled_orders (order_id, reason, canceled_at) 
+                   VALUES (?, ?, NOW())
+                   ON DUPLICATE KEY UPDATE reason = ?, canceled_at = NOW()";
+            $db->execute($sql, [$orderId, $reason, $reason]);
+            
+            $db->commit();
             return true;
+            
         } catch (Exception $e) {
+            $db->rollBack();
             error_log('Error cancelling order: '.$e->getMessage());
-
             return false;
         }
     }

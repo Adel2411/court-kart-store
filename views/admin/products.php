@@ -135,14 +135,17 @@
 </div>
 
 <!-- Add/Edit Product Modal -->
-<div class="admin-modal" id="productModal">
-    <div class="admin-modal-content">
-        <div class="admin-modal-header">
-            <h3 class="admin-modal-title" id="modalTitle">Add New Product</h3>
-            <button type="button" class="admin-modal-close" id="closeModal">&times;</button>
+<div class="modal" id="productModal" aria-hidden="true" role="dialog" aria-labelledby="productModalTitle">
+    <div class="modal-backdrop" tabindex="-1" data-close></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="productModalTitle">Add New Product</h3>
+            <button type="button" class="modal-close" data-close aria-label="Close modal">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
         
-        <div class="admin-modal-body">
+        <div class="modal-body">
             <form id="productForm" action="/admin/products/save" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="id" id="productId">
                 
@@ -201,7 +204,7 @@
             </form>
         </div>
         
-        <div class="admin-modal-footer">
+        <div class="modal-footer">
             <button type="button" class="btn btn-outline" id="cancelBtn">Cancel</button>
             <button type="button" class="btn btn-primary" id="saveProductBtn">Save Product</button>
         </div>
@@ -303,6 +306,21 @@ document.addEventListener('DOMContentLoaded', function() {
         filter.addEventListener('change', function() {
             this.closest('form').submit();
         });
+    });
+
+    // Connect to our modal component
+    document.addEventListener('modal:open', function(e) {
+        if (e.detail.modalId === 'productModal') {
+            // Modal has been opened, handle any specific behaviors
+            document.getElementById('productName').focus();
+        }
+    });
+    
+    document.addEventListener('modal:close', function(e) {
+        if (e.detail.modalId === 'productModal') {
+            // Modal has been closed, handle any cleanup
+            document.getElementById('productImagePreview').style.display = 'none';
+        }
     });
 });
 </script>

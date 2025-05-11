@@ -322,11 +322,11 @@
 <div class="filters-backdrop"></div>
 
 <!-- Quick View Modal -->
-<div class="modal" id="quickViewModal" aria-hidden="true">
+<div class="modal" id="quickViewModal" aria-hidden="true" role="dialog" aria-labelledby="quickViewTitle">
     <div class="modal-backdrop" tabindex="-1" data-close></div>
     <div class="modal-content">
         <div class="modal-header">
-            <h2 class="modal-title">Product Quick View</h2>
+            <h2 class="modal-title" id="quickViewTitle">Product Quick View</h2>
             <button type="button" class="modal-close" data-close aria-label="Close modal">
                 <i class="fas fa-times"></i>
             </button>

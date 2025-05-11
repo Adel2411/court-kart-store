@@ -27,7 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // Product filter functionality
   initProductFilters();
   
-  // Existing code for product form modal...
+  // Initialize product modals
+  initProductModal();
 });
 
 /**
@@ -61,6 +62,121 @@ function initProductFilters() {
     resetBtn.addEventListener('click', function(e) {
       e.preventDefault();
       window.location.href = '/admin/products';
+    });
+  }
+}
+
+/**
+ * Initialize product modal functionality
+ */
+function initProductModal() {
+  const addBtn = document.getElementById('addProductBtn');
+  const saveBtn = document.getElementById('saveProductBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
+  const productForm = document.getElementById('productForm');
+  const productIdInput = document.getElementById('productId');
+  const productImage = document.getElementById('productImage');
+  const productImagePreview = document.getElementById('productImagePreview');
+  const modalTitle = document.getElementById('productModalTitle');
+  
+  // Open modal for new product
+  if (addBtn) {
+    addBtn.addEventListener('click', function() {
+      modalTitle.textContent = 'Add New Product';
+      productForm.reset();
+      productIdInput.value = '';
+      if (productImagePreview) productImagePreview.style.display = 'none';
+      
+      // Open modal using the modal component
+      if (window.CourtKartModals && window.CourtKartModals.productModal) {
+        window.CourtKartModals.productModal.open();
+      } else {
+        // Fallback if modal component isn't loaded yet
+        document.getElementById('productModal').classList.add('active');
+      }
+    });
+  }
+  
+  // Image preview functionality
+  if (productImage) {
+    productImage.addEventListener('input', function() {
+      if (this.value && productImagePreview) {
+        productImagePreview.src = this.value;
+        productImagePreview.style.display = 'block';
+        
+        // Handle error if image doesn't load
+        productImagePreview.onerror = function() {
+          this.style.display = 'none';
+        };
+      } else if (productImagePreview) {
+        productImagePreview.style.display = 'none';
+      }
+    });
+  }
+  
+  // Edit product
+  document.querySelectorAll('.edit-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const productData = JSON.parse(this.closest('tr').dataset.product);
+      modalTitle.textContent = 'Edit Product';
+      
+      document.getElementById('productId').value = productData.id;
+      document.getElementById('productName').value = productData.name;
+      document.getElementById('productDescription').value = productData.description;
+      document.getElementById('productPrice').value = productData.price;
+      document.getElementById('productStock').value = productData.stock;
+      document.getElementById('productCategory').value = productData.category;
+      document.getElementById('productImage').value = productData.image_url;
+      
+      // Show image preview
+      if (productData.image_url && productImagePreview) {
+        productImagePreview.src = productData.image_url;
+        productImagePreview.style.display = 'block';
+        
+        // Handle error if image doesn't load
+        productImagePreview.onerror = function() {
+          this.style.display = 'none';
+        };
+      }
+      
+      // Open modal using the modal component
+      if (window.CourtKartModals && window.CourtKartModals.productModal) {
+        window.CourtKartModals.productModal.open();
+      } else {
+        // Fallback if modal component isn't loaded yet
+        document.getElementById('productModal').classList.add('active');
+      }
+    });
+  });
+  
+  // Close modal
+  function closeModal() {
+    if (window.CourtKartModals && window.CourtKartModals.productModal) {
+      window.CourtKartModals.productModal.close();
+    } else {
+      document.getElementById('productModal').classList.remove('active');
+    }
+  }
+  
+  // Add close functionality to cancel button
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', closeModal);
+  }
+  
+  // Modal closes
+  document.querySelectorAll('#productModal [data-close]').forEach(element => {
+    element.addEventListener('click', closeModal);
+  });
+  
+  // Submit form when Save button is clicked
+  if (saveBtn && productForm) {
+    saveBtn.addEventListener('click', function() {
+      if (productForm.checkValidity()) {
+        productForm.submit();
+      } else {
+        // Trigger HTML5 validation
+        productForm.reportValidity();
+      }
     });
   }
 }

@@ -106,13 +106,16 @@
 </div>
 
 <!-- User View Modal -->
-<div class="admin-modal" id="viewUserModal">
-    <div class="admin-modal-content">
-        <div class="admin-modal-header">
-            <h2>User Details</h2>
-            <button type="button" class="close" id="closeViewModal">&times;</button>
+<div class="modal" id="viewUserModal" aria-hidden="true" role="dialog" aria-labelledby="viewUserTitle">
+    <div class="modal-backdrop" tabindex="-1" data-close></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title" id="viewUserTitle">User Details</h2>
+            <button type="button" class="modal-close" data-close aria-label="Close modal">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <div class="admin-modal-body">
+        <div class="modal-body">
             <div class="user-profile">
                 <div class="user-profile-header">
                     <div class="large-avatar" id="userAvatar">
@@ -141,28 +144,31 @@
                 </div>
             </div>
         </div>
-        <div class="admin-modal-footer">
-            <button type="button" class="btn btn-outline" id="closeViewModalBtn">Close</button>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" id="closeViewModalBtn" data-close>Close</button>
             <button type="button" class="btn btn-primary edit-btn" id="editUserBtn">Edit User</button>
         </div>
     </div>
 </div>
 
 <!-- User Delete Confirmation Modal -->
-<div class="admin-modal" id="deleteUserModal">
-    <div class="admin-modal-content">
-        <div class="admin-modal-header">
-            <h2>Delete User</h2>
-            <button type="button" class="close" id="closeDeleteModal">&times;</button>
+<div class="modal" id="deleteUserModal" aria-hidden="true" role="dialog" aria-labelledby="deleteUserTitle">
+    <div class="modal-backdrop" tabindex="-1" data-close></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title" id="deleteUserTitle">Delete User</h2>
+            <button type="button" class="modal-close" data-close aria-label="Close modal">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <div class="admin-modal-body">
+        <div class="modal-body">
             <div class="confirmation-message">
                 <i class="fas fa-exclamation-triangle warning-icon"></i>
                 <p>Are you sure you want to delete this user? This action cannot be undone.</p>
                 <p class="user-to-delete">User: <strong id="deleteUserName"></strong></p>
             </div>
         </div>
-        <div class="admin-modal-footer">
+        <div class="modal-footer">
             <button type="button" class="btn btn-outline" id="cancelDeleteBtn">Cancel</button>
             <form id="deleteUserForm" action="/admin/users/delete" method="post" class="inline-form">
                 <input type="hidden" name="user_id" id="deleteUserId">
@@ -173,13 +179,16 @@
 </div>
 
 <!-- User Edit Modal -->
-<div class="admin-modal" id="editUserModal">
-    <div class="admin-modal-content">
-        <div class="admin-modal-header">
-            <h2>Edit User</h2>
-            <button type="button" class="close" id="closeEditModal">&times;</button>
+<div class="modal" id="editUserModal" aria-hidden="true" role="dialog" aria-labelledby="editUserTitle">
+    <div class="modal-backdrop" tabindex="-1" data-close></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title" id="editUserTitle">Edit User</h2>
+            <button type="button" class="modal-close" data-close aria-label="Close modal">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <div class="admin-modal-body">
+        <div class="modal-body">
             <form id="editUserForm" action="/admin/users/update" method="post">
                 <input type="hidden" name="user_id" id="editUserId">
                 
@@ -222,7 +231,7 @@
                 </div>
             </form>
         </div>
-        <div class="admin-modal-footer">
+        <div class="modal-footer">
             <button type="button" class="btn btn-outline" id="cancelEditBtn">Cancel</button>
             <button type="button" class="btn btn-primary" id="saveEditBtn">Save Changes</button>
         </div>

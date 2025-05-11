@@ -50,11 +50,9 @@
                             <i class="fas fa-print"></i> Print
                         </button>
                         <?php if (($order->status ?? '') !== 'cancelled' && ($order->status ?? '') !== 'delivered'): ?>
-                            <form action="/orders/<?= htmlspecialchars($order->id ?? '') ?>/cancel" method="POST" class="cancel-order-form">
-                                <button type="submit" class="btn btn-danger">
-                                    <i class="fas fa-times"></i> Cancel Order
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-outline-danger cancel-order-btn" data-order-id="<?= htmlspecialchars($order->id ?? '') ?>">
+                                <i class="fas fa-times-circle"></i> Cancel Order
+                            </button>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -266,4 +264,30 @@
             </div>
         </div>
     <?php endif; ?>
+</div>
+
+<!-- Cancel Order Modal -->
+<div class="modal" id="cancelOrderModal" aria-hidden="true" role="dialog" aria-labelledby="cancelOrderTitle">
+    <div class="modal-backdrop" tabindex="-1" data-close></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="cancelOrderTitle">Cancel Order</h3>
+            <button type="button" class="modal-close" data-close aria-label="Close modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to cancel this order? This action cannot be undone.</p>
+            <form id="cancelOrderForm" method="post">
+                <div class="form-group">
+                    <label for="cancelReason">Please tell us why you're cancelling this order:</label>
+                    <textarea id="cancelReason" name="reason" class="form-control" rows="3" required></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" id="cancelModalBtn" data-close>Back</button>
+            <button type="button" class="btn btn-danger" id="confirmCancelBtn">Confirm Cancellation</button>
+        </div>
+    </div>
 </div>

@@ -648,3 +648,27 @@
 .animated {
   animation: fadeIn 0.6s ease forwards;
 }
+
+/* Order cancel modal specific styles */
+#cancelOrderModal .modal-header h3 {
+  color: var(--danger);
+}
+
+#cancelOrderForm .form-group {
+  margin-bottom: var(--space-md);
+}
+
+#cancelOrderForm label {
+  display: block;
+  margin-bottom: var(--space-xs);
+  font-weight: 500;
+}
+
+#cancelOrderForm textarea {
+  width: 100%;
+  padding: var(--space-sm);
+  border: 1px solid var(--light-gray);
+  border-radius: var(--radius-md);
+  resize: vertical;
+  min-height: 100px;
+}

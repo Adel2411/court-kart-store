@@ -1,3 +1,10 @@
+-- Drop existing triggers if they exist
+-- DROP TRIGGER IF EXISTS AfterOrderConfirmed;
+-- DROP TRIGGER IF EXISTS BeforeOrderItemInsert;
+-- DROP TRIGGER IF EXISTS AfterOrderCancelled;
+-- DROP TRIGGER IF EXISTS LogCanceledOrder;
+
+
 -- 1. Trigger to update stock after order status changes to 'confirmed'
 DELIMITER $$
 
@@ -111,8 +118,13 @@ AFTER UPDATE ON orders
 FOR EACH ROW
 BEGIN
     IF OLD.status != 'cancelled' AND NEW.status = 'cancelled' THEN
+        -- Only insert if there's no existing record
         INSERT INTO canceled_orders (order_id, reason, canceled_at)
-        VALUES (NEW.id, 'Order was canceled by user or admin', NOW());
+        SELECT NEW.id, 'Order was canceled by user or admin', NOW()
+        FROM dual
+        WHERE NOT EXISTS (
+            SELECT 1 FROM canceled_orders WHERE order_id = NEW.id
+        );
         
         INSERT INTO logs (action, user_id, order_id, message)
         VALUES ('ORDER_CANCEL', NEW.user_id, NEW.id, CONCAT('Order #', NEW.id, ' cancellation recorded'));

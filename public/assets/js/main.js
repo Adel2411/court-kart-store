@@ -1,26 +1,55 @@
-document.addEventListener("DOMContentLoaded", function () {
+/**
+ * Main JavaScript file for Court Kart
+ * Loads common functionality across all pages
+ */
+
+// Import components
+document.addEventListener('DOMContentLoaded', function() {
+  // Load modal functionality
+  loadScript('/assets/js/components/modal.js');
+  
+  // Initialize global components
+  initGlobalComponents();
+});
+
+/**
+ * Load a script dynamically
+ * @param {string} src - Script source path
+ * @param {Function} callback - Optional callback after script loads
+ */
+function loadScript(src, callback) {
+  const script = document.createElement('script');
+  script.src = src;
+  script.async = true;
+  
+  if (callback && typeof callback === 'function') {
+    script.onload = callback;
+  }
+  
+  document.body.appendChild(script);
+}
+
+/**
+ * Initialize components that should be available on all pages
+ */
+function initGlobalComponents() {
   // Mobile menu toggle
-  const mobileMenuBtn = document.getElementById("mobileMenuBtn");
-  const nav = document.querySelector("nav");
-
-  if (mobileMenuBtn) {
-    mobileMenuBtn.addEventListener("click", function () {
-      nav.classList.toggle("active");
-
-      // Change button appearance
-      const spans = mobileMenuBtn.querySelectorAll("span");
-      if (nav.classList.contains("active")) {
-        spans[0].style.transform = "rotate(45deg) translate(5px, 5px)";
-        spans[1].style.opacity = "0";
-        spans[2].style.transform = "rotate(-45deg) translate(7px, -6px)";
-      } else {
-        spans[0].style.transform = "none";
-        spans[1].style.opacity = "1";
-        spans[2].style.transform = "none";
-      }
+  const menuToggle = document.querySelector('.mobile-menu-toggle');
+  const mobileMenu = document.querySelector('.mobile-menu');
+  
+  if (menuToggle && mobileMenu) {
+    menuToggle.addEventListener('click', function() {
+      mobileMenu.classList.toggle('active');
+      document.body.classList.toggle('menu-open');
     });
   }
-
+  
+  // Initialize tooltips
+  initTooltips();
+  
+  // Handle form validation
+  initFormValidation();
+  
   // Auto-hide alerts after 5 seconds
   const alerts = document.querySelectorAll(".alert");
   if (alerts.length > 0) {
@@ -80,47 +109,71 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // Form validations
-  const forms = document.querySelectorAll("form");
-  forms.forEach((form) => {
-    form.addEventListener("submit", function (event) {
-      const requiredFields = form.querySelectorAll("[required]");
-      let isValid = true;
+  // Update cart counts via AJAX if available
+  updateCartCount();
+}
 
-      requiredFields.forEach((field) => {
-        if (!field.value.trim()) {
-          isValid = false;
-          field.classList.add("is-invalid");
-
-          // Add error message if doesn't exist
-          let errorMsg = field.parentNode.querySelector(".error-message");
-          if (!errorMsg) {
-            errorMsg = document.createElement("div");
-            errorMsg.className = "error-message";
-            errorMsg.textContent = "This field is required";
-            field.parentNode.appendChild(errorMsg);
-          }
-        } else {
-          field.classList.remove("is-invalid");
-          const errorMsg = field.parentNode.querySelector(".error-message");
-          if (errorMsg) {
-            errorMsg.remove();
-          }
-        }
-      });
-
-      if (!isValid) {
-        event.preventDefault();
+/**
+ * Initialize tooltips
+ */
+function initTooltips() {
+  const tooltipTriggers = document.querySelectorAll('[data-tooltip]');
+  
+  tooltipTriggers.forEach(trigger => {
+    const tooltipText = trigger.dataset.tooltip;
+    
+    trigger.addEventListener('mouseenter', function() {
+      const tooltip = document.createElement('div');
+      tooltip.className = 'tooltip';
+      tooltip.textContent = tooltipText;
+      document.body.appendChild(tooltip);
+      
+      const triggerRect = trigger.getBoundingClientRect();
+      tooltip.style.top = `${triggerRect.top - tooltip.offsetHeight - 10}px`;
+      tooltip.style.left = `${triggerRect.left + (trigger.offsetWidth / 2) - (tooltip.offsetWidth / 2)}px`;
+      tooltip.style.opacity = '1';
+      
+      this._tooltip = tooltip;
+    });
+    
+    trigger.addEventListener('mouseleave', function() {
+      if (this._tooltip) {
+        this._tooltip.remove();
+        this._tooltip = null;
       }
     });
   });
+}
 
-  // Update cart counts via AJAX if available
-  updateCartCount();
-
-  // Initialize tooltips
-  initializeTooltips();
-});
+/**
+ * Initialize form validation
+ */
+function initFormValidation() {
+  document.querySelectorAll('form').forEach(form => {
+    const submitButton = form.querySelector('button[type="submit"]');
+    
+    if (submitButton) {
+      form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          
+          // Find and highlight invalid fields
+          form.querySelectorAll('input, select, textarea').forEach(field => {
+            if (!field.validity.valid) {
+              field.classList.add('is-invalid');
+              
+              field.addEventListener('input', function() {
+                if (this.validity.valid) {
+                  this.classList.remove('is-invalid');
+                }
+              }, { once: true });
+            }
+          });
+        }
+      });
+    }
+  });
+}
 
 // Function to update cart count
 function updateCartCount() {
@@ -148,35 +201,4 @@ function updateCartCount() {
     .catch((error) => {
       console.error("Could not update cart count:", error);
     });
-}
-
-// Function to initialize tooltips
-function initializeTooltips() {
-  const tooltipElements = document.querySelectorAll("[data-tooltip]");
-
-  tooltipElements.forEach((element) => {
-    const tooltipText = element.getAttribute("data-tooltip");
-
-    element.addEventListener("mouseenter", function () {
-      const tooltip = document.createElement("div");
-      tooltip.className = "tooltip";
-      tooltip.textContent = tooltipText;
-      document.body.appendChild(tooltip);
-
-      const rect = element.getBoundingClientRect();
-      const tooltipHeight = tooltip.offsetHeight;
-      const tooltipWidth = tooltip.offsetWidth;
-
-      tooltip.style.top = rect.top - tooltipHeight - 10 + "px";
-      tooltip.style.left = rect.left + rect.width / 2 - tooltipWidth / 2 + "px";
-      tooltip.style.opacity = "1";
-    });
-
-    element.addEventListener("mouseleave", function () {
-      const tooltip = document.querySelector(".tooltip");
-      if (tooltip) {
-        tooltip.remove();
-      }
-    });
-  });
 }

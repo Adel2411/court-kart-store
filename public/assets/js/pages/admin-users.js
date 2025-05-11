@@ -99,15 +99,11 @@ function initRoleFilter() {
 
 /**
  * Initialize user view modal
+ * Updated to use the modal component
  */
 function initViewModal() {
   const viewButtons = document.querySelectorAll('.view-user');
-  const viewModal = document.getElementById('viewUserModal');
-  const closeViewModal = document.getElementById('closeViewModal');
-  const closeViewModalBtn = document.getElementById('closeViewModalBtn');
   const editUserBtn = document.getElementById('editUserBtn');
-  
-  if (!viewModal) return;
   
   viewButtons.forEach(button => {
     button.addEventListener('click', function() {
@@ -119,7 +115,7 @@ function initViewModal() {
       const userName = userEmail.split('@')[0]; // Extract name from email as fallback
       const userRole = row.querySelector('.role-badge').textContent;
       const userCreatedAt = row.querySelector('.date').textContent + ' at ' + 
-                            row.querySelector('.time').textContent;
+                           row.querySelector('.time').textContent;
       const profileImage = row.querySelector('.user-avatar-img')?.src || '';
       
       document.getElementById('userName').textContent = userName;
@@ -139,30 +135,35 @@ function initViewModal() {
       // Set edit button data
       editUserBtn.setAttribute('data-id', userId);
       
-      // Show the modal
-      viewModal.classList.add('active');
+      // Open the modal using our modal component
+      if (window.CourtKartModals && window.CourtKartModals.viewUserModal) {
+        window.CourtKartModals.viewUserModal.open();
+      } else {
+        // Fallback if modal component isn't loaded yet
+        document.getElementById('viewUserModal').classList.add('active');
+      }
     });
   });
-  
-  // Close modal functionality
-  const closeViewModalFn = function() {
-    viewModal.classList.remove('active');
-  };
-  
-  if (closeViewModal) closeViewModal.addEventListener('click', closeViewModalFn);
-  if (closeViewModalBtn) closeViewModalBtn.addEventListener('click', closeViewModalFn);
   
   // Edit button functionality
   if (editUserBtn) {
     editUserBtn.addEventListener('click', function() {
       const userId = this.getAttribute('data-id');
+      
       // Close the view modal
-      closeViewModalFn();
-      // Find and trigger the edit button for this user
-      const editButton = document.querySelector(`.edit-user[data-id="${userId}"]`);
-      if (editButton) {
-        editButton.click();
+      if (window.CourtKartModals && window.CourtKartModals.viewUserModal) {
+        window.CourtKartModals.viewUserModal.close();
+      } else {
+        document.getElementById('viewUserModal').classList.remove('active');
       }
+      
+      // Find and trigger the edit button for this user
+      setTimeout(() => {
+        const editButton = document.querySelector(`.edit-user[data-id="${userId}"]`);
+        if (editButton) {
+          editButton.click();
+        }
+      }, 300); // Add a small delay to allow modal animation to complete
     });
   }
 }
@@ -173,21 +174,32 @@ function initViewModal() {
 function initEditModal() {
   const editButtons = document.querySelectorAll('.edit-user');
   const editModal = document.getElementById('editUserModal');
-  const closeEditModal = document.getElementById('closeEditModal');
-  const cancelEditBtn = document.getElementById('cancelEditBtn');
   const editUserForm = document.getElementById('editUserForm');
   const saveEditBtn = document.getElementById('saveEditBtn');
+  const cancelEditBtn = document.getElementById('cancelEditBtn');
   
-  if (!editModal) return;
+  if (!editModal || !editButtons.length) return;
   
   editButtons.forEach(button => {
-    button.addEventListener('click', function() {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
       const userId = this.getAttribute('data-id');
       const row = this.closest('tr');
       
-      // Fetch user details from the row
-      const userName = row.querySelector('.user-name').textContent;
-      const userEmail = row.querySelector('td:nth-child(3)').textContent;
+      // Correctly fetch user details from the row
+      // Get the user's email from the third column
+      const userEmail = row.querySelector('td:nth-child(3)').textContent.trim();
+      // Extract name from email as fallback or use real name if available
+      let userName = userEmail.split('@')[0]; 
+      
+      // If the row has the user's name stored elsewhere, try to get it
+      const userNameEl = row.querySelector('.user-info');
+      if (userNameEl) {
+        const nameFromImg = userNameEl.querySelector('img')?.getAttribute('alt');
+        if (nameFromImg) userName = nameFromImg;
+      }
+      
+      // Get the user role from the badge
       const userRole = row.querySelector('.role-badge').textContent.toLowerCase().trim();
       
       // Populate the form fields
@@ -207,7 +219,12 @@ function initEditModal() {
     editModal.classList.remove('active');
   };
   
-  if (closeEditModal) closeEditModal.addEventListener('click', closeEditModalFn);
+  // Add click handler to close button
+  const closeButtons = editModal.querySelectorAll('.modal-close, [data-close]');
+  closeButtons.forEach(button => {
+    button.addEventListener('click', closeEditModalFn);
+  });
+  
   if (cancelEditBtn) cancelEditBtn.addEventListener('click', closeEditModalFn);
   
   // Save changes functionality
@@ -263,6 +280,12 @@ function initDeleteModal() {
   const closeDeleteModalFn = function() {
     deleteModal.classList.remove('active');
   };
+  
+  // Add click handler to close button
+  deleteModal.querySelector('.modal-close').addEventListener('click', closeDeleteModalFn);
+  
+  // Add click handler to backdrop
+  deleteModal.querySelector('.modal-backdrop').addEventListener('click', closeDeleteModalFn);
   
   if (closeDeleteModal) closeDeleteModal.addEventListener('click', closeDeleteModalFn);
   if (cancelDeleteBtn) cancelDeleteBtn.addEventListener('click', closeDeleteModalFn);
