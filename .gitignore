@@ -1,1 +1,7 @@
 config/database.php
+
+**/indent.log
+
+docs/aux/
+docs/out/*
+!docs/out/report.pdf
