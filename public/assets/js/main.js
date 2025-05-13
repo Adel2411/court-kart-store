@@ -33,17 +33,37 @@ function loadScript(src, callback) {
  * Initialize components that should be available on all pages
  */
 function initGlobalComponents() {
-  // Mobile menu toggle
-  const menuToggle = document.querySelector('.mobile-menu-toggle');
-  const mobileMenu = document.querySelector('.mobile-menu');
+  // Mobile menu toggle - FIXED to match correct class names
+  const menuToggle = document.querySelector('.mobile-menu-btn');
+  const navMenu = document.querySelector('nav');
   
-  if (menuToggle && mobileMenu) {
+  if (menuToggle && navMenu) {
     menuToggle.addEventListener('click', function() {
-      mobileMenu.classList.toggle('active');
+      navMenu.classList.toggle('active');
+      menuToggle.classList.toggle('active');
       document.body.classList.toggle('menu-open');
     });
+    
+    // Close menu when clicking on a link
+    const navLinks = navMenu.querySelectorAll('a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', function() {
+        navMenu.classList.remove('active');
+        menuToggle.classList.remove('active');
+        document.body.classList.remove('menu-open');
+      });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+      if (!navMenu.contains(event.target) && !menuToggle.contains(event.target) && navMenu.classList.contains('active')) {
+        navMenu.classList.remove('active');
+        menuToggle.classList.remove('active');
+        document.body.classList.remove('menu-open');
+      }
+    });
   }
-  
+
   // Initialize tooltips
   initTooltips();
   

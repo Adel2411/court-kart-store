@@ -291,6 +291,8 @@ footer {
   .header-content {
     flex-wrap: wrap;
     height: auto;
+    padding: var(--space-md) 0;
+    position: relative;
   }
 
   nav {
@@ -300,25 +302,32 @@ footer {
     align-items: flex-start;
     padding: var(--space-md) 0;
     position: absolute;
-    top: 70px;
+    top: 100%; /* Changed from fixed 70px to be more flexible */
     left: 0;
     right: 0;
     background-color: var(--white);
     box-shadow: var(--shadow-md);
     z-index: 999;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, display 0s linear 0.3s;
   }
 
   nav.active {
     display: flex;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
   }
 
   nav a {
     width: 100%;
     padding: var(--space-md);
+    border-bottom: 1px solid var(--light-gray);
   }
 
-  nav a.active::after {
-    display: none;
+  nav a:last-child {
+    border-bottom: none;
   }
 
   .mobile-menu-btn {
@@ -335,6 +344,10 @@ footer {
 
   .grid-2 {
     grid-template-columns: 1fr;
+  }
+
+  body.menu-open {
+    overflow: hidden;
   }
 }
 
