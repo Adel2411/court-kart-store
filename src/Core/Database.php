@@ -96,7 +96,6 @@ class Database
     /**
      * Prevent unserialization of the singleton instance.
      *
-     *
      * @throws Exception When attempting to unserialize singleton
      */
     public function __wakeup(): void
@@ -112,11 +111,9 @@ class Database
     public function query(string $sql, array $params = []): \PDOStatement
     {
         $stmt = $this->pdo->prepare($sql);
-        
-        // Bind parameters properly based on their type
-        if (!empty($params)) {
+
+        if (! empty($params)) {
             foreach ($params as $key => $value) {
-                // Determine parameter type for proper binding
                 $type = PDO::PARAM_STR;
                 if (is_int($value)) {
                     $type = PDO::PARAM_INT;
@@ -125,12 +122,10 @@ class Database
                 } elseif (is_null($value)) {
                     $type = PDO::PARAM_NULL;
                 }
-                
-                // If key is numeric (positional parameter)
+
                 if (is_int($key)) {
                     $stmt->bindValue($key + 1, $value, $type);
                 } else {
-                    // Named parameter
                     $stmt->bindValue($key, $value, $type);
                 }
             }

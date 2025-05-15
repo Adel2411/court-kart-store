@@ -18,9 +18,6 @@ class User
 
     /**
      * Get all users from the database
-     *
-     * @param  int  $limit  Optional limit of users to fetch
-     * @return array Array of users
      */
     public static function getAll($limit = 20): array
     {
@@ -34,9 +31,6 @@ class User
 
     /**
      * Get a user by their ID
-     *
-     * @param  int  $id  User ID
-     * @return array|null User data or null if not found
      */
     public static function getById($id): ?array
     {
@@ -49,8 +43,6 @@ class User
 
     /**
      * Get count of all users
-     *
-     * @return int Count of users
      */
     public static function getCount(): int
     {
@@ -64,39 +56,33 @@ class User
 
     /**
      * Update user information
-     *
-     * @param int $id User ID
-     * @param array $data User data to update
-     * @return bool Success status
      */
     public static function update($id, array $data): bool
     {
         $db = Database::getInstance();
-        
+
         $sql = 'UPDATE users SET 
                 name = ?, 
                 email = ?';
-        
+
         $params = [
             $data['name'],
-            $data['email']
+            $data['email'],
         ];
-        
-        // Add profile_image to the update if provided
+
         if (isset($data['profile_image'])) {
             $sql .= ', profile_image = ?';
             $params[] = $data['profile_image'];
         }
-        
-        // Add password to the update if provided
+
         if (isset($data['password'])) {
             $sql .= ', password = ?';
             $params[] = $data['password'];
         }
-        
+
         $sql .= ' WHERE id = ?';
         $params[] = $id;
-        
+
         return $db->execute($sql, $params);
     }
 }

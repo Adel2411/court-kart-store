@@ -4,10 +4,10 @@ namespace App\Controllers;
 
 use App\Core\Session;
 use App\Core\View;
+use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
-use App\Models\Category; // Add this import
 use App\Services\AuthService;
 
 class AdminController
@@ -16,10 +16,10 @@ class AdminController
 
     public function __construct()
     {
-        $this->authService = new AuthService();
-        
+        $this->authService = new AuthService;
+
         // This check should be redundant with middleware, but adding as a safeguard
-        if (!$this->authService->isAdmin()) {
+        if (! $this->authService->isAdmin()) {
             header('Location: /login');
             exit;
         }
@@ -27,16 +27,16 @@ class AdminController
 
     /**
      * Display the admin dashboard
+     *
+     * @return void
      */
     public function index()
     {
-        // Get real dashboard statistics from database
         $totalOrders = Order::getCount();
         $totalSales = Order::getTotalSales();
         $totalUsers = User::getCount();
         $totalProducts = Product::getCount();
 
-        // Get recent orders
         $recentOrders = Order::getRecent(5);
 
         echo View::renderWithLayout('admin/index', 'admin', [
@@ -46,28 +46,26 @@ class AdminController
             'totalUsers' => $totalUsers,
             'totalProducts' => $totalProducts,
             'recentOrders' => $recentOrders,
-            'page_css' => 'admin', // Make sure admin.css is loaded
+            'page_css' => 'admin',
         ]);
     }
 
     /**
      * Display products management page
+     *
+     * @return void
      */
     public function products()
     {
-        // Get filter parameters
         $category = $_GET['category'] ?? 'all';
         $sort = $_GET['sort'] ?? 'name_asc';
         $search = $_GET['search'] ?? '';
-        
-        // Get all products with filters
+
         $products = Product::getAllFiltered($category, $sort, $search);
-        
+
         try {
-            // Get all categories for the filter dropdown
             $categories = Category::getAll();
         } catch (\Exception $e) {
-            // Handle error if categories can't be loaded
             $categories = [];
             Session::flash('error', 'Failed to load categories');
         }
@@ -83,15 +81,17 @@ class AdminController
             'page_js' => 'admin_products',
         ]);
     }
-    
+
     /**
      * Save a product (create or update)
+     *
+     * @return void
      */
     public function saveProduct()
     {
         // Validate CSRF token
         // ...
-        
+
         $id = $_POST['id'] ?? null;
         $data = [
             'name' => $_POST['name'] ?? '',
@@ -101,81 +101,79 @@ class AdminController
             'category' => $_POST['category'] ?? '',
             'image_url' => $_POST['image_url'] ?? '',
         ];
-        
-        // Validate product data
-        if (empty($data['name']) || empty($data['description']) || 
-            $data['price'] <= 0 || $data['stock'] < 0 || 
+
+        if (empty($data['name']) || empty($data['description']) ||
+            $data['price'] <= 0 || $data['stock'] < 0 ||
             empty($data['category']) || empty($data['image_url'])) {
-            
+
             Session::set('error', 'Please fill in all required fields correctly.');
             header('Location: /admin/products');
             exit;
         }
-        
+
         $success = false;
-        
+
         if ($id) {
-            // Update existing product
             $success = Product::update($id, $data);
             $message = 'Product updated successfully.';
         } else {
-            // Add new product
             $success = Product::add($data);
             $message = 'Product added successfully.';
         }
-        
+
         if ($success) {
             Session::set('success', $message);
         } else {
             Session::set('error', 'Failed to save product.');
         }
-        
+
         header('Location: /admin/products');
         exit;
     }
-    
+
     /**
      * Delete a product
+     *
+     * @return void
      */
     public function deleteProduct()
     {
         // Validate CSRF token
         // ...
-        
+
         $id = $_POST['id'] ?? null;
-        
-        if (!$id) {
+
+        if (! $id) {
             Session::set('error', 'Invalid product ID.');
             header('Location: /admin/products');
             exit;
         }
-        
+
         $success = Product::delete($id);
-        
+
         if ($success) {
             Session::set('success', 'Product deleted successfully.');
         } else {
             Session::set('error', 'Failed to delete product.');
         }
-        
+
         header('Location: /admin/products');
         exit;
     }
 
     /**
      * Display orders management page
+     *
+     * @return void
      */
     public function orders()
     {
-        // Get status filter from query string
         $status = $_GET['status'] ?? 'all';
-        
-        // Get orders based on status filter
-        $orders = ($status === 'all') 
-            ? Order::getAll(50)  // Get all orders
-            : Order::getAllByStatus($status, 50);  // Get filtered orders
 
-        // Get items count for each order
+        $orders = ($status === 'all')
+            ? Order::getAll(50)
+            : Order::getAllByStatus($status, 50);
+
         foreach ($orders as &$order) {
             $order['items_count'] = Order::getItemsCount($order['id']);
         }
@@ -183,58 +181,56 @@ class AdminController
         echo View::renderWithLayout('admin/orders', 'admin', [
             'title' => 'Order Management - Court Kart',
             'orders' => $orders,
-            'currentStatus' => $status, // Pass current status to view
+            'currentStatus' => $status,
         ]);
     }
 
     /**
      * Display single order details
-     * 
-     * @param int $id Order ID
+     *
+     * @param  int  $id  Order ID
+     * @return void
      */
     public function showOrder($id)
     {
-        // Get order details
         $orderDetails = Order::getOrderDetails($id);
-        
+
         if (empty($orderDetails)) {
             Session::set('error', 'Order not found');
             header('Location: /admin/orders');
             exit;
         }
-        
-        // Process order details for view
-        $order = (object)$orderDetails[0];
+
+        $order = (object) $orderDetails[0];
         $orderItems = [];
-        
+
         foreach ($orderDetails as $item) {
             if (isset($item['product_id'])) {
-                $orderItems[] = (object)[
+                $orderItems[] = (object) [
                     'product_id' => $item['product_id'],
                     'product_name' => $item['product_name'] ?? 'Unknown Product',
                     'price' => $item['price'] ?? 0,
                     'quantity' => $item['quantity'] ?? 0,
                     'image_url' => $item['image_url'] ?? '',
-                    'subtotal' => ($item['price'] ?? 0) * ($item['quantity'] ?? 0)
+                    'subtotal' => ($item['price'] ?? 0) * ($item['quantity'] ?? 0),
                 ];
             }
         }
 
-        // Calculate order subtotal, shipping cost, and total
         $subtotal = 0;
         foreach ($orderItems as $item) {
             $subtotal += $item->subtotal;
         }
-        
+
         $shippingCost = 0; // Free shipping
         $total = $subtotal + $shippingCost;
-        
+
         $order->subtotal = $subtotal;
         $order->shipping_cost = $shippingCost;
         $order->total = $total;
-        
+
         echo View::renderWithLayout('admin/order-detail', 'admin', [
-            'title' => 'Order #' . $id . ' - Admin - Court Kart',
+            'title' => 'Order #'.$id.' - Admin - Court Kart',
             'order' => $order,
             'orderItems' => $orderItems,
             'page_css' => ['admin', 'orders'],
@@ -243,6 +239,8 @@ class AdminController
 
     /**
      * Update order status
+     *
+     * @return void
      */
     public function updateOrderStatus()
     {
@@ -250,33 +248,33 @@ class AdminController
             header('Location: /admin/orders');
             exit;
         }
-        
+
         $orderId = $_POST['order_id'] ?? 0;
         $status = $_POST['status'] ?? '';
-        
-        if (!$orderId || !$status) {
+
+        if (! $orderId || ! $status) {
             Session::set('error', 'Invalid order ID or status');
             header('Location: /admin/orders');
             exit;
         }
-        
+
         if (Order::updateStatus($orderId, $status)) {
             Session::set('success', 'Order status updated successfully');
         } else {
             Session::set('error', 'Failed to update order status');
         }
-        
-        // Redirect back to order details
+
         header("Location: /admin/orders/{$orderId}");
         exit;
     }
 
     /**
      * Display users management page
+     *
+     * @return void
      */
     public function users()
     {
-        // Get real users data from database
         $users = User::getAll(10);
         $totalUsers = User::getCount();
 
@@ -291,30 +289,28 @@ class AdminController
 
     /**
      * Update a user
+     *
+     * @return void
      */
     public function updateUser()
     {
-        // Check if admin is logged in
-        if (!$this->authService->isAdmin()) {
+        if (! $this->authService->isAdmin()) {
             header('Location: /login');
             exit;
         }
 
-        // Get form data
         $userId = $_POST['user_id'] ?? '';
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
         $role = $_POST['role'] ?? '';
         $password = $_POST['password'] ?? '';
 
-        // Validate input
         if (empty($userId) || empty($name) || empty($email) || empty($role)) {
             Session::set('error', 'All fields are required except password.');
             header('Location: /admin/users');
             exit;
         }
 
-        // Check if email already exists for different user
         $db = \App\Core\Database::getInstance();
         $existingUser = $db->fetchRow(
             'SELECT id FROM users WHERE email = ? AND id != ?',
@@ -334,32 +330,28 @@ class AdminController
             exit;
         }
 
-        // Update user
         try {
-            if (!empty($password)) {
-                // Update with new password
+            if (! empty($password)) {
                 $hashedPassword = \App\Helpers\Security::hashPassword($password);
                 $db->execute(
                     'UPDATE users SET name = ?, email = ?, role = ?, password = ? WHERE id = ?',
                     [$name, $email, $role, $hashedPassword, $userId]
                 );
             } else {
-                // Update without changing password
                 $db->execute(
                     'UPDATE users SET name = ?, email = ?, role = ? WHERE id = ?',
                     [$name, $email, $role, $userId]
                 );
             }
 
-            // Log user update
             $db->execute(
                 'INSERT INTO logs (action, user_id, message) VALUES (?, ?, ?)',
-                ['USER_UPDATE', $_SESSION['user_id'], 'User updated: ' . $email]
+                ['USER_UPDATE', $_SESSION['user_id'], 'User updated: '.$email]
             );
 
             Session::set('success', 'User updated successfully.');
         } catch (\Exception $e) {
-            Session::set('error', 'Failed to update user. ' . $e->getMessage());
+            Session::set('error', 'Failed to update user. '.$e->getMessage());
         }
 
         header('Location: /admin/users');
@@ -368,16 +360,16 @@ class AdminController
 
     /**
      * Delete a user
+     *
+     * @return void
      */
     public function deleteUser()
     {
-        // Check if admin is logged in
-        if (!$this->authService->isAdmin()) {
+        if (! $this->authService->isAdmin()) {
             header('Location: /login');
             exit;
         }
 
-        // Get user ID
         $userId = $_POST['user_id'] ?? '';
 
         if (empty($userId)) {
@@ -393,31 +385,27 @@ class AdminController
             exit;
         }
 
-        // Delete user
         try {
             $db = \App\Core\Database::getInstance();
-            
-            // First, get user email for logging
+
             $user = $db->fetchRow('SELECT email FROM users WHERE id = ?', [$userId]);
-            
-            if (!$user) {
+
+            if (! $user) {
                 Session::set('error', 'User not found.');
                 header('Location: /admin/users');
                 exit;
             }
-            
-            // Delete user
+
             $db->execute('DELETE FROM users WHERE id = ?', [$userId]);
-            
-            // Log user deletion
+
             $db->execute(
                 'INSERT INTO logs (action, user_id, message) VALUES (?, ?, ?)',
-                ['USER_DELETE', $_SESSION['user_id'], 'User deleted: ' . $user['email']]
+                ['USER_DELETE', $_SESSION['user_id'], 'User deleted: '.$user['email']]
             );
 
             Session::set('success', 'User deleted successfully.');
         } catch (\Exception $e) {
-            Session::set('error', 'Failed to delete user. ' . $e->getMessage());
+            Session::set('error', 'Failed to delete user. '.$e->getMessage());
         }
 
         header('Location: /admin/users');

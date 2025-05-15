@@ -16,9 +16,6 @@ class Session
 
     /**
      * Set a session value
-     *
-     * @param  string  $key  Session key
-     * @param  mixed  $value  Session value
      */
     public static function set(string $key, $value): void
     {
@@ -28,10 +25,6 @@ class Session
 
     /**
      * Get a session value
-     *
-     * @param  string  $key  Session key
-     * @param  mixed  $default  Default value if key doesn't exist
-     * @return mixed Session value or default
      */
     public static function get(string $key, $default = null)
     {
@@ -42,9 +35,6 @@ class Session
 
     /**
      * Check if a session key exists
-     *
-     * @param  string  $key  Session key
-     * @return bool True if key exists
      */
     public static function has(string $key): bool
     {
@@ -55,8 +45,6 @@ class Session
 
     /**
      * Remove a session value
-     *
-     * @param  string  $key  Session key
      */
     public static function remove(string $key): void
     {
@@ -68,10 +56,6 @@ class Session
 
     /**
      * Get and remove a session value (flash message pattern)
-     *
-     * @param  string  $key  Session key
-     * @param  mixed  $default  Default value if key doesn't exist
-     * @return mixed Session value or default
      */
     public static function flash(string $key, $default = null)
     {
@@ -108,9 +92,6 @@ class Session
 
     /**
      * Regenerate the session ID
-     *
-     * @param  bool  $deleteOldSession  Whether to delete the old session
-     * @return bool True on success
      */
     public static function regenerate(bool $deleteOldSession = true): bool
     {

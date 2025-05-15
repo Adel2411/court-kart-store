@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Core\Database;
 use Exception;
-use PDO;
 
 class Order
 {
@@ -140,30 +139,27 @@ class Order
     /**
      * Get detailed information about a specific order
      *
-     * @param int $orderId Order ID
+     * @param  int  $orderId  Order ID
      * @return array|null Order details or null if not found
      */
     public static function getOrderDetails(int $orderId): ?array
     {
         $db = Database::getInstance();
-        
+
         try {
-            // Get order header information
-            $orderSql = "SELECT o.*, u.name as customer_name, u.email as customer_email 
+            $orderSql = 'SELECT o.*, u.name as customer_name, u.email as customer_email 
                         FROM orders o 
                         JOIN users u ON o.user_id = u.id 
-                        WHERE o.id = ?";
-            
+                        WHERE o.id = ?';
+
             $orderDetails = $db->fetchRow($orderSql, [$orderId]);
-            
-            if (!$orderDetails) {
+
+            if (! $orderDetails) {
                 return null;
             }
-            
-            // Call the stored procedure to get order items
-            $items = $db->fetchRows("CALL GetOrderDetails(?)", [$orderId]);
-            
-            // Format the return to match the expected structure
+
+            $items = $db->fetchRows('CALL GetOrderDetails(?)', [$orderId]);
+
             $result = [];
             foreach ($items as $item) {
                 $orderWithItems = array_merge([
@@ -174,27 +170,26 @@ class Order
                     'created_at' => $orderDetails['created_at'],
                     'updated_at' => $orderDetails['updated_at'],
                     'customer_name' => $orderDetails['customer_name'],
-                    'customer_email' => $orderDetails['customer_email']
+                    'customer_email' => $orderDetails['customer_email'],
                 ], [
                     'product_id' => $item['product_id'] ?? null,
                     'product_name' => $item['product_name'] ?? null,
                     'quantity' => $item['quantity'] ?? null,
                     'price' => $item['unit_price'] ?? null,
-                    'image_url' => $item['image_url'] ?? null, 
-                    'subtotal' => $item['subtotal'] ?? null
+                    'image_url' => $item['image_url'] ?? null,
+                    'subtotal' => $item['subtotal'] ?? null,
                 ]);
                 $result[] = $orderWithItems;
             }
-            
-            // If no items found, return just the order header
+
             if (empty($result)) {
                 $result[] = $orderDetails;
             }
-            
+
             return $result;
         } catch (Exception $e) {
-            // Log the error
-            error_log('Error getting order details: ' . $e->getMessage());
+            error_log('Error getting order details: '.$e->getMessage());
+
             return null;
         }
     }
@@ -211,14 +206,13 @@ class Order
     {
         try {
             $db = Database::getInstance();
-            
-            // Call the stored procedure to finalize the order
-            $db->execute("CALL FinalizeOrder(?, ?)", [$orderId, $userId]);
-            
+
+            $db->execute('CALL FinalizeOrder(?, ?)', [$orderId, $userId]);
+
             return true;
         } catch (Exception $e) {
-            // Log the error message which could come from the procedure
-            error_log('Order finalization failed: ' . $e->getMessage());
+            error_log('Order finalization failed: '.$e->getMessage());
+
             return false;
         }
     }
@@ -233,40 +227,36 @@ class Order
     public static function getCustomerOrderHistory(int $userId): array
     {
         $db = Database::getInstance();
-        
+
         try {
-            // Call the stored procedure to get customer orders with item counts
-            $orders = $db->fetchRows("CALL GetCustomerOrderHistory(?)", [$userId]);
-            
-            // If stored procedure isn't working, fall back to direct query
+            $orders = $db->fetchRows('CALL GetCustomerOrderHistory(?)', [$userId]);
+
             if (empty($orders)) {
-                $sql = "SELECT o.id, o.total_price, o.status, o.created_at, 
+                $sql = 'SELECT o.id, o.total_price, o.status, o.created_at, 
                        COUNT(oi.id) as items_count
                        FROM orders o 
                        LEFT JOIN order_items oi ON o.id = oi.order_id 
                        WHERE o.user_id = ? 
                        GROUP BY o.id 
-                       ORDER BY o.created_at DESC";
-                       
+                       ORDER BY o.created_at DESC';
+
                 $orders = $db->fetchRows($sql, [$userId]);
             }
-            
-            // Format the result to match existing code expectations
+
             foreach ($orders as &$order) {
-                // Rename fields to match expected structure if needed
-                if (isset($order['order_id']) && !isset($order['id'])) {
+                if (isset($order['order_id']) && ! isset($order['id'])) {
                     $order['id'] = $order['order_id'];
                 }
-                
-                // Make sure total_price exists and is properly named
-                if (isset($order['total']) && !isset($order['total_price'])) {
+
+                if (isset($order['total']) && ! isset($order['total_price'])) {
                     $order['total_price'] = $order['total'];
                 }
             }
-            
+
             return $orders;
         } catch (Exception $e) {
-            error_log('Error getting customer order history: ' . $e->getMessage());
+            error_log('Error getting customer order history: '.$e->getMessage());
+
             return [];
         }
     }
@@ -287,12 +277,10 @@ class Order
         try {
             $db->beginTransaction();
 
-            // Create order header
             $sql = "INSERT INTO orders (user_id, total_price, status) VALUES (?, ?, 'pending')";
             $db->execute($sql, [$userId, $totalPrice]);
             $orderId = (int) $db->getLastInsertId();
 
-            // Add order items - BeforeOrderItemInsert trigger will validate stock
             foreach ($items as $item) {
                 $sql = 'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)';
                 $db->execute($sql, [
@@ -308,7 +296,6 @@ class Order
             return $orderId;
         } catch (Exception $e) {
             $db->rollBack();
-            // Log the error message which could come from the trigger
             error_log('Order creation failed: '.$e->getMessage());
 
             return false;
@@ -331,8 +318,7 @@ class Order
 
         try {
             $db->beginTransaction();
-            
-            // Verify order belongs to user
+
             $sql = "SELECT id FROM orders WHERE id = ? AND user_id = ? AND status != 'cancelled'";
             $order = $db->fetchRow($sql, [$orderId, $userId]);
 
@@ -340,22 +326,22 @@ class Order
                 return false;
             }
 
-            // Update status - triggers will handle stock restoration
             $sql = "UPDATE orders SET status = 'cancelled' WHERE id = ?";
             $db->execute($sql, [$orderId]);
-            
-            // Insert the cancellation reason directly
-            $sql = "INSERT INTO canceled_orders (order_id, reason, canceled_at) 
+
+            $sql = 'INSERT INTO canceled_orders (order_id, reason, canceled_at) 
                    VALUES (?, ?, NOW())
-                   ON DUPLICATE KEY UPDATE reason = ?, canceled_at = NOW()";
+                   ON DUPLICATE KEY UPDATE reason = ?, canceled_at = NOW()';
             $db->execute($sql, [$orderId, $reason, $reason]);
-            
+
             $db->commit();
+
             return true;
-            
+
         } catch (Exception $e) {
             $db->rollBack();
             error_log('Error cancelling order: '.$e->getMessage());
+
             return false;
         }
     }
@@ -402,7 +388,7 @@ class Order
 
         $validStatus = self::validateStatus($status);
         $limit = (int) $limit;
-        
+
         $sql = "SELECT o.*, u.name as customer_name, u.email as customer_email  
                 FROM orders o 
                 JOIN users u ON o.user_id = u.id 
@@ -412,7 +398,7 @@ class Order
 
         return $db->fetchRows($sql, [$validStatus]);
     }
-    
+
     /**
      * Validate order status to prevent SQL injection
      *
@@ -422,7 +408,7 @@ class Order
     private static function validateStatus(string $status): string
     {
         $validStatuses = self::getValidStatuses();
-        
+
         return in_array($status, $validStatuses) ? $status : 'pending';
     }
 
@@ -434,38 +420,33 @@ class Order
     private static function getValidStatuses(): array
     {
         static $statuses = null;
-        
+
         if ($statuses === null) {
             try {
                 $db = Database::getInstance();
-                
+
                 $sql = "SELECT SUBSTRING(COLUMN_TYPE, 6, LENGTH(COLUMN_TYPE) - 6) as enum_list
                         FROM INFORMATION_SCHEMA.COLUMNS
                         WHERE TABLE_SCHEMA = DATABASE()
                         AND TABLE_NAME = 'orders'
                         AND COLUMN_NAME = 'status'";
-                
+
                 $result = $db->fetchRow($sql);
-                
+
                 if ($result && isset($result['enum_list'])) {
-                    // Parse the enum list which comes in format: 'value1','value2','value3'
                     $enumList = $result['enum_list'];
-                    
-                    // Remove the first and last quote and then split by ','
+
                     $enumList = substr($enumList, 1, -1);
                     $statuses = explode("','", $enumList);
                 } else {
-                    // Fallback to default values if query fails
                     $statuses = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
                 }
             } catch (Exception $e) {
-                error_log('Error fetching valid order statuses: ' . $e->getMessage());
-                // Fallback to default values
+                error_log('Error fetching valid order statuses: '.$e->getMessage());
                 $statuses = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
             }
         }
-        
+
         return $statuses;
     }
 }
-

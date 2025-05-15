@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Core\Database;
-use Exception;
 
 class Product
 {
@@ -25,9 +24,6 @@ class Product
 
     /**
      * Get all products with optional limit
-     *
-     * @param  int  $limit  Maximum number of products to return
-     * @return array
      */
     public static function getAll($limit = null)
     {
@@ -45,11 +41,6 @@ class Product
 
     /**
      * Get filtered products with pagination
-     *
-     * @param  array  $filters  Array of filter parameters
-     * @param  int  $page  Current page number
-     * @param  int  $perPage  Number of items per page
-     * @return array Contains 'products' array and 'pagination' metadata
      */
     public static function getFiltered($filters, $page = 1, $perPage = 9)
     {
@@ -59,7 +50,6 @@ class Product
         $sql = 'SELECT * FROM products WHERE 1=1';
         $countSql = 'SELECT COUNT(*) as count FROM products WHERE 1=1';
 
-        // Search filter
         if (! empty($filters['search'])) {
             $searchCondition = ' AND (name LIKE ? OR description LIKE ?)';
             $sql .= $searchCondition;
@@ -69,7 +59,6 @@ class Product
             $params[] = $searchTerm;
         }
 
-        // Category filter - Updated to handle multiple categories
         if (! empty($filters['category'])) {
             if (is_array($filters['category']) && count($filters['category']) > 0) {
                 $placeholders = implode(',', array_fill(0, count($filters['category']), '?'));
@@ -87,7 +76,6 @@ class Product
             }
         }
 
-        // Price range filter
         if (! empty($filters['min_price'])) {
             $minPriceCondition = ' AND price >= ?';
             $sql .= $minPriceCondition;
@@ -104,11 +92,9 @@ class Product
             $countParams[] = $filters['max_price'];
         }
 
-        // Get total count for pagination
-        $countParams = $params; // Copy params for count query
+        $countParams = $params;
         $totalCount = (int) $db->fetchRow($countSql, $countParams)['count'];
 
-        // Apply sorting
         if (! empty($filters['sort'])) {
             switch ($filters['sort']) {
                 case 'newest':
@@ -121,7 +107,7 @@ class Product
                     $sql .= ' ORDER BY price DESC';
                     break;
                 case 'popularity':
-                    $sql .= ' ORDER BY stock ASC'; // Using stock as a proxy for popularity
+                    $sql .= ' ORDER BY stock ASC';
                     break;
                 default:
                     $sql .= ' ORDER BY created_at DESC';
@@ -130,20 +116,16 @@ class Product
             $sql .= ' ORDER BY created_at DESC';
         }
 
-        // Calculate pagination values
         $totalPages = ceil($totalCount / $perPage);
-        $page = max(1, min($page, max(1, $totalPages))); // Ensure page is within valid range
+        $page = max(1, min($page, max(1, $totalPages)));
         $offset = ($page - 1) * $perPage;
 
-        // Add pagination to the query
         $sql .= ' LIMIT ? OFFSET ?';
         $params[] = $perPage;
         $params[] = $offset;
 
-        // Get products for current page
         $products = $db->fetchRows($sql, $params);
 
-        // Return both products and pagination metadata
         return [
             'products' => $products,
             'pagination' => [
@@ -157,9 +139,6 @@ class Product
 
     /**
      * Get product by ID
-     *
-     * @param  int  $id  Product ID
-     * @return array|bool Product data or false if not found
      */
     public static function getById($id)
     {
@@ -170,10 +149,6 @@ class Product
 
     /**
      * Get products by category
-     *
-     * @param  string  $category  Category name
-     * @param  int  $limit  Maximum number of products to return
-     * @return array
      */
     public static function getByCategory($category, $limit = null)
     {
@@ -191,8 +166,6 @@ class Product
 
     /**
      * Get total count of products
-     *
-     * @return int
      */
     public static function getCount()
     {
@@ -204,9 +177,6 @@ class Product
 
     /**
      * Add a new product
-     *
-     * @param  array  $data  Product data
-     * @return int|bool New product ID or false on failure
      */
     public static function add($data)
     {
@@ -224,10 +194,6 @@ class Product
 
     /**
      * Update a product
-     *
-     * @param  int  $id  Product ID
-     * @param  array  $data  Product data
-     * @return bool Success flag
      */
     public static function update($id, $data)
     {
@@ -246,9 +212,6 @@ class Product
 
     /**
      * Delete a product
-     *
-     * @param  int  $id  Product ID
-     * @return bool Success flag
      */
     public static function delete($id)
     {
@@ -259,9 +222,6 @@ class Product
 
     /**
      * Get newest products based on creation date
-     *
-     * @param  int  $limit  Maximum number of products to return
-     * @return array
      */
     public static function getNewest($limit = 4)
     {
@@ -279,17 +239,11 @@ class Product
 
     /**
      * Get popular products (currently based on lowest stock as an indicator of sales)
-     *
-     * @param  int  $limit  Maximum number of products to return
-     * @return array
      */
     public static function getPopular($limit = 4)
     {
         $db = Database::getInstance();
 
-        // In a real-world scenario, this would be based on sales data or view counts
-        // For now, we're assuming popular products have lower stock due to more sales
-        // Alternatively, this could be implemented with a product_views or order_items table join
         $sql = 'SELECT * FROM products WHERE stock > 0 ORDER BY stock ASC';
 
         if ($limit) {
@@ -303,53 +257,44 @@ class Product
 
     /**
      * Get all products with filters
-     *
-     * @param  string  $category  Category name filter (or 'all')
-     * @param  string  $sort  Sort order (name_asc, name_desc, price_asc, price_desc, newest)
-     * @param  string  $search  Search term
-     * @return array Array of filtered products
      */
     public static function getAllFiltered(string $category = 'all', string $sort = 'name_asc', string $search = ''): array
     {
         $db = Database::getInstance();
         $params = [];
-        
-        // Start building the query
-        $sql = "SELECT * FROM products WHERE 1=1";
-        
-        // Add category filter if not 'all'
+
+        $sql = 'SELECT * FROM products WHERE 1=1';
+
         if ($category !== 'all') {
-            $sql .= " AND category = ?";
+            $sql .= ' AND category = ?';
             $params[] = $category;
         }
-        
-        // Add search filter if provided
-        if (!empty($search)) {
-            $sql .= " AND (name LIKE ? OR description LIKE ?)";
+
+        if (! empty($search)) {
+            $sql .= ' AND (name LIKE ? OR description LIKE ?)';
             $params[] = "%$search%";
             $params[] = "%$search%";
         }
-        
-        // Add sorting
+
         switch ($sort) {
             case 'name_desc':
-                $sql .= " ORDER BY name DESC";
+                $sql .= ' ORDER BY name DESC';
                 break;
             case 'price_asc':
-                $sql .= " ORDER BY price ASC";
+                $sql .= ' ORDER BY price ASC';
                 break;
             case 'price_desc':
-                $sql .= " ORDER BY price DESC";
+                $sql .= ' ORDER BY price DESC';
                 break;
             case 'newest':
-                $sql .= " ORDER BY created_at DESC";
+                $sql .= ' ORDER BY created_at DESC';
                 break;
             case 'name_asc':
             default:
-                $sql .= " ORDER BY name ASC";
+                $sql .= ' ORDER BY name ASC';
                 break;
         }
-        
+
         return $db->fetchRows($sql, $params);
     }
 }

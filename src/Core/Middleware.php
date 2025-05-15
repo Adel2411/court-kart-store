@@ -16,10 +16,7 @@ class Middleware
         $authService = new AuthService;
 
         if (! $authService->isLoggedIn()) {
-            // Store the requested URL for redirect after login
             Session::set('redirect_after_login', $_SERVER['REQUEST_URI']);
-
-            // Redirect to login page
             header('Location: /login');
             exit;
         }
@@ -37,16 +34,12 @@ class Middleware
         $authService = new AuthService;
 
         if (! $authService->isLoggedIn()) {
-            // Store the requested URL for redirect after login
             Session::set('redirect_after_login', $_SERVER['REQUEST_URI']);
-
-            // Redirect to login page
             header('Location: /login');
             exit;
         }
 
         if (! $authService->isAdmin()) {
-            // User is logged in but not an admin
             header('Location: /unauthorized');
             exit;
         }
@@ -64,7 +57,6 @@ class Middleware
         $authService = new AuthService;
 
         if ($authService->isLoggedIn()) {
-            // User is already logged in, redirect to home
             header('Location: /');
             exit;
         }

@@ -21,7 +21,6 @@ class AuthService
     {
         $db = Database::getInstance();
 
-        // Get user by email
         $sql = 'SELECT * FROM users WHERE email = ?';
         $user = $db->fetchRow($sql, [$email]);
 
@@ -29,20 +28,16 @@ class AuthService
             return false;
         }
 
-        // Verify password
         if (! Security::verifyPassword($password, $user['password'])) {
             return false;
         }
 
-        // Store user in session
         $this->setUserSession($user);
 
-        // Create remember me token if requested
         if ($remember) {
             $this->createRememberToken($user['id']);
         }
 
-        // Log successful login
         $db->execute(
             'INSERT INTO logs (action, user_id, message) VALUES (?, ?, ?)',
             ['USER_LOGIN', $user['id'], 'User logged in successfully']
@@ -56,33 +51,26 @@ class AuthService
      */
     public function logout(): void
     {
-        // Get user ID before destroying session
         $userId = Session::get('user_id');
 
-        // Clear session
         Session::destroy();
 
-        // Remove remember me cookie
         Security::removeRememberCookie();
 
-        // Clear remember token from database if user was logged in and column exists
         if ($userId) {
             $db = Database::getInstance();
 
-            // Check if remember_token column exists in the users table
             try {
                 $db->execute(
                     'UPDATE users SET remember_token = NULL WHERE id = ?',
                     [$userId]
                 );
 
-                // Log logout
                 $db->execute(
                     'INSERT INTO logs (action, user_id, message) VALUES (?, ?, ?)',
                     ['USER_LOGOUT', $userId, 'User logged out']
                 );
             } catch (\PDOException $e) {
-                // Column doesn't exist or other DB error - just log logout
                 $db->execute(
                     'INSERT INTO logs (action, user_id, message) VALUES (?, ?, ?)',
                     ['USER_LOGOUT', $userId, 'User logged out']
@@ -98,12 +86,10 @@ class AuthService
      */
     public function isLoggedIn(): bool
     {
-        // First check session
         if (Session::has('user_id')) {
             return true;
         }
 
-        // Then check remember me cookie
         return $this->checkRememberMe();
     }
 
@@ -151,7 +137,6 @@ class AuthService
 
         $db = Database::getInstance();
 
-        // Get user with remember token
         $user = $db->fetchRow(
             'SELECT * FROM users WHERE id = ? AND remember_token IS NOT NULL',
             [$cookieData['user_id']]
@@ -163,10 +148,8 @@ class AuthService
             return false;
         }
 
-        // User is authenticated via remember me
         $this->setUserSession($user);
 
-        // Refresh the remember me token for security
         $this->refreshRememberToken($user['id']);
 
         return true;
@@ -179,16 +162,13 @@ class AuthService
      */
     private function setUserSession(array $user): void
     {
-        // Regenerate session ID to prevent session fixation
         Session::regenerate();
 
-        // Store user data in session
         Session::set('user_id', $user['id']);
         Session::set('user_name', $user['name']);
         Session::set('user_email', $user['email']);
         Session::set('user_role', $user['role']);
 
-        // Set last activity time for session timeout
         Session::set('last_activity', time());
     }
 
@@ -203,14 +183,12 @@ class AuthService
         $token = Security::generateRandomToken(64);
         $db = Database::getInstance();
 
-        // Update user with remember token
         $success = $db->execute(
             'UPDATE users SET remember_token = ? WHERE id = ?',
             [$token, $userId]
         );
 
         if ($success) {
-            // Set the cookie
             return Security::createRememberCookie($userId, $token);
         }
 
@@ -225,7 +203,6 @@ class AuthService
      */
     private function refreshRememberToken(int $userId): bool
     {
-        // Generate new token
         return $this->createRememberToken($userId);
     }
 }

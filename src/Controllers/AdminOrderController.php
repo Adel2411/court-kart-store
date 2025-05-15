@@ -12,10 +12,10 @@ class AdminOrderController
 
     public function __construct()
     {
-        $this->view = new View();
-        
+        $this->view = new View;
+
         // Check admin authentication
-        if (!Session::get('is_admin')) {
+        if (! Session::get('is_admin')) {
             Session::flash('error', 'Admin access required');
             header('Location: /login');
             exit;
@@ -28,21 +28,22 @@ class AdminOrderController
     public function index()
     {
         $orders = Order::getAll(50);
-        
+
         return $this->view->render('admin/orders', [
             'orders' => $orders,
-            'pageTitle' => 'Manage Orders'
+            'pageTitle' => 'Manage Orders',
         ]);
     }
 
     /**
      * Show order details in admin panel
-     * @param int $id Order ID
+     *
+     * @param  int  $id  Order ID
      */
     public function show($id)
     {
         $orderDetails = Order::getOrderDetails($id);
-        
+
         if (empty($orderDetails)) {
             Session::flash('error', 'Order not found');
             header('Location: /admin/orders');
@@ -51,7 +52,7 @@ class AdminOrderController
 
         return $this->view->render('admin/order-details', [
             'orderDetails' => $orderDetails,
-            'pageTitle' => 'Order #' . $id
+            'pageTitle' => 'Order #'.$id,
         ]);
     }
 
@@ -65,16 +66,16 @@ class AdminOrderController
             header('Location: /admin/orders');
             exit;
         }
-        
+
         $orderId = $_POST['order_id'] ?? 0;
         $status = $_POST['status'] ?? '';
-        
+
         if (Order::updateStatus($orderId, $status)) {
             Session::flash('success', 'Order status updated successfully');
         } else {
             Session::flash('error', 'Failed to update order status');
         }
-        
+
         header('Location: /admin/orders');
         exit;
     }

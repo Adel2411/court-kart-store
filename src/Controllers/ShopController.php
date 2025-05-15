@@ -12,32 +12,28 @@ class ShopController
      */
     public function index()
     {
-        // Get filters from request
         $filters = [
             'search' => $_GET['search'] ?? null,
             'category' => $_GET['category'] ?? null,
             'min_price' => $_GET['min_price'] ?? null,
             'max_price' => $_GET['max_price'] ?? null,
-            'sort' => $_GET['sort'] ?? 'newest'
+            'sort' => $_GET['sort'] ?? 'newest',
         ];
-        
-        // Get current page from request, default to 1
-        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        
-        // Get products with pagination
+
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+
         $result = Product::getFiltered($filters, $page, 9);
         $products = $result['products'];
         $pagination = $result['pagination'];
-        
-        // Preserve filters in pagination links
+
         $pagination['query_string'] = $this->buildQueryString($filters);
-        
+
         echo View::renderWithLayout('shop/index', 'main', [
             'title' => 'Shop - Court Kart',
             'products' => $products,
             'pagination' => $pagination,
             'page_css' => ['shop'],
-            'page_js' => ['shop']
+            'page_js' => ['shop'],
         ]);
     }
 
@@ -47,12 +43,12 @@ class ShopController
     private function buildQueryString($filters)
     {
         $query = [];
-        
-        if (!empty($filters['search'])) {
+
+        if (! empty($filters['search'])) {
             $query['search'] = $filters['search'];
         }
-        
-        if (!empty($filters['category'])) {
+
+        if (! empty($filters['category'])) {
             if (is_array($filters['category'])) {
                 foreach ($filters['category'] as $category) {
                     $query['category'][] = $category;
@@ -61,19 +57,19 @@ class ShopController
                 $query['category'] = $filters['category'];
             }
         }
-        
-        if (!empty($filters['min_price'])) {
+
+        if (! empty($filters['min_price'])) {
             $query['min_price'] = $filters['min_price'];
         }
-        
-        if (!empty($filters['max_price'])) {
+
+        if (! empty($filters['max_price'])) {
             $query['max_price'] = $filters['max_price'];
         }
-        
-        if (!empty($filters['sort'])) {
+
+        if (! empty($filters['sort'])) {
             $query['sort'] = $filters['sort'];
         }
-        
+
         return http_build_query($query);
     }
 
@@ -84,11 +80,9 @@ class ShopController
      */
     public function show($id)
     {
-        // Fetch product from database
         $product = Product::getById($id);
 
         if (! $product) {
-            // Product not found, redirect to 404
             header('HTTP/1.0 404 Not Found');
             require_once BASE_PATH.'/views/errors/404.php';
 
@@ -126,7 +120,6 @@ class ShopController
 
         $category_name = $categories[$id] ?? 'Unknown Category';
 
-        // Fetch products from the selected category
         $products = Product::getByCategory($category_name, 4);
 
         echo View::renderWithLayout('shop/category', 'main', [

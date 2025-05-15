@@ -8,9 +8,6 @@ class Security
 {
     /**
      * Hash a password using PHP's password_hash function
-     *
-     * @param  string  $password  Plain text password
-     * @return string Hashed password
      */
     public static function hashPassword(string $password): string
     {
@@ -19,10 +16,6 @@ class Security
 
     /**
      * Verify if a password matches a hash
-     *
-     * @param  string  $password  Plain text password
-     * @param  string  $hash  Hashed password
-     * @return bool True if password matches hash
      */
     public static function verifyPassword(string $password, string $hash): bool
     {
@@ -31,8 +24,6 @@ class Security
 
     /**
      * Generate a CSRF token and store it in the session
-     *
-     * @return string The CSRF token
      */
     public static function generateCsrfToken(): string
     {
@@ -44,9 +35,6 @@ class Security
 
     /**
      * Verify if the provided CSRF token is valid
-     *
-     * @param  string  $token  The token to verify
-     * @return bool True if token is valid
      */
     public static function verifyCsrfToken(string $token): bool
     {
@@ -64,9 +52,6 @@ class Security
 
     /**
      * Generate a secure random token
-     *
-     * @param  int  $length  Length of the token
-     * @return string Random token
      */
     public static function generateRandomToken(int $length = 32): string
     {
@@ -75,11 +60,6 @@ class Security
 
     /**
      * Create a remember me cookie
-     *
-     * @param  int  $userId  User ID
-     * @param  string  $token  Remember me token
-     * @param  int  $days  Cookie expiration in days
-     * @return bool True if cookie was set
      */
     public static function createRememberCookie(int $userId, string $token, int $days = 30): bool
     {
@@ -102,8 +82,6 @@ class Security
 
     /**
      * Remove the remember me cookie
-     *
-     * @return bool True if cookie was removed
      */
     public static function removeRememberCookie(): bool
     {
@@ -123,8 +101,6 @@ class Security
 
     /**
      * Parse the remember me cookie value
-     *
-     * @return array|null Array with user_id and token, or null if invalid
      */
     public static function parseRememberCookie(): ?array
     {

@@ -17,7 +17,6 @@ class Category
         $db = Database::getInstance();
 
         try {
-            // Get distinct categories from the products table
             $categories = $db->fetchRows('SELECT DISTINCT category FROM products');
 
             // Format the result to be more usable in views
