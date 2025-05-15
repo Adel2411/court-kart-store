@@ -20,63 +20,67 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * Initialize add to cart functionality
+ * Initialize add to cart functionality - convert to traditional form submission
  */
 function initAddToCart() {
     const addToCartForms = document.querySelectorAll('.add-to-cart-form');
     
     addToCartForms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const productId = this.querySelector('[name="product_id"]').value;
-            const quantity = this.querySelector('[name="quantity"]')?.value || 1;
-            const submitBtn = this.querySelector('button[type="submit"]');
+        // Add a hidden input for the return URL to redirect back after form submission
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'return_url';
+        hiddenInput.value = window.location.href;
+        form.appendChild(hiddenInput);
+        
+        // Update action to enable direct form submission
+        form.action = '/cart/add';
+        form.method = 'POST';
+        
+        // Add visual feedback without preventing form submission
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
             const originalText = submitBtn.innerHTML;
             
-            // Show loading state
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            submitBtn.disabled = true;
-            
-            // Send AJAX request to add item to cart
-            fetch('/cart/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: `product_id=${productId}&quantity=${quantity}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Show success state
-                submitBtn.innerHTML = '<i class="fas fa-check"></i> Added';
-                submitBtn.classList.add('btn-success');
+            form.addEventListener('submit', function() {
+                // Show loading state
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                submitBtn.disabled = true;
                 
-                // Update cart count
-                updateCartCount();
+                // The form will submit naturally and redirect
+                // No need to prevent default or use fetch
                 
-                // Reset button after delay
-                setTimeout(() => {
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                    submitBtn.classList.remove('btn-success');
-                }, 2000);
-            })
-            .catch(error => {
-                // Show error state
-                submitBtn.innerHTML = '<i class="fas fa-times"></i> Failed';
-                submitBtn.classList.add('btn-danger');
+                // Store button state in localStorage to restore after redirect
+                localStorage.setItem('lastAddedProductId', form.querySelector('[name="product_id"]').value);
                 
-                // Reset button after delay
-                setTimeout(() => {
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                    submitBtn.classList.remove('btn-danger');
-                }, 2000);
+                return true; // Allow form to submit normally
             });
-        });
+        }
     });
+    
+    // Check if we just returned from adding an item
+    const lastAddedProductId = localStorage.getItem('lastAddedProductId');
+    if (lastAddedProductId) {
+        // Show success animation on the button for that product
+        const form = document.querySelector(`.add-to-cart-form input[value="${lastAddedProductId}"]`)?.closest('form');
+        if (form) {
+            const btn = form.querySelector('button[type="submit"]');
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-check"></i> Added';
+                btn.classList.add('btn-success');
+                
+                // Reset button after delay
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-shopping-cart"></i> Add to Cart';
+                    btn.disabled = false;
+                    btn.classList.remove('btn-success');
+                }, 2000);
+            }
+        }
+        
+        // Clear the stored ID
+        localStorage.removeItem('lastAddedProductId');
+    }
 }
 
 /**
@@ -282,30 +286,17 @@ function showTooltip(element, text) {
 }
 
 /**
- * Update the cart count in the header
+ * Update the cart count in the header - no fetch call
  */
 function updateCartCount() {
-  // Call the global updateCartCount function from main.js
-  if (window.updateCartCount) {
-    window.updateCartCount();
-  } else {
-    // Fallback implementation
-    fetch('/cart/count')
-      .then(response => response.json())
-      .then(data => {
-        const cartCountElements = document.querySelectorAll('.cart-count');
-        cartCountElements.forEach(element => {
-          element.textContent = data.count || 0;
-          
-          // Simple animation
-          element.style.transform = 'scale(1.5)';
-          setTimeout(() => {
+    // The cart count will be set by PHP directly in the HTML
+    // Just add animation if needed
+    const cartCountElements = document.querySelectorAll('.cart-count');
+    cartCountElements.forEach(element => {
+        // Simple animation
+        element.style.transform = 'scale(1.5)';
+        setTimeout(() => {
             element.style.transform = 'scale(1)';
-          }, 300);
-        });
-      })
-      .catch(error => {
-        console.error('Error updating cart count:', error);
-      });
-  }
+        }, 300);
+    });
 }

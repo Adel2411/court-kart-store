@@ -195,30 +195,19 @@ function initFormValidation() {
   });
 }
 
-// Function to update cart count
+// Function to update cart count - removing fetch API
 function updateCartCount() {
-  const cartCountElements = document.querySelectorAll(".cart-count");
-  
-  if (cartCountElements.length === 0) return;
-  
-  // Make AJAX call to get cart count
-  fetch("/cart/count")
-    .then((response) => response.json())
-    .then((data) => {
-      if (data && data.count !== undefined) {
-        cartCountElements.forEach(element => {
-          // Update the text
-          element.textContent = data.count;
-          
-          // Add a simple pulse animation
-          element.style.transform = 'scale(1.5)';
-          setTimeout(() => {
+    const cartCountElements = document.querySelectorAll(".cart-count");
+    
+    if (cartCountElements.length === 0) return;
+    
+    // Instead of fetch, just add animation to existing cart count
+    // The PHP will set the correct count when rendering the page
+    cartCountElements.forEach(element => {
+        // Add a simple pulse animation
+        element.style.transform = 'scale(1.5)';
+        setTimeout(() => {
             element.style.transform = 'scale(1)';
-          }, 300);
-        });
-      }
-    })
-    .catch((error) => {
-      console.error("Could not update cart count:", error);
+        }, 300);
     });
 }

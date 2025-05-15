@@ -471,44 +471,36 @@ document.addEventListener('DOMContentLoaded', function() {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                const formData = new FormData(form);
                 const submitBtn = form.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
                 
                 // Show loading state
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
                 submitBtn.disabled = true;
                 
-                fetch('/cart/add', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error('Failed to add product');
-                    return response.json();
-                })
-                .then(data => {
-                    // Close modal
-                    quickViewModal.setAttribute('aria-hidden', 'true');
+                // Update cart count in UI
+                const cartCountElem = document.querySelector('.cart-count');
+                if (cartCountElem) {
+                    const currentCount = parseInt(cartCountElem.textContent) || 0;
+                    cartCountElem.textContent = currentCount + 1;
                     
-                    // Show success notification
-                    showCartNotification();
-                    
-                    // Update cart count in header if available
-                    updateCartCount();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    submitBtn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed';
-                    submitBtn.classList.add('btn-danger');
-                    
-                    // Reset button after delay
+                    // Add animation
+                    cartCountElem.classList.add('pulse');
                     setTimeout(() => {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                        submitBtn.classList.remove('btn-danger');
-                    }, 2000);
-                });
+                        cartCountElem.classList.remove('pulse');
+                    }, 500);
+                }
+                
+                // Close modal
+                quickViewModal.setAttribute('aria-hidden', 'true');
+                
+                // Show success notification
+                showCartNotification();
+                
+                // Traditional form submission
+                setTimeout(() => {
+                    form.removeEventListener('submit', arguments.callee);
+                    form.submit();
+                }, 500);
             });
         }
     }
@@ -526,7 +518,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     /**
-     * Update cart count in header
+     * Update cart count in header - removing fetch API call
      */
     function updateCartCount() {
         const cartCountElem = document.querySelector('.cart-count');

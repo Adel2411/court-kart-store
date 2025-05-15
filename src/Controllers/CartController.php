@@ -47,48 +47,51 @@ class CartController
         $userId = Session::get('user_id');
         $productId = $_POST['product_id'] ?? null;
         $quantity = (int)($_POST['quantity'] ?? 1);
+        $returnUrl = $_POST['return_url'] ?? '/shop';
+        
+        $isAjaxRequest = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
         
         // Validate input
         if (!$productId || $quantity < 1) {
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            if ($isAjaxRequest) {
                 header('Content-Type: application/json');
                 echo json_encode(['success' => false, 'message' => 'Invalid product or quantity.']);
-                exit;
+                return;
             }
             Session::set('error', 'Invalid product or quantity.');
-            header('Location: /shop');
+            header('Location: ' . $returnUrl);
             exit;
         }
         
         // Check product exists and has enough stock
         $product = Product::getById($productId);
         if (!$product) {
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            if ($isAjaxRequest) {
                 header('Content-Type: application/json');
                 echo json_encode(['success' => false, 'message' => 'Product not found.']);
-                exit;
+                return;
             }
             Session::set('error', 'Product not found.');
-            header('Location: /shop');
+            header('Location: ' . $returnUrl);
             exit;
         }
         
         if ($quantity > $product['stock']) {
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            if ($isAjaxRequest) {
                 header('Content-Type: application/json');
                 echo json_encode(['success' => false, 'message' => 'Not enough stock available.']);
-                exit;
+                return;
             }
             Session::set('error', 'Not enough stock available.');
-            header('Location: /shop/product/' . $productId);
+            header('Location: ' . $returnUrl);
             exit;
         }
         
         // Add to cart
         $success = Cart::addItem($userId, $productId, $quantity);
         
-        // Handle AJAX requests
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+        if ($isAjaxRequest) {
             header('Content-Type: application/json');
             $cartCount = Cart::getItemCount($userId);
             echo json_encode([
@@ -96,20 +99,18 @@ class CartController
                 'message' => $success ? 'Product added to your cart.' : 'Failed to add product to cart.',
                 'count' => $cartCount
             ]);
+            return;
+        } else {
+            if ($success) {
+                Session::set('success', 'Product added to your cart.');
+            } else {
+                Session::set('error', 'Failed to add product to cart.');
+            }
+            
+            // Redirect back to previous page or cart
+            header('Location: ' . $returnUrl);
             exit;
         }
-        
-        // Handle regular requests
-        if ($success) {
-            Session::set('success', 'Product added to your cart.');
-        } else {
-            Session::set('error', 'Failed to add product to cart.');
-        }
-        
-        // Redirect back to previous page or cart
-        $redirect = $_SERVER['HTTP_REFERER'] ?? '/cart';
-        header('Location: ' . $redirect);
-        exit;
     }
 
     /**
