@@ -1,51 +1,52 @@
 <!-- Enhanced Hero Section with Image -->
 <section class="hero-section">
-    <div class="hero-content" data-animation="fade-in">
-        <div class="hero-badge-container">
-            <span class="hero-badge">Premium Basketball Gear</span>
-        </div>
-        
-        <h1 class="hero-title" data-animation="slide-up">
-            TIES THE BASKETBALL <span class="text-highlight">COURT</span><br>
-            TO YOUR SHOPPING <span class="text-highlight">JOURNEY</span>
-        </h1>
-        
-        <p class="hero-description" data-animation="slide-up">
-            Discover our expertly curated collection of premium basketball products 
-            designed for athletes who demand excellence on and off the court.
-        </p>
-        
-        <div class="hero-buttons">
-            <a href="/shop" class="btn btn-primary btn-lg pulse">
-                <span>Shop Collection</span>
-                <i class="fas fa-arrow-right"></i>
-            </a>
-            <a href="#categories" class="btn btn-outline btn-lg">
-                <span>Explore Categories</span>
-            </a>
-        </div>
-        
-        <div class="hero-stats">
-            <div class="stat">
-                <span class="stat-number counter-animation" data-counter="<?= $totalProducts ?? 200 ?>">0</span><span class="stat-plus">+</span>
-                <p class="stat-label">Products</p>
+    <div class="container">
+        <div class="hero-wrapper">
+            <div class="hero-content" data-animation="fade-in">
+                <div class="hero-badge-container">
+                    <span class="hero-badge">New Season Collection</span>
+                </div>
+                
+                <h1 class="hero-title" data-animation="slide-up">
+                    Dominate The <span class="text-highlight">Court</span> With Our Premium Gear
+                </h1>
+                
+                <p class="hero-description" data-animation="slide-up">
+                    Elevate your game with top-tier basketball gear designed for champions. 
+                    From shoes to jerseys, we've got everything you need to perform at your best.
+                </p>
+                
+                <div class="hero-buttons">
+                    <a href="/shop" class="btn btn-primary btn-lg">
+                        <span>Shop Collection</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="/categories" class="btn btn-outline btn-lg">
+                        <span>Browse Categories</span>
+                    </a>
+                </div>
+                
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="stat-number">25<span class="stat-plus">+</span></div>
+                        <p class="stat-label">Brands</p>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="stat-number">500<span class="stat-plus">+</span></div>
+                        <p class="stat-label">Products</p>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="stat-number">10K<span class="stat-plus">+</span></div>
+                        <p class="stat-label">Customers</p>
+                    </div>
+                </div>
             </div>
-            <div class="stat">
-                <span class="stat-number counter-animation" data-counter="<?= $totalUsers ?? 2000 ?>">0</span><span class="stat-plus">+</span>
-                <p class="stat-label">Happy Players</p>
-            </div>
-            <div class="stat">
-                <span class="stat-number">Free</span>
-                <p class="stat-label">Premium Shipping</p>
+            
+            <div class="hero-image-container">
+                <img src="/assets/images/hero-image.png" alt="Basketball Player" class="hero-player-image">
+                <div class="hero-image-circle"></div>
             </div>
         </div>
-    </div>
-    
-    <div class="scroll-indicator">
-        <a href="#brands-section">
-            <span>Scroll to explore</span>
-            <i class="fas fa-arrow-down"></i>
-        </a>
     </div>
 </section>
 
