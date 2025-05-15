@@ -16,110 +16,154 @@ This project demonstrates advanced PHP concepts including MVC architecture, sess
 
 ### Customer Features
 
-- **Product Browsing**: Browse through categorized basketball products
-- **Search & Filter**: Find products by name, price range, category, and brand
-- **Account Management**: Register, login, view profile, and order history
+- **Product Browsing**: Browse through categorized basketball products with grid and list views
+- **Advanced Filtering**: Find products by name, price range, category, and sort by various criteria
+- **User Account Management**: Register, login, view profile, and track order history
+- **Product Details**: View comprehensive product information, images, and specifications
 - **Shopping Cart**: Add/remove items, adjust quantities, view cart totals
 - **Checkout Process**: Address entry, payment method selection, order confirmation
 - **Order Tracking**: View status and details of past orders
 
 ### Admin Features
 
+- **Dashboard**: Overview of store performance and key metrics
 - **Product Management**: Add, edit, and remove products from inventory
 - **Order Administration**: Process orders, update status, and view order details
 - **User Management**: View and manage customer accounts
 - **Inventory Control**: Monitor stock levels with automatic alerts
-- **Analytics Dashboard**: View sales data and popular products
 
-### Database Features
+### Technical Features
 
-- **Stored Procedures**:
-  - `GetOrderDetails`: Retrieve order details with calculated total
-  - `FinalizeOrder`: Process order completion and empty cart
-  - `GetCustomerOrderHistory`: Display all orders for a customer
-- **Triggers**:
-  - `after_order_confirm`: Decrease product stock on order confirmation
-  - `before_order_insert`: Prevent orders exceeding available stock
-  - `after_order_cancel`: Restore inventory when orders are canceled
-  - `log_canceled_orders`: Record canceled orders in history table
+- **Responsive Design**: Mobile-first approach for all device compatibility
+- **Form Validation**: Client and server-side validation for data integrity
+- **Session Management**: Secure PHP session handling
+- **Database Operations**: Stored procedures and triggers for complex operations
+- **Security**: Protection against XSS, CSRF, and SQL injection
 
 ---
 
 ## Technology Stack
 
-- **Frontend**: HTML5, CSS3, JavaScript (vanilla)
-- **Backend**: PHP 8.0+ (no frameworks)
-- **Database**: MySQL 8.0+
-- **Session Management**: PHP native sessions
-- **Authentication**: Custom-built, secure hash-based system
-- **Development Environment**: XAMPP/LAMP/MAMP
+- **Frontend**: 
+  - HTML5, CSS3 with responsive design
+  - Vanilla JavaScript with modular organization
+  - Font Awesome icons
+  
+- **Backend**: 
+  - PHP 8.0+ (no frameworks)
+  - MVC architecture
+  - Custom routing system
+  
+- **Database**: 
+  - MySQL 8.0+
+  - Stored procedures
+  - Database triggers
+  
+- **Development Environment**: 
+  - XAMPP/LAMP stack
 
 ---
 
-## Architecture
-
-CourtKart follows a lightweight MVC (Model-View-Controller) architecture:
-
-- **Models**: Encapsulate database logic and business rules
-- **Views**: Handle presentation and templating
-- **Controllers**: Process requests and coordinate between models and views
-- **Services**: Handle complex business logic operations
-
----
-
-## Enhanced Folder Structure
+## Project Structure
 
 ```plaintext
 court-kart-store/
-├── public/                    # Web root - publicly accessible files
+├── public/                    # Public accessible files
 │   ├── index.php             # Application entry point
 │   ├── assets/               # Static assets
-│   │   ├── css/              # Stylesheets
-│   │   ├── js/               # JavaScript files
-│   │   └── images/           # Images and graphics
+│   │   ├── css/              # Stylesheets (main, components, layouts, pages)
+│   │   ├── js/               # JavaScript files (main, pages)
+│   │   └── images/           # Images and product photos
 │   └── .htaccess             # URL rewriting rules
 ├── src/                       # Application source code
-│   ├── Models/               # Data access layer
-│   │   ├── User.php
-│   │   ├── Product.php
-│   │   ├── Cart.php
-│   │   ├── Order.php
-│   │   └── Category.php
+│   ├── Core/                 # Framework core components
+│   │   ├── Database.php      # Database connection handler
+│   │   ├── Router.php        # URL routing system
+│   │   ├── Session.php       # Session management
+│   │   └── View.php          # Template rendering
 │   ├── Controllers/          # Request handlers
+│   │   ├── HomeController.php
 │   │   ├── ShopController.php
 │   │   ├── CartController.php
 │   │   ├── AuthController.php
 │   │   ├── OrderController.php
+│   │   ├── CheckoutController.php
+│   │   ├── AccountController.php
 │   │   └── AdminController.php
-│   ├── Services/             # Business logic
-│   │   ├── AuthService.php
-│   │   ├── CartService.php
-│   │   └── OrderService.php
-│   ├── Core/                 # Framework components
-│   │   ├── Database.php
-│   │   ├── Router.php
-│   │   ├── Session.php
-│   │   └── View.php
+│   ├── Models/               # Data models
+│   │   ├── User.php
+│   │   ├── Product.php
+│   │   ├── Cart.php
+│   │   └── Order.php
 │   └── Helpers/              # Utility functions
 │       ├── Validator.php
 │       └── Security.php
-├── config/                    # Configuration files
-│   ├── app.php
-│   └── database.php
 ├── views/                     # Template files
 │   ├── layouts/              # Reusable layouts
 │   │   ├── main.php          # Main site layout
-│   │   └── admin.php         # Admin panel layout
-│   ├── shop/
-│   ├── cart/
-│   ├── auth/
-│   └── admin/
-├── sql/                       # Database scripts
-│   ├── schema.sql            # Table structure
-│   ├── procedures.sql        # Stored procedures
-│   ├── triggers.sql          # Database triggers
-│   └── seed.sql              # Sample data
+│   │   ├── admin.php         # Admin panel layout
+│   │   └── footer.php        # Footer partial
+│   ├── shop/                 # Shop pages
+│   │   ├── index.php         # Product listing page
+│   │   └── product.php       # Product detail page
+│   ├── cart/                 # Shopping cart views
+│   │   └── index.php
+│   ├── home.php              # Homepage template
+│   └── errors/               # Error pages
+│       └── 404.php
+├── routes/                    # Routing configuration
+│   └── web.php               # Web routes definition
+├── config/                    # Configuration files
+│   ├── app.php
+│   └── database.php
 └── bootstrap.php              # Application initialization
+```
+
+---
+
+## Key Components
+
+### 1. Routing System
+The application uses a custom routing system located in `routes/web.php` that maps URLs to controller actions and supports middleware for authentication:
+
+```php
+// Public routes
+$router->get('/', 'HomeController@index');
+$router->get('/shop', 'ShopController@index');
+$router->get('/shop/product/{id}', 'ShopController@show');
+
+// Auth protected routes
+$router->get('/cart', 'CartController@index', 'auth');
+$router->post('/cart/add', 'CartController@add', 'auth');
+
+// Admin routes
+$router->get('/admin/products', 'AdminController@products', 'admin');
+```
+
+### 2. View Rendering
+Templates are managed through the `View` class which supports layouts and partial templates:
+
+```php
+// Render a view with layout
+echo View::renderWithLayout('shop/product', 'main', [
+    'title' => $product['name'].' - Court Kart',
+    'product' => $product,
+    'page_css' => 'product'
+]);
+```
+
+### 3. Database Interaction
+Models interact with the database and encapsulate data operations:
+
+```php
+// Get filtered products with pagination
+$products = Product::getFiltered([
+    'category' => $_GET['category'] ?? null,
+    'search' => $_GET['search'] ?? null,
+    'min_price' => $_GET['min_price'] ?? null,
+    'max_price' => $_GET['max_price'] ?? null,
+    'sort' => $_GET['sort'] ?? 'newest'
+], $page, 12);
 ```
 
 ---
@@ -130,20 +174,18 @@ court-kart-store/
 
    ```
    git clone https://github.com/Adel2411/court-kart-store.git
+   cd court-kart-store
    ```
 
 2. **Configure your web server**
 
    - Set document root to the `public` directory
-   - Ensure PHP has appropriate permissions
+   - Ensure PHP 8.0+ is installed and configured
 
-3. **Create the database**
+3. **Create and populate the database**
 
    ```
-   mysql -u username -p < sql/schema.sql
-   mysql -u username -p < sql/procedures.sql
-   mysql -u username -p < sql/triggers.sql
-   mysql -u username -p < sql/seed.sql
+   mysql -u username -p < database/schema.sql
    ```
 
 4. **Configure database connection**
@@ -152,32 +194,31 @@ court-kart-store/
 
 5. **Start your local server**
 
-   - Run your XAMPP/MAMP/LAMP stack
+   - Launch XAMPP/MAMP/LAMP
+   - Or use PHP's built-in server: `php -S localhost:8000 -t public`
 
 6. **Access the application**
-   - Navigate to `http://localhost` in your browser
+   - Navigate to `http://localhost:8000` in your browser
+   - Admin access: Use credentials admin@courtkart.com / admin123
 
 ---
 
-## Database Schema (ERD)
+## Screenshots
 
 <p align="center">
-  <img src="public/assets/images/db-schema.png" alt="CourtKart Database Schema"/>
+  <img src="public/assets/images/screenshots/homepage.png" alt="Homepage" width="48%"/>
+  <img src="public/assets/images/screenshots/product-listing.png" alt="Product Listing" width="48%"/>
 </p>
 
 ---
 
-## Project Requirements
+## Database Schema
 
-This project fulfills the following academic requirements:
+The database uses a normalized schema with tables for users, products, categories, orders, and cart items. Key relationships include one-to-many between users and orders, and many-to-many between orders and products via order_items.
 
-- Main shop page with detailed product listings
-- User authentication system
-- Shopping cart functionality
-- Product search and filtering
-- Database integration with stored procedures and triggers
-- Session and cookie management
-- Admin interface for product management
+<p align="center">
+  <img src="public/assets/images/db-schema.png" alt="CourtKart Database Schema"/>
+</p>
 
 ---
 
@@ -194,4 +235,4 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
-> **Disclaimer**: This project is built without external libraries or frameworks, intended for educational demonstration only.
+> **Note**: This project is built without external frameworks or libraries, focusing on core PHP principles and clean code structure.
