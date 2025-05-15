@@ -145,6 +145,36 @@ function initGlobalComponents() {
 
   // Update cart counts via AJAX if available
   updateCartCount();
+  
+  // Initialize modals (will be fully initialized once modal.js loads)
+  initModals();
+}
+
+/**
+ * Initialize modals on the page
+ */
+function initModals() {
+  // This is just a placeholder function
+  // The actual initialization happens in modal.js which is loaded dynamically
+  // But we can pre-attach click handlers for any static modal triggers
+  document.querySelectorAll('[data-modal-trigger]').forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('data-modal-target');
+      
+      // If Modal class is available, use it, otherwise wait for script to load
+      if (typeof Modal !== 'undefined') {
+        const modalEl = document.getElementById(targetId);
+        if (modalEl) {
+          const modal = new Modal();
+          modal.setContent(modalEl.innerHTML);
+          modal.open();
+        }
+      } else {
+        console.warn('Modal component not yet loaded. Try again in a moment.');
+      }
+    });
+  });
 }
 
 /**

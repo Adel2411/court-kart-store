@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="/assets/css/components.css">
     <link rel="stylesheet" href="/assets/css/layouts.css">
     
+    <!-- Load component CSS files -->
+    <link rel="stylesheet" href="/assets/css/components/modal.css">
+    
     <!-- Authentication pages CSS -->
     <?php if (strpos($_SERVER['REQUEST_URI'], '/login') === 0 || strpos($_SERVER['REQUEST_URI'], '/register') === 0) { ?>
         <link rel="stylesheet" href="/assets/css/auth.css">
@@ -35,6 +38,110 @@
     
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Mobile navigation styles -->
+    <style>
+        /* Mobile menu styles */
+        @media (max-width: 768px) {
+            .header-content {
+                position: relative;
+            }
+            
+            nav {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: #fff;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                padding: 20px;
+                z-index: 999;
+                transform: translateY(-150%);
+                opacity: 0;
+                transition: transform 0.3s ease, opacity 0.3s ease;
+                visibility: hidden;
+            }
+            
+            nav.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            nav a {
+                margin: 10px 0;
+                display: block;
+                text-align: center;
+            }
+            
+            .nav-right {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-top: 15px;
+                border-top: 1px solid #eee;
+                padding-top: 15px;
+            }
+            
+            .nav-right a {
+                margin: 8px 0;
+            }
+            
+            .mobile-menu-btn {
+                display: flex !important;
+                flex-direction: column;
+                justify-content: space-between;
+                width: 30px;
+                height: 24px;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                padding: 0;
+                z-index: 10;
+            }
+            
+            .mobile-menu-btn span {
+                width: 100%;
+                height: 3px;
+                background: #333;
+                border-radius: 3px;
+                transition: transform 0.3s ease, opacity 0.3s ease;
+            }
+            
+            .mobile-menu-btn.active span:nth-child(1) {
+                transform: translateY(10px) rotate(45deg);
+            }
+            
+            .mobile-menu-btn.active span:nth-child(2) {
+                opacity: 0;
+            }
+            
+            .mobile-menu-btn.active span:nth-child(3) {
+                transform: translateY(-10px) rotate(-45deg);
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-menu-btn {
+                display: none !important;
+            }
+            
+            nav {
+                display: flex !important;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+            }
+            
+            .nav-right {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -46,7 +153,13 @@
                     </a>
                 </div>
                 
-                <nav>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                
+                <nav id="mainNav">
                     <a href="/">Home</a>
                     <a href="/shop">Shop</a>
                     
@@ -90,12 +203,6 @@
                         <?php } ?>
                     </div>
                 </nav>
-                
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
             </div>
         </div>
     </header>
@@ -147,6 +254,48 @@
     
     <!-- JavaScript -->
     <script src="/assets/js/main.js"></script>
+    
+    <!-- Mobile navigation script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mainNav = document.getElementById('mainNav');
+            
+            if (mobileMenuBtn && mainNav) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    mainNav.classList.toggle('active');
+                    mobileMenuBtn.classList.toggle('active');
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    const isClickInsideNav = mainNav.contains(event.target);
+                    const isClickOnMenuBtn = mobileMenuBtn.contains(event.target);
+                    
+                    if (!isClickInsideNav && !isClickOnMenuBtn && mainNav.classList.contains('active')) {
+                        mainNav.classList.remove('active');
+                        mobileMenuBtn.classList.remove('active');
+                    }
+                });
+                
+                // Handle window resize
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 768) {
+                        mainNav.classList.remove('active');
+                        mobileMenuBtn.classList.remove('active');
+                    }
+                });
+                
+                // Add accessibility for keyboard navigation
+                mobileMenuBtn.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        mobileMenuBtn.click();
+                    }
+                });
+            }
+        });
+    </script>
     
     <!-- Include page-specific JS when available -->
     <?php if (isset($page_js)) { ?>

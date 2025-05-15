@@ -1,163 +1,290 @@
 /**
- * Modal Component
- * Handles functionality for modals throughout Court Kart
+ * Modal Component for Court Kart
+ * Provides reusable modal dialog functionality
  */
 
 class Modal {
-  constructor(modalElement) {
-    this.modal = modalElement;
-    this.backdrop = this.modal.querySelector('.modal-backdrop');
-    this.closeButtons = this.modal.querySelectorAll('[data-close], .modal-close');
-    this.openButtons = document.querySelectorAll(`[data-modal="${this.modal.id}"]`);
-    this.focusableElements = this.modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-    this.firstFocusable = this.focusableElements[0];
-    this.lastFocusable = this.focusableElements[this.focusableElements.length - 1];
-    this.isOpen = false;
-    this.previouslyFocused = null;
+  constructor(options = {}) {
+    this.options = {
+      closeOnEscape: true,
+      closeOnBackdropClick: true,
+      onOpen: null,
+      onClose: null,
+      ...options
+    };
     
-    this.initEventListeners();
+    this.isOpen = false;
+    this.modal = null;
+    this.backdrop = null;
+    this.closeBtn = null;
+    this.modalContent = null;
+    this.lastFocusedElement = null;
+    
+    this.handleEscapeKey = this.handleEscapeKey.bind(this);
+    this.handleBackdropClick = this.handleBackdropClick.bind(this);
   }
   
-  initEventListeners() {
-    // Open modal buttons
-    this.openButtons.forEach(button => {
-      button.addEventListener('click', this.open.bind(this));
-    });
-    
-    // Close modal buttons
-    this.closeButtons.forEach(button => {
-      button.addEventListener('click', this.close.bind(this));
-    });
-    
-    // Click on backdrop to close
-    if (this.backdrop) {
-      this.backdrop.addEventListener('click', this.close.bind(this));
+  /**
+   * Create a new modal from HTML content
+   * @param {string} content - HTML content for the modal
+   * @param {object} options - Optional configuration options
+   * @return {Modal} - New modal instance
+   */
+  static create(content, options = {}) {
+    const modal = new Modal(options);
+    modal.setContent(content);
+    return modal;
+  }
+  
+  /**
+   * Create modal from a template element
+   * @param {string} templateId - ID of the template element
+   * @param {object} options - Optional configuration options
+   * @return {Modal} - New modal instance
+   */
+  static fromTemplate(templateId, options = {}) {
+    const template = document.getElementById(templateId);
+    if (!template) {
+      console.error(`Template with ID "${templateId}" not found`);
+      return null;
     }
     
-    // Listen for ESC key
-    this.modal.addEventListener('keydown', this.handleKeyDown.bind(this));
+    const content = template.content.cloneNode(true);
+    const modal = new Modal(options);
+    modal.setContent(content);
+    return modal;
   }
   
-  open() {
-    // Store the previously focused element
-    this.previouslyFocused = document.activeElement;
+  /**
+   * Set modal content
+   * @param {string|Node} content - Content to display in modal
+   */
+  setContent(content) {
+    if (!this.modal) {
+      this.createModal();
+    }
     
-    // Show the modal
+    const modalBody = this.modal.querySelector('.modal-body');
+    modalBody.innerHTML = '';
+    
+    if (typeof content === 'string') {
+      modalBody.innerHTML = content;
+    } else {
+      modalBody.appendChild(content);
+    }
+    
+    return this;
+  }
+  
+  /**
+   * Set modal title
+   * @param {string} title - Title text
+   */
+  setTitle(title) {
+    if (!this.modal) {
+      this.createModal();
+    }
+    
+    const modalTitle = this.modal.querySelector('.modal-title');
+    modalTitle.textContent = title;
+    
+    return this;
+  }
+  
+  /**
+   * Create the modal DOM elements
+   */
+  createModal() {
+    // Create modal container
+    this.modal = document.createElement('div');
+    this.modal.className = 'modal';
+    this.modal.setAttribute('role', 'dialog');
+    this.modal.setAttribute('aria-modal', 'true');
+    this.modal.setAttribute('aria-hidden', 'true');
+    
+    // Create backdrop
+    this.backdrop = document.createElement('div');
+    this.backdrop.className = 'modal-backdrop';
+    
+    // Create modal content
+    this.modalContent = document.createElement('div');
+    this.modalContent.className = 'modal-content';
+    
+    // Create modal header
+    const modalHeader = document.createElement('div');
+    modalHeader.className = 'modal-header';
+    
+    const modalTitle = document.createElement('h3');
+    modalTitle.className = 'modal-title';
+    modalTitle.textContent = 'Modal Title';
+    
+    this.closeBtn = document.createElement('button');
+    this.closeBtn.className = 'modal-close';
+    this.closeBtn.setAttribute('aria-label', 'Close modal');
+    this.closeBtn.innerHTML = '&times;';
+    
+    // Create modal body
+    const modalBody = document.createElement('div');
+    modalBody.className = 'modal-body';
+    
+    // Create modal footer
+    const modalFooter = document.createElement('div');
+    modalFooter.className = 'modal-footer';
+    
+    // Assemble modal
+    modalHeader.appendChild(modalTitle);
+    modalHeader.appendChild(this.closeBtn);
+    
+    this.modalContent.appendChild(modalHeader);
+    this.modalContent.appendChild(modalBody);
+    this.modalContent.appendChild(modalFooter);
+    
+    this.modal.appendChild(this.backdrop);
+    this.modal.appendChild(this.modalContent);
+    
+    // Add event listeners
+    this.closeBtn.addEventListener('click', () => this.close());
+    
+    // Append to DOM
+    document.body.appendChild(this.modal);
+    
+    return this;
+  }
+  
+  /**
+   * Open the modal
+   */
+  open() {
+    if (!this.modal) {
+      this.createModal();
+    }
+    
+    // Save the currently focused element to restore focus later
+    this.lastFocusedElement = document.activeElement;
+    
+    // Show modal
     this.modal.classList.add('active');
     this.modal.setAttribute('aria-hidden', 'false');
     
-    // Prevent body scroll
-    document.body.style.overflow = 'hidden';
-    
-    // Focus the first focusable element
-    if (this.firstFocusable) {
-      setTimeout(() => {
-        this.firstFocusable.focus();
-      }, 100);
+    // Add event listeners
+    if (this.options.closeOnEscape) {
+      document.addEventListener('keydown', this.handleEscapeKey);
     }
+    
+    if (this.options.closeOnBackdropClick) {
+      this.backdrop.addEventListener('click', this.handleBackdropClick);
+    }
+    
+    // Set focus to the first focusable element in the modal
+    this.trapFocus();
+    
+    // Prevent body scrolling
+    document.body.style.overflow = 'hidden';
     
     this.isOpen = true;
     
-    // Trigger open event
-    const openEvent = new CustomEvent('modal:open', { detail: { modalId: this.modal.id } });
-    document.dispatchEvent(openEvent);
+    // Trigger onOpen callback
+    if (typeof this.options.onOpen === 'function') {
+      this.options.onOpen(this);
+    }
     
     return this;
   }
   
+  /**
+   * Close the modal
+   */
   close() {
-    if (!this.isOpen) return this;
+    if (!this.isOpen || !this.modal) return;
     
-    // Hide the modal
+    // Hide modal
     this.modal.classList.remove('active');
     this.modal.setAttribute('aria-hidden', 'true');
     
-    // Restore body scroll
+    // Remove event listeners
+    document.removeEventListener('keydown', this.handleEscapeKey);
+    this.backdrop.removeEventListener('click', this.handleBackdropClick);
+    
+    // Restore body scrolling
     document.body.style.overflow = '';
     
-    // Restore focus to previous element
-    if (this.previouslyFocused) {
-      this.previouslyFocused.focus();
+    // Restore focus
+    if (this.lastFocusedElement) {
+      this.lastFocusedElement.focus();
     }
     
     this.isOpen = false;
     
-    // Trigger close event
-    const closeEvent = new CustomEvent('modal:close', { detail: { modalId: this.modal.id } });
-    document.dispatchEvent(closeEvent);
+    // Trigger onClose callback
+    if (typeof this.options.onClose === 'function') {
+      this.options.onClose(this);
+    }
     
     return this;
   }
   
-  handleKeyDown(event) {
-    if (!this.isOpen) return;
-    
-    // Close on ESC key
+  /**
+   * Handle ESC key press
+   * @param {KeyboardEvent} event - Keyboard event
+   */
+  handleEscapeKey(event) {
     if (event.key === 'Escape') {
-      event.preventDefault();
       this.close();
     }
+  }
+  
+  /**
+   * Handle backdrop click
+   */
+  handleBackdropClick() {
+    this.close();
+  }
+  
+  /**
+   * Set up focus trap within the modal
+   */
+  trapFocus() {
+    // Find all focusable elements
+    const focusableElements = this.modalContent.querySelectorAll('a[href], button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
     
-    // Trap focus inside modal
-    if (event.key === 'Tab') {
-      // If there are no focusable elements, do nothing
-      if (!this.focusableElements.length) return;
-      
-      // Shift + Tab
-      if (event.shiftKey) {
-        if (document.activeElement === this.firstFocusable) {
-          event.preventDefault();
-          this.lastFocusable.focus();
-        }
-      } 
-      // Tab
-      else {
-        if (document.activeElement === this.lastFocusable) {
-          event.preventDefault();
-          this.firstFocusable.focus();
-        }
-      }
+    if (focusableElements.length > 0) {
+      // Focus the first element
+      focusableElements[0].focus();
+    } else {
+      // If no focusable elements, focus the modal itself
+      this.modalContent.setAttribute('tabindex', '-1');
+      this.modalContent.focus();
     }
   }
 }
 
-/**
- * Initialize all modals on the page
- */
-function initModals() {
-  const modals = document.querySelectorAll('.modal');
-  const modalInstances = {};
+// Initialize modals on the page
+document.addEventListener('DOMContentLoaded', function() {
+  // Find elements with data-modal-target attribute
+  const modalTriggers = document.querySelectorAll('[data-modal-target]');
   
-  modals.forEach(modalElement => {
-    const modalId = modalElement.id;
-    if (modalId) {
-      modalInstances[modalId] = new Modal(modalElement);
+  modalTriggers.forEach(trigger => {
+    const targetId = trigger.getAttribute('data-modal-target');
+    const modalEl = document.getElementById(targetId);
+    
+    if (modalEl) {
+      // Create a Modal instance for this element
+      const modal = new Modal({
+        closeOnEscape: modalEl.getAttribute('data-close-on-escape') !== 'false',
+        closeOnBackdropClick: modalEl.getAttribute('data-close-on-backdrop') !== 'false'
+      });
+      
+      // Set content from the target element
+      modal.setContent(modalEl.innerHTML);
+      
+      // Handle modal opening
+      trigger.addEventListener('click', event => {
+        event.preventDefault();
+        modal.open();
+      });
     }
   });
-  
-  // Add to window for external access
-  window.CourtKartModals = modalInstances;
-  
-  // Support for dynamic opening via data attributes
-  document.addEventListener('click', function(event) {
-    const openTrigger = event.target.closest('[data-open-modal]');
-    if (openTrigger) {
-      const modalId = openTrigger.dataset.openModal;
-      if (modalInstances[modalId]) {
-        modalInstances[modalId].open();
-      }
-    }
-  });
-}
+});
 
-// Initialize modals when the DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initModals);
-} else {
-  initModals();
-}
-
-// Export for module usage
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { Modal, initModals };
-}
+// Export the Modal class for use in other scripts
+window.Modal = Modal;
