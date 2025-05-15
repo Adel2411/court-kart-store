@@ -10,6 +10,20 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Initialize global components
   initGlobalComponents();
+  
+  // Initialize mobile menu toggle
+  initMobileMenu();
+  
+  // Initialize responsive tables
+  initResponsiveTables();
+  
+  // Initialize alert dismissal
+  initAlertDismissal();
+  
+  // Handle admin sidebar responsive behavior if on admin page
+  if (document.querySelector('.admin-wrapper')) {
+      initAdminResponsive();
+  }
 });
 
 /**
@@ -134,6 +148,55 @@ function initGlobalComponents() {
 }
 
 /**
+ * Initialize mobile menu toggle
+ */
+function initMobileMenu() {
+    const menuBtn = document.getElementById('mobileMenuBtn');
+    const nav = document.querySelector('header nav');
+    
+    if (menuBtn && nav) {
+        menuBtn.addEventListener('click', function() {
+            this.classList.toggle('active');
+            nav.classList.toggle('active');
+            
+            // Add or remove no-scroll class from body
+            document.body.classList.toggle('menu-open');
+        });
+    }
+}
+
+/**
+ * Initialize responsive tables
+ */
+function initResponsiveTables() {
+    const tables = document.querySelectorAll('.admin-table');
+    
+    tables.forEach(table => {
+        // Add horizontal scroll indicator if table is wider than container
+        const wrapper = table.closest('.admin-table-wrapper');
+        if (wrapper && table.offsetWidth > wrapper.offsetWidth) {
+            wrapper.classList.add('scrollable');
+        }
+    });
+}
+
+/**
+ * Initialize alert dismissal
+ */
+function initAlertDismissal() {
+    const alerts = document.querySelectorAll('.alert');
+    
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            alert.classList.add('fade-out');
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 500);
+        }, 5000);
+    });
+}
+
+/**
  * Initialize tooltips
  */
 function initTooltips() {
@@ -209,5 +272,56 @@ function updateCartCount() {
         setTimeout(() => {
             element.style.transform = 'scale(1)';
         }, 300);
+    });
+}
+
+/**
+ * Handle admin sidebar responsive behavior
+ */
+function initAdminResponsive() {
+    const wrapper = document.getElementById('adminWrapper');
+    const toggle = document.getElementById('sidebarToggle');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    
+    // Fix table cell width on mobile
+    const fixTableCellWidth = () => {
+        const tables = document.querySelectorAll('.admin-table');
+        tables.forEach(table => {
+            if (window.innerWidth < 768) {
+                // Force minimum width for action columns
+                const actionCells = table.querySelectorAll('.actions, .actions-cell');
+                actionCells.forEach(cell => {
+                    cell.style.minWidth = '100px';
+                });
+            }
+        });
+    };
+    
+    // Call once on load
+    fixTableCellWidth();
+    
+    // And on resize
+    window.addEventListener('resize', fixTableCellWidth);
+    
+    // Handle table horizontal scrolling indicators
+    const tableWrappers = document.querySelectorAll('.admin-table-wrapper');
+    tableWrappers.forEach(wrapper => {
+        wrapper.addEventListener('scroll', function() {
+            const maxScroll = this.scrollWidth - this.clientWidth;
+            
+            if (this.scrollLeft === 0) {
+                this.classList.add('scroll-start');
+                this.classList.remove('scroll-middle', 'scroll-end');
+            } else if (this.scrollLeft >= maxScroll - 5) {
+                this.classList.add('scroll-end');
+                this.classList.remove('scroll-start', 'scroll-middle');
+            } else {
+                this.classList.add('scroll-middle');
+                this.classList.remove('scroll-start', 'scroll-end');
+            }
+        });
+        
+        // Trigger the scroll event once to set the initial state
+        wrapper.dispatchEvent(new Event('scroll'));
     });
 }

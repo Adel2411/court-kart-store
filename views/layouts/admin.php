@@ -20,6 +20,9 @@
 </head>
 <body>
     <div class="admin-wrapper" id="adminWrapper">
+        <!-- Sidebar Backdrop for mobile -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+        
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="admin-sidebar-header">
@@ -122,7 +125,7 @@
     </div>
     
     <!-- Sidebar toggle button for mobile -->
-    <button class="sidebar-toggle" id="sidebarToggle">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
         <i class="fas fa-bars"></i>
     </button>
     
@@ -133,16 +136,38 @@
     <?php } ?>
     
     <script>
-        // Sidebar toggle for mobile
+        // Enhanced Sidebar toggle for mobile
         document.addEventListener('DOMContentLoaded', function() {
             const wrapper = document.getElementById('adminWrapper');
             const toggle = document.getElementById('sidebarToggle');
+            const backdrop = document.getElementById('sidebarBackdrop');
             
             if (toggle) {
                 toggle.addEventListener('click', function() {
                     wrapper.classList.toggle('sidebar-visible');
                 });
             }
+            
+            // Close sidebar when backdrop is clicked
+            if (backdrop) {
+                backdrop.addEventListener('click', function() {
+                    wrapper.classList.remove('sidebar-visible');
+                });
+            }
+            
+            // Close sidebar when window is resized to desktop size
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 991 && wrapper.classList.contains('sidebar-visible')) {
+                    wrapper.classList.remove('sidebar-visible');
+                }
+            });
+            
+            // Close sidebar when escape key is pressed
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && wrapper.classList.contains('sidebar-visible')) {
+                    wrapper.classList.remove('sidebar-visible');
+                }
+            });
         });
     </script>
 </body>

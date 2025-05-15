@@ -225,6 +225,8 @@ table td:nth-child(2) {
   margin-left: 260px;
   padding: var(--space-xl);
   transition: margin var(--transition-normal);
+  position: relative;
+  z-index: 50; /* Add z-index lower than sidebar */
 }
 
 .admin-header {
@@ -234,6 +236,8 @@ table td:nth-child(2) {
   margin: var(--space-xl);
   padding: var(--space-lg);
   border-bottom: 1px solid var(--light-gray);
+  position: relative;
+  z-index: 45; /* Lower than admin-main to ensure sidebar appears on top */
 }
 
 .admin-title {
@@ -507,46 +511,84 @@ table td:nth-child(2) {
 /* Responsive Admin Layout */
 .sidebar-toggle {
   display: none;
-  background: none;
+  background: var(--primary);
   border: none;
   cursor: pointer;
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   padding: 0;
-  color: var(--secondary);
+  color: var(--white);
   font-size: 1.5rem;
   position: fixed;
   bottom: 20px;
   right: 20px;
   border-radius: 50%;
-  background-color: var(--white);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-lg);
   z-index: 90;
   align-items: center;
   justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.sidebar-toggle:hover {
+  transform: scale(1.05);
+  background: var(--primary-dark);
+}
+
+/* Mobile sidebar backdrop overlay */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 99;
 }
 
 @media (max-width: 991px) {
   .admin-sidebar {
     transform: translateX(-100%);
+    z-index: 100;
+    width: 280px; /* Slightly wider on mobile */
+    box-shadow: var(--shadow-lg);
   }
 
   .admin-main {
     margin-left: 0;
+    width: 100%;
+    z-index: 50; /* Maintain z-index on mobile */
   }
 
   .sidebar-visible .admin-sidebar {
     transform: translateX(0);
   }
 
+  .sidebar-visible .sidebar-backdrop {
+    display: block;
+  }
+
   .sidebar-toggle {
     display: flex;
+  }
+  
+  /* Admin header tweaks for mobile */
+  .admin-header {
+    margin: var(--space-md);
+    padding: var(--space-md);
+    z-index: 45; /* Maintain z-index on mobile */
+  }
+  
+  /* Adjust card padding on smaller screens */
+  .admin-card {
+    padding: var(--space-md);
   }
 }
 
 @media (max-width: 767px) {
   .admin-main {
-    padding: var(--space-lg) var(--space-md);
+    padding: var(--space-md);
   }
 
   .stats-grid {
@@ -557,6 +599,8 @@ table td:nth-child(2) {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-md);
+    margin: var(--space-sm);
+    padding: var(--space-sm);
   }
 
   .admin-header-actions {
@@ -564,18 +608,64 @@ table td:nth-child(2) {
     justify-content: space-between;
   }
 
+  /* Improve form layout on mobile */
+  .admin-form {
+    gap: var(--space-md);
+  }
+  
+  /* Make tables more mobile-friendly */
+  .admin-table th,
+  .admin-table td {
+    padding: var(--space-sm);
+    font-size: 0.9rem;
+  }
+  
+  /* Ensure modals fit on mobile screens */
+  .modal-content {
+    width: 95%;
+    max-width: 95%;
+    max-height: 85vh;
+  }
+  
   .admin-card-header {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-md);
   }
-
+  
   .admin-card-actions {
     width: 100%;
+    justify-content: flex-start;
+    margin-top: var(--space-sm);
   }
+  
+  /* Limit order tables on mobile */
+  .admin-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -var(--space-md);
+    padding: 0 var(--space-md);
+    width: calc(100% + var(--space-md)*2);
+  }
+}
 
-  .admin-table th,
-  .admin-table td {
+/* Ultra small devices */
+@media (max-width: 480px) {
+  .stat-card {
     padding: var(--space-sm);
+  }
+  
+  .admin-menu-link {
+    padding: var(--space-sm) var(--space-md);
+  }
+  
+  .admin-title {
+    font-size: 1.5rem;
+  }
+  
+  /* Hide less important columns in tables */
+  .admin-table th:nth-child(3),
+  .admin-table td:nth-child(3) {
+    display: none;
   }
 }

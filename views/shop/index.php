@@ -106,15 +106,6 @@
                                               value="<?= $_GET['max_price'] ?? 500 ?>" min="0" max="1000" step="10" placeholder="Max">
                                     </div>
                                 </div>
-                                
-                                <div class="price-slider">
-                                    <div class="slider-track"></div>
-                                    <div class="slider-labels">
-                                        <span>$0</span>
-                                        <span>$500</span>
-                                        <span>$1000</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </details>
