@@ -189,10 +189,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Form validation
-    const checkoutForm = document.getElementById('checkout-form');
-    checkoutForm.addEventListener('submit', function(event) {
-        // Basic validation could be added here if needed
-        // For now, we'll rely on the browser's built-in validation
-    });
+    // const checkoutForm = document.getElementById('checkout-form');
+    // checkoutForm.addEventListener('submit', function(event) {
+    // });
 });
 </script>

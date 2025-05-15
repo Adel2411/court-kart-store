@@ -27,7 +27,6 @@
                     <button type="button" class="filters-toggle" aria-label="Toggle filters">
                         <i class="fas fa-sliders-h"></i>
                     </button>
-                    <!-- Add close button for mobile -->
                     <button type="button" class="filters-close" aria-label="Close filters">
                         <i class="fas fa-times"></i>
                     </button>
@@ -36,7 +35,6 @@
                 <div class="active-filters" id="active-filters"></div>
                 
                 <form action="/shop" method="GET" id="filters-form">
-                    <!-- Search filter -->
                     <details class="filter-group" open>
                         <summary class="filter-title">
                             <i class="fas fa-search"></i> 
@@ -50,7 +48,6 @@
                         </div>
                     </details>
                     
-                    <!-- Category filter -->
                     <details class="filter-group" open>
                         <summary class="filter-title">
                             <i class="fas fa-tags"></i> 
@@ -85,7 +82,6 @@
                         </div>
                     </details>
                     
-                    <!-- Price range filter -->
                     <details class="filter-group" open>
                         <summary class="filter-title">
                             <i class="fas fa-dollar-sign"></i> 
@@ -110,7 +106,6 @@
                         </div>
                     </details>
                     
-                    <!-- Sort options -->
                     <details class="filter-group" open>
                         <summary class="filter-title">
                             <i class="fas fa-sort"></i> 
@@ -304,13 +299,12 @@
     </div>
 </main>
 
-<!-- Add filter toggle for mobile -->
+<!-- Mobile filter toggle -->
 <button type="button" class="mobile-filters-toggle" aria-label="Show filters">
     <i class="fas fa-filter"></i>
     <span>Filters</span>
 </button>
 
-<!-- Add backdrop for mobile filter overlay -->
 <div class="filters-backdrop"></div>
 
 <!-- Quick View Modal -->

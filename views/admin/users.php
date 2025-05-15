@@ -48,7 +48,7 @@
                         <tr data-role="<?= strtolower($user['role']) ?>">
                             <td><?= $user['id'] ?></td>
                             <td class="user-info">
-                                <?php if (!empty($user['profile_image'])) { ?>
+                                <?php if (! empty($user['profile_image'])) { ?>
                                     <div class="user-avatar">
                                         <img src="<?= htmlspecialchars($user['profile_image']) ?>" alt="<?= htmlspecialchars($user['name']) ?>" class="user-avatar-img">
                                     </div>
@@ -238,5 +238,4 @@
     </div>
 </div>
 
-<!-- Include the JavaScript file -->
 <script src="/assets/js/pages/admin-users.js"></script>

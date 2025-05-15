@@ -17,12 +17,12 @@
                 <label for="categoryFilter">Category:</label>
                 <select name="category" id="categoryFilter" class="form-control">
                     <option value="all" <?= ($currentCategory ?? 'all') === 'all' ? 'selected' : '' ?>>All Categories</option>
-                    <?php foreach ($categories as $cat): ?>
+                    <?php foreach ($categories as $cat) { ?>
                     <!-- Since we're using the category name as the ID -->
                     <option value="<?= htmlspecialchars($cat['id']) ?>" <?= ($currentCategory ?? 'all') == $cat['id'] ? 'selected' : '' ?>>
                         <?= htmlspecialchars($cat['name']) ?>
                     </option>
-                    <?php endforeach; ?>
+                    <?php } ?>
                 </select>
             </div>
             
@@ -41,19 +41,19 @@
                 <label for="searchFilter">Search:</label>
                 <div class="search-input-wrapper">
                     <input type="text" name="search" id="searchFilter" class="form-control" placeholder="Search products..." value="<?= htmlspecialchars($currentSearch ?? '') ?>">
-                    <?php if (!empty($currentSearch)): ?>
+                    <?php if (! empty($currentSearch)) { ?>
                     <a href="?category=<?= $currentCategory ?? 'all' ?>&sort=<?= $currentSort ?? 'name_asc' ?>" class="clear-search">
                         <i class="fas fa-times"></i>
                     </a>
-                    <?php endif; ?>
+                    <?php } ?>
                 </div>
             </div>
             
             <div class="filter-actions">
                 <button type="submit" class="btn btn-primary">Apply Filters</button>
-                <?php if (($currentCategory ?? 'all') !== 'all' || ($currentSort ?? 'name_asc') !== 'name_asc' || !empty($currentSearch ?? '')): ?>
+                <?php if (($currentCategory ?? 'all') !== 'all' || ($currentSort ?? 'name_asc') !== 'name_asc' || ! empty($currentSearch ?? '')) { ?>
                 <a href="/admin/products" class="btn btn-outline">Reset</a>
-                <?php endif; ?>
+                <?php } ?>
             </div>
         </form>
     </div>
@@ -185,11 +185,11 @@
                                 'Accessories' => '<i class="fas fa-glasses"></i>',
                                 'Merchandise' => '<i class="fas fa-store"></i>',
                             ];
-                            
-                            foreach ($categories as $category => $icon) {
-                                echo "<option value=\"$category\">$icon $category</option>";
-                            }
-                            ?>
+
+                    foreach ($categories as $category => $icon) {
+                        echo "<option value=\"$category\">$icon $category</option>";
+                    }
+                    ?>
                         </select>
                     </div>
                     
@@ -225,7 +225,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const productImage = document.getElementById('productImage');
     const productImagePreview = document.getElementById('productImagePreview');
     
-    // Open modal for new product
     addBtn.addEventListener('click', function() {
         modalTitle.textContent = 'Add New Product';
         productForm.reset();
@@ -234,7 +233,6 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.classList.add('active');
     });
     
-    // Close modal
     function closeModal() {
         modal.classList.remove('active');
     }
@@ -242,13 +240,11 @@ document.addEventListener('DOMContentLoaded', function() {
     closeBtn.addEventListener('click', closeModal);
     cancelBtn.addEventListener('click', closeModal);
     
-    // Image preview functionality
     productImage.addEventListener('input', function() {
         if (this.value) {
             productImagePreview.src = this.value;
             productImagePreview.style.display = 'block';
             
-            // Handle error if image doesn't load
             productImagePreview.onerror = function() {
                 this.style.display = 'none';
             };
@@ -271,12 +267,10 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('productCategory').value = productData.category;
             document.getElementById('productImage').value = productData.image_url;
             
-            // Show image preview
             if (productData.image_url) {
                 productImagePreview.src = productData.image_url;
                 productImagePreview.style.display = 'block';
                 
-                // Handle error if image doesn't load
                 productImagePreview.onerror = function() {
                     this.style.display = 'none';
                 };
@@ -286,12 +280,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Submit form when Save button is clicked
     saveBtn.addEventListener('click', function() {
         if (productForm.checkValidity()) {
             productForm.submit();
         } else {
-            // Trigger HTML5 validation
             let submitEvent = new Event('submit', {
                 'bubbles': true,
                 'cancelable': true
@@ -311,14 +303,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Connect to our modal component
     document.addEventListener('modal:open', function(e) {
         if (e.detail.modalId === 'productModal') {
-            // Modal has been opened, handle any specific behaviors
             document.getElementById('productName').focus();
         }
     });
     
     document.addEventListener('modal:close', function(e) {
         if (e.detail.modalId === 'productModal') {
-            // Modal has been closed, handle any cleanup
             document.getElementById('productImagePreview').style.display = 'none';
         }
     });

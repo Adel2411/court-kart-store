@@ -6,27 +6,22 @@
     <title><?= $title ?? 'Court Kart - Basketball Equipment Store' ?></title>
     <link rel="icon" type="image/x-icon" href="/assets/images/court-kart-logo-dark.ico">
     
-    <!-- Load main CSS files -->
+    <!-- Load CSS files -->
     <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="/assets/css/components.css">
     <link rel="stylesheet" href="/assets/css/layouts.css">
-    
-    <!-- Load component CSS files -->
     <link rel="stylesheet" href="/assets/css/components/modal.css">
     <link rel="stylesheet" href="/assets/css/components/footer.css">
     
-    <!-- Authentication pages CSS -->
     <?php if (strpos($_SERVER['REQUEST_URI'], '/login') === 0 || strpos($_SERVER['REQUEST_URI'], '/register') === 0) { ?>
         <link rel="stylesheet" href="/assets/css/auth.css">
         <link rel="stylesheet" href="/assets/css/pages/auth.css">
     <?php } ?>
     
-    <!-- Account pages CSS -->
     <?php if (strpos($_SERVER['REQUEST_URI'], '/account') === 0) { ?>
         <link rel="stylesheet" href="/assets/css/pages/account.css">
     <?php } ?>
     
-    <!-- Include page-specific CSS when available -->
     <?php if (isset($page_css)) { ?>
         <?php if (is_array($page_css)) { ?>
             <?php foreach ($page_css as $css) { ?>
@@ -37,7 +32,6 @@
         <?php } ?>
     <?php } ?>
     
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -82,10 +76,10 @@
                                 <span class="sr-only">Cart</span>
                                 <?php
                                 $cartCount = 0;
-                                if (\App\Core\Session::get('user_id')) {
-                                    $cartCount = \App\Models\Cart::getItemCount(\App\Core\Session::get('user_id'));
-                                }
-                                ?>
+                            if (\App\Core\Session::get('user_id')) {
+                                $cartCount = \App\Models\Cart::getItemCount(\App\Core\Session::get('user_id'));
+                            }
+                            ?>
                                 <?php if ($cartCount > 0) { ?>
                                     <span class="cart-badge"><?= $cartCount ?></span>
                                 <?php } ?>
@@ -93,7 +87,7 @@
                             
                             <div class="user-menu">
                                 <button class="user-menu-btn" id="userMenuBtn" aria-label="User menu" aria-expanded="false" aria-haspopup="true">
-                                    <?php if (isset($_SESSION['profile_image']) && !empty($_SESSION['profile_image'])) { ?>
+                                    <?php if (isset($_SESSION['profile_image']) && ! empty($_SESSION['profile_image'])) { ?>
                                         <div class="user-avatar">
                                             <img src="<?= htmlspecialchars($_SESSION['profile_image']) ?>" alt="" class="user-avatar-img">
                                         </div>
@@ -196,7 +190,6 @@
     <!-- JavaScript -->
     <script src="/assets/js/main.js"></script>
     
-    <!-- Mobile navigation script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Mobile menu toggle
@@ -212,17 +205,13 @@
                 navBackdrop.classList.toggle('active');
                 body.classList.toggle('menu-open');
                 
-                // Update ARIA attributes
                 mobileMenuBtn.setAttribute('aria-expanded', !isExpanded);
             }
             
             if (mobileMenuBtn && mainNav) {
                 mobileMenuBtn.addEventListener('click', toggleMobileMenu);
-                
-                // Close menu when clicking on backdrop
                 navBackdrop.addEventListener('click', toggleMobileMenu);
                 
-                // Close menu when clicking on a nav link on mobile
                 const navLinks = mainNav.querySelectorAll('.nav-link');
                 navLinks.forEach(link => {
                     link.addEventListener('click', function() {
@@ -232,7 +221,6 @@
                     });
                 });
                 
-                // Handle window resize
                 window.addEventListener('resize', function() {
                     if (window.innerWidth > 768 && mainNav.classList.contains('active')) {
                         mainNav.classList.remove('active');
@@ -256,7 +244,6 @@
                     userMenuBtn.setAttribute('aria-expanded', !isExpanded);
                 });
                 
-                // Close user dropdown when clicking outside
                 document.addEventListener('click', function(e) {
                     if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
                         userDropdown.classList.remove('active');
@@ -267,7 +254,6 @@
         });
     </script>
     
-    <!-- Include page-specific JS when available -->
     <?php if (isset($page_js)) { ?>
         <?php if (is_array($page_js)) { ?>
             <?php foreach ($page_js as $js) { ?>

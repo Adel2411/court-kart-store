@@ -84,34 +84,34 @@
                             <td><?= date('M d, Y', strtotime($order['created_at'])) ?></td>
                             <td><span style="font-weight: 500; color: var(--primary);">$<?= number_format($order['total_price'], 2) ?></span></td>
                             <td>
-                                <?php 
+                                <?php
                                 $statusClass = '';
-                                switch ($order['status']) {
-                                    case 'pending':
-                                        $statusClass = 'bg-warning';
-                                        $icon = 'clock';
-                                        break;
-                                    case 'confirmed':
-                                        $statusClass = 'bg-primary';
-                                        $icon = 'check-circle';
-                                        break;
-                                    case 'shipped':
-                                        $statusClass = 'bg-info';
-                                        $icon = 'truck';
-                                        break;
-                                    case 'delivered':
-                                        $statusClass = 'bg-success';
-                                        $icon = 'box-open';
-                                        break;
-                                    case 'cancelled':
-                                        $statusClass = 'bg-danger';
-                                        $icon = 'times-circle';
-                                        break;
-                                    default:
-                                        $statusClass = 'bg-secondary';
-                                        $icon = 'circle';
-                                }
-                                ?>
+                        switch ($order['status']) {
+                            case 'pending':
+                                $statusClass = 'bg-warning';
+                                $icon = 'clock';
+                                break;
+                            case 'confirmed':
+                                $statusClass = 'bg-primary';
+                                $icon = 'check-circle';
+                                break;
+                            case 'shipped':
+                                $statusClass = 'bg-info';
+                                $icon = 'truck';
+                                break;
+                            case 'delivered':
+                                $statusClass = 'bg-success';
+                                $icon = 'box-open';
+                                break;
+                            case 'cancelled':
+                                $statusClass = 'bg-danger';
+                                $icon = 'times-circle';
+                                break;
+                            default:
+                                $statusClass = 'bg-secondary';
+                                $icon = 'circle';
+                        }
+                        ?>
                                 <span class="status-badge <?= $statusClass ?>">
                                     <i class="fas fa-<?= $icon ?>"></i>
                                     <?= ucfirst($order['status']) ?>

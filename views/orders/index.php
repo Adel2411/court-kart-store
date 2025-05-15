@@ -62,7 +62,7 @@
     </div>
 
     <div class="pagination">
-        <!-- Placeholder for pagination if needed -->
+        <!-- Pagination if needed -->
     </div>
 <?php } ?>
 

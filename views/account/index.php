@@ -3,7 +3,7 @@
 <div class="account-container">
     <div class="account-sidebar">
         <div class="account-avatar">
-            <?php if (!empty($user['profile_image'])) { ?>
+            <?php if (! empty($user['profile_image'])) { ?>
                 <div class="avatar-container">
                     <img src="<?= htmlspecialchars($user['profile_image']) ?>" alt="<?= htmlspecialchars($user['name']) ?>" class="avatar-image">
                 </div>
@@ -60,7 +60,7 @@
                 <h3>Recent Orders</h3>
             </div>
             <div class="account-card-body">
-                <?php if (isset($orders) && !empty($orders)) { ?>
+                <?php if (isset($orders) && ! empty($orders)) { ?>
                     <div class="recent-orders">
                         <?php foreach (array_slice($orders, 0, 3) as $order) { ?>
                             <div class="order-preview">

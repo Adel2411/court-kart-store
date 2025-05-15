@@ -27,34 +27,34 @@
                 <div class="order-meta-item">
                     <div class="meta-label">Status</div>
                     <div class="meta-value">
-                        <?php 
+                        <?php
                         $statusClass = '';
-                        switch ($order->status ?? '') {
-                            case 'pending':
-                                $statusClass = 'bg-warning';
-                                $icon = 'clock';
-                                break;
-                            case 'confirmed':
-                                $statusClass = 'bg-primary';
-                                $icon = 'check-circle';
-                                break;
-                            case 'shipped':
-                                $statusClass = 'bg-info';
-                                $icon = 'truck';
-                                break;
-                            case 'delivered':
-                                $statusClass = 'bg-success';
-                                $icon = 'box-open';
-                                break;
-                            case 'cancelled':
-                                $statusClass = 'bg-danger';
-                                $icon = 'times-circle';
-                                break;
-                            default:
-                                $statusClass = 'bg-secondary';
-                                $icon = 'circle';
-                        }
-                        ?>
+    switch ($order->status ?? '') {
+        case 'pending':
+            $statusClass = 'bg-warning';
+            $icon = 'clock';
+            break;
+        case 'confirmed':
+            $statusClass = 'bg-primary';
+            $icon = 'check-circle';
+            break;
+        case 'shipped':
+            $statusClass = 'bg-info';
+            $icon = 'truck';
+            break;
+        case 'delivered':
+            $statusClass = 'bg-success';
+            $icon = 'box-open';
+            break;
+        case 'cancelled':
+            $statusClass = 'bg-danger';
+            $icon = 'times-circle';
+            break;
+        default:
+            $statusClass = 'bg-secondary';
+            $icon = 'circle';
+    }
+    ?>
                         <span class="status-badge <?= $statusClass ?>">
                             <i class="fas fa-<?= $icon ?>"></i>
                             <?= ucfirst($order->status ?? 'Processing') ?>
@@ -71,22 +71,21 @@
                 </div>
                 <div class="order-meta-item">
                     <div class="meta-label">Total</div>
-                    <div class="meta-value"><?= '$' . number_format($order->total ?? 0, 2) ?></div>
+                    <div class="meta-value"><?= '$'.number_format($order->total ?? 0, 2) ?></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Order content in two column layout -->
+    <!-- Order content -->
     <div class="order-content">
         <div class="order-details-column">
-            <!-- Order Items List -->
             <div class="admin-card">
                 <div class="admin-card-header">
                     <div class="admin-card-title">Order Items</div>
                 </div>
                 <div class="admin-card-body">
-                    <?php if (!empty($orderItems)): ?>
+                    <?php if (! empty($orderItems)) { ?>
                         <div class="admin-table-wrapper">
                             <table class="admin-table">
                                 <thead>
@@ -98,7 +97,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($orderItems as $item): ?>
+                                    <?php foreach ($orderItems as $item) { ?>
                                         <tr>
                                             <td>
                                                 <div class="product-info-cell">
@@ -112,36 +111,36 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td><?= '$' . number_format($item->price, 2) ?></td>
+                                            <td><?= '$'.number_format($item->price, 2) ?></td>
                                             <td><?= $item->quantity ?></td>
-                                            <td><strong><?= '$' . number_format($item->subtotal, 2) ?></strong></td>
+                                            <td><strong><?= '$'.number_format($item->subtotal, 2) ?></strong></td>
                                         </tr>
-                                    <?php endforeach; ?>
+                                    <?php } ?>
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <td colspan="3" class="text-right">Subtotal</td>
-                                        <td><strong><?= '$' . number_format($order->subtotal, 2) ?></strong></td>
+                                        <td><strong><?= '$'.number_format($order->subtotal, 2) ?></strong></td>
                                     </tr>
                                     <tr>
                                         <td colspan="3" class="text-right">Shipping</td>
                                         <td>
-                                            <?= $order->shipping_cost > 0 ? '$' . number_format($order->shipping_cost, 2) : 'Free' ?>
+                                            <?= $order->shipping_cost > 0 ? '$'.number_format($order->shipping_cost, 2) : 'Free' ?>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td colspan="3" class="text-right">Total</td>
-                                        <td><strong class="order-total"><?= '$' . number_format($order->total, 2) ?></strong></td>
+                                        <td><strong class="order-total"><?= '$'.number_format($order->total, 2) ?></strong></td>
                                     </tr>
                                 </tfoot>
                             </table>
                         </div>
-                    <?php else: ?>
+                    <?php } else { ?>
                         <div class="empty-state">
                             <i class="fas fa-box-open"></i>
                             <p>No items found in this order.</p>
                         </div>
-                    <?php endif; ?>
+                    <?php } ?>
                 </div>
             </div>
             
@@ -209,7 +208,6 @@
 </div>
 
 <style>
-/* Additional styles for order detail page */
 .order-meta-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -305,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (updateForm) {
         updateForm.addEventListener('submit', function(e) {
             const status = document.getElementById('orderStatus').value;
-            const currentStatus = '<?= $order->status ?? 'pending' ?>';
+            const currentStatus = `<?= $order->status ?? 'pending' ?>`;
             
             if (status === 'cancelled' && currentStatus !== 'cancelled') {
                 if (!confirm('Are you sure you want to cancel this order? This action cannot be undone.')) {

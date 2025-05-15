@@ -143,7 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Set initial state for prefilled inputs
         if (input.value !== '') {
             input.parentElement.classList.add('focused');
         }
@@ -154,7 +153,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const background = document.querySelector('.animated-basketball');
         if (!background) return;
         
-        // Adjust number of basketballs based on screen size
         const isMobile = window.innerWidth <= 768;
         const ballCount = isMobile ? 4 : 8;
         
@@ -172,14 +170,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle orientation changes
     window.addEventListener('orientationchange', function() {
-        // Allow time for the orientation change to complete
         setTimeout(function() {
-            // Adjust layout if needed
             const isLandscape = window.matchMedia("(orientation: landscape)").matches;
             const isMobile = window.innerWidth <= 768;
             
             if (isLandscape && isMobile) {
-                // Ensure the form is visible in the viewport
                 document.querySelector('.auth-card').scrollIntoView({
                     behavior: 'smooth',
                     block: 'start'

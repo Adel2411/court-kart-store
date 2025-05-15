@@ -19,14 +19,14 @@
     </div>
     
     <!-- Status indicator for filtered view -->
-    <?php if (($currentStatus ?? 'all') !== 'all'): ?>
+    <?php if (($currentStatus ?? 'all') !== 'all') { ?>
     <div class="filter-status-indicator" style="padding: 0.5rem 1.5rem; background: var(--light); border-radius: var(--radius-sm); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
         <div>
             <i class="fas fa-filter"></i> Showing only <strong><?= ucfirst($currentStatus ?? 'all') ?></strong> orders
         </div>
         <a href="/admin/orders?status=all" class="btn btn-sm btn-outline">Clear Filter</a>
     </div>
-    <?php endif; ?>
+    <?php } ?>
     
     <div class="admin-table-wrapper">
         <table class="admin-table">
@@ -71,34 +71,34 @@
                                 <span style="font-weight: 600; color: var(--primary);">$<?= number_format($order['total_price'], 2) ?></span>
                             </td>
                             <td>
-                                <?php 
+                                <?php
                                 $statusClass = '';
-                                switch ($order['status']) {
-                                    case 'pending':
-                                        $statusClass = 'bg-warning';
-                                        $icon = 'clock';
-                                        break;
-                                    case 'confirmed':
-                                        $statusClass = 'bg-primary';
-                                        $icon = 'check-circle';
-                                        break;
-                                    case 'shipped':
-                                        $statusClass = 'bg-info';
-                                        $icon = 'truck';
-                                        break;
-                                    case 'delivered':
-                                        $statusClass = 'bg-success';
-                                        $icon = 'box-open';
-                                        break;
-                                    case 'cancelled':
-                                        $statusClass = 'bg-danger';
-                                        $icon = 'times-circle';
-                                        break;
-                                    default:
-                                        $statusClass = 'bg-secondary';
-                                        $icon = 'circle';
-                                }
-                                ?>
+                        switch ($order['status']) {
+                            case 'pending':
+                                $statusClass = 'bg-warning';
+                                $icon = 'clock';
+                                break;
+                            case 'confirmed':
+                                $statusClass = 'bg-primary';
+                                $icon = 'check-circle';
+                                break;
+                            case 'shipped':
+                                $statusClass = 'bg-info';
+                                $icon = 'truck';
+                                break;
+                            case 'delivered':
+                                $statusClass = 'bg-success';
+                                $icon = 'box-open';
+                                break;
+                            case 'cancelled':
+                                $statusClass = 'bg-danger';
+                                $icon = 'times-circle';
+                                break;
+                            default:
+                                $statusClass = 'bg-secondary';
+                                $icon = 'circle';
+                        }
+                        ?>
                                 <span class="status-badge <?= $statusClass ?>">
                                     <i class="fas fa-<?= $icon ?>"></i>
                                     <?= ucfirst($order['status']) ?>
@@ -133,7 +133,7 @@
         
         <div class="modal-body">
             <div id="orderDetailContent">
-                <!-- Order details will be loaded here -->
+                <!-- Order details will be loaded here dynamicly -->
                 <div class="loading-spinner">
                     <i class="fas fa-spinner fa-spin"></i>
                 </div>

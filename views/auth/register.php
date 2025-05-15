@@ -161,7 +161,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Password visibility toggle
     const toggleButtons = document.querySelectorAll('.password-toggle');
     toggleButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -180,7 +179,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Input focus effects
     const inputs = document.querySelectorAll('.input-wrapper input');
     inputs.forEach(input => {
         input.addEventListener('focus', function() {
@@ -205,7 +203,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const strengthText = document.getElementById('strengthText');
     const strengthSpan = strengthText.querySelector('span');
     
-    // Password requirements
     const reqLength = document.getElementById('req-length');
     const reqUppercase = document.getElementById('req-uppercase');
     const reqLowercase = document.getElementById('req-lowercase');
@@ -217,14 +214,12 @@ document.addEventListener('DOMContentLoaded', function() {
         let strength = 0;
         let meetsRequirements = 0;
         
-        // Reset requirements
         reqLength.classList.remove('met');
         reqUppercase.classList.remove('met');
         reqLowercase.classList.remove('met');
         reqNumber.classList.remove('met');
         reqSpecial.classList.remove('met');
         
-        // Check requirements
         if (value.length >= 8) {
             strength += 20;
             meetsRequirements++;
@@ -255,10 +250,8 @@ document.addEventListener('DOMContentLoaded', function() {
             reqSpecial.classList.add('met');
         }
         
-        // Update strength meter
         strengthMeter.style.width = strength + '%';
         
-        // Update strength label and color
         if (strength <= 20) {
             strengthMeter.className = 'strength-meter-fill weak';
             strengthSpan.textContent = 'Too weak';
@@ -306,7 +299,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const viewport = window.innerWidth;
         const passwordReqs = document.getElementById('passwordRequirements');
         
-        // On small screens, show password requirements only when field is focused
         if (viewport <= 576 && passwordReqs) {
             const passwordInput = document.getElementById('password');
             
@@ -320,7 +312,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            // Initially hide if empty
             if (passwordInput.value === '') {
                 passwordReqs.style.display = 'none';
             }
@@ -332,7 +323,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const background = document.querySelector('.animated-basketball');
         if (!background) return;
         
-        // Adjust number of basketballs based on screen size
         const isMobile = window.innerWidth <= 768;
         const ballCount = isMobile ? 4 : 8;
         
@@ -349,7 +339,6 @@ document.addEventListener('DOMContentLoaded', function() {
     adjustUIForViewport();
     createBasketballs();
     
-    // Handle orientation changes and resize events
     window.addEventListener('orientationchange', adjustUIForViewport);
     window.addEventListener('resize', adjustUIForViewport);
 });

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?? 'Admin - Court Kart' ?></title>
     <link rel="icon" type="image/x-icon" href="public/assets/images/court-kart-logo-dark.ico">
-    <!-- Load main CSS files -->
     <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="/assets/css/components.css">
     <link rel="stylesheet" href="/assets/css/layouts.css">
@@ -15,12 +14,10 @@
         <link rel="stylesheet" href="/assets/css/pages/<?= $page_css ?>.css">
     <?php } ?>
     
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="admin-wrapper" id="adminWrapper">
-        <!-- Sidebar Backdrop for mobile -->
         <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
         
         <!-- Sidebar -->
@@ -82,12 +79,11 @@
         
         <!-- Main content -->
         <main class="admin-main">
-            <!-- Header with user info -->
             <header class="admin-header">
                 <h1 class="admin-title"><?= $title ?? 'Dashboard' ?></h1>
                 <div class="admin-header-actions">
                     <div class="admin-user">
-                        <?php if (isset($_SESSION['profile_image']) && !empty($_SESSION['profile_image'])) { ?>
+                        <?php if (isset($_SESSION['profile_image']) && ! empty($_SESSION['profile_image'])) { ?>
                             <div class="admin-user-image">
                                 <img src="<?= htmlspecialchars($_SESSION['profile_image']) ?>" alt="Admin Profile" class="admin-avatar-img">
                             </div>
@@ -129,14 +125,13 @@
         <i class="fas fa-bars"></i>
     </button>
     
-    <!-- JavaScript -->
     <script src="/assets/js/main.js"></script>
     <?php if (isset($page_js)) { ?>
         <script src="/assets/js/pages/<?= $page_js ?>.js"></script>
     <?php } ?>
     
     <script>
-        // Enhanced Sidebar toggle for mobile
+        // Sidebar toggle for mobile
         document.addEventListener('DOMContentLoaded', function() {
             const wrapper = document.getElementById('adminWrapper');
             const toggle = document.getElementById('sidebarToggle');

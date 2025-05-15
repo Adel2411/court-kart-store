@@ -1,4 +1,4 @@
-<!-- Enhanced Hero Section with Image -->
+<!-- Hero Section -->
 <section class="hero-section">
     <div class="container">
         <div class="hero-wrapper">
@@ -67,7 +67,7 @@
     </div>
 </div>
 
-<!-- New Arrivals Section - Modern Card Design -->
+<!-- New Arrivals Section -->
 <div class="section new-arrivals">
     <div class="container">
         <div class="section-header animated-header">
@@ -132,7 +132,7 @@
     </div>
 </div>
 
-<!-- Featured Categories - Enhanced Visual Design -->
+<!-- Featured Categories Section -->
 <div class="featured-categories" id="categories">
     <div class="container">
         <div class="section-header animated-header">
@@ -183,7 +183,7 @@
     </div>
 </div>
 
-<!-- Featured Banner - Premium Design -->
+<!-- Featured Banner Section -->
 <div class="featured-banner premium-banner">
     <div class="container">
         <div class="banner-content">
@@ -265,7 +265,7 @@
     </div>
 </div>
 
-<!-- Browse By Style - Visual Enhancement -->
+<!-- Browse By Style Section -->
 <div class="browse-categories-section">
     <div class="container">
         <div class="section-header animated-header">
@@ -308,7 +308,7 @@
     </div>
 </div>
 
-<!-- Enhanced Testimonials Section -->
+<!-- Testimonials Section -->
 <div class="testimonials-section modern-testimonials">
     <div class="container">
         <div class="section-header animated-header">
@@ -376,7 +376,7 @@
     </div>
 </div>
 
-<!-- Enhanced CTA Section -->
+<!-- CTA Section -->
 <div class="cta-section modern-cta">
     <div class="container">
         <div class="cta-content">
@@ -387,7 +387,7 @@
     </div>
 </div>
 
-<!-- Enhanced Newsletter Section -->
+<!-- Newsletter Section -->
 <div class="newsletter-section modern-newsletter">
     <div class="container">
         <div class="newsletter-content">

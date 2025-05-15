@@ -3,7 +3,7 @@
 <div class="account-container">
     <div class="account-sidebar">
         <div class="account-avatar">
-            <?php if (!empty($user['profile_image'])) { ?>
+            <?php if (! empty($user['profile_image'])) { ?>
                 <div class="avatar-container">
                     <img src="<?= htmlspecialchars($user['profile_image']) ?>" alt="<?= htmlspecialchars($user['name']) ?>" class="avatar-image">
                 </div>
@@ -75,11 +75,11 @@
                             
                             <div class="profile-image-preview">
                                 <div class="image-preview-container" id="profileImagePreview">
-                                    <?php if (!empty($user['profile_image'])): ?>
+                                    <?php if (! empty($user['profile_image'])) { ?>
                                         <img src="<?= htmlspecialchars($user['profile_image']) ?>" alt="Profile Preview" id="previewImg">
-                                    <?php else: ?>
+                                    <?php } else { ?>
                                         <?= strtoupper(substr($user['name'] ?? 'A', 0, 1)) ?>
-                                    <?php endif; ?>
+                                    <?php } ?>
                                 </div>
                                 <p class="preview-placeholder" id="previewPlaceholder">Image preview</p>
                             </div>
@@ -181,35 +181,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Length check
             if (value.length >= 8) {
                 strength += 20;
             }
             
-            // Uppercase check
             if (/[A-Z]/.test(value)) {
                 strength += 20;
             }
             
-            // Lowercase check
             if (/[a-z]/.test(value)) {
                 strength += 20;
             }
             
-            // Number check
             if (/[0-9]/.test(value)) {
                 strength += 20;
             }
             
-            // Special character check
             if (/[^A-Za-z0-9]/.test(value)) {
                 strength += 20;
             }
             
-            // Update strength meter
             strengthMeter.style.width = strength + '%';
             
-            // Update strength label and color
             if (strength <= 20) {
                 strengthMeter.className = 'strength-meter-fill weak';
                 strengthSpan.textContent = 'Too weak';
@@ -268,7 +261,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             let isValid = true;
             
-            // If trying to set new password without current password
             if ((newPassword || confirmPassword) && !currentPassword) {
                 e.preventDefault();
                 isValid = false;
@@ -280,7 +272,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentPasswordField.parentNode.parentNode.appendChild(errorMsg);
             }
             
-            // If passwords don't match
             if (newPassword && newPassword !== confirmPassword) {
                 e.preventDefault();
                 isValid = false;
@@ -292,7 +283,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmPasswordField.parentNode.parentNode.appendChild(errorMsg);
             }
             
-            // If new password is too short
             if (newPassword && newPassword.length < 8) {
                 e.preventDefault();
                 isValid = false;
@@ -315,7 +305,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const originalText = submitBtn.textContent;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
                 
-                // Restore button after 10 seconds in case of network issues
                 setTimeout(() => {
                     if (submitBtn.disabled) {
                         submitBtn.disabled = false;
@@ -334,7 +323,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (profileImageInput && profileImagePreview) {
         profileImageInput.addEventListener('input', updateProfileImagePreview);
         
-        // Initial call to set up the preview
         updateProfileImagePreview();
         
         function updateProfileImagePreview() {
@@ -343,17 +331,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const initial = userName ? userName.charAt(0).toUpperCase() : 'A';
             
             if (imageUrl) {
-                // Create a new image to test loading
                 const testImage = new Image();
                 testImage.onload = function() {
-                    // Image loaded successfully
                     profileImagePreview.innerHTML = `<img src="${imageUrl}" alt="Profile Preview" id="previewImg">`;
                     profileImagePreview.classList.remove('preview-error');
                     previewPlaceholder.textContent = 'Image preview';
                 };
                 
                 testImage.onerror = function() {
-                    // Image failed to load
                     profileImagePreview.innerHTML = initial;
                     profileImagePreview.classList.add('preview-error');
                     previewPlaceholder.textContent = 'Invalid image URL';
@@ -361,7 +346,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 testImage.src = imageUrl;
             } else {
-                // No URL provided, show initial
                 profileImagePreview.innerHTML = initial;
                 profileImagePreview.classList.remove('preview-error');
                 previewPlaceholder.textContent = 'No image URL provided';
