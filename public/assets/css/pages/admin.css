@@ -399,6 +399,10 @@ table td:nth-child(2) {
 .admin-table-wrapper {
   overflow-x: auto;
   border-radius: var(--radius-md);
+  width: 100%;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  position: relative;
+  margin-bottom: var(--space-md);
 }
 
 .admin-table {
@@ -407,6 +411,7 @@ table td:nth-child(2) {
   border-spacing: 0;
   border-radius: var(--radius-md);
   overflow: hidden;
+  min-width: 650px; /* Prevent excessive compression */
 }
 
 .admin-table th {
@@ -419,43 +424,200 @@ table td:nth-child(2) {
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap; /* Prevent header text wrapping */
 }
 
 .admin-table td {
   padding: var(--space-md);
   border-bottom: 1px solid var(--light-gray);
   vertical-align: middle;
-}
-
-.admin-table tr:last-child td {
-  border-bottom: none;
-}
-
-.admin-table tbody tr {
-  transition: background-color var(--transition-fast);
-}
-
-.admin-table tbody tr:hover {
-  background-color: var(--light);
+  max-width: 250px; /* Prevent cells from growing too wide */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal; /* Allow text to wrap within cells */
+  word-break: break-word; /* Break long words if necessary */
 }
 
 .admin-table .actions {
   display: flex;
   gap: var(--space-xs);
   justify-content: flex-end;
+  flex-wrap: nowrap;
 }
 
-/* Status badges for orders */
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xxs);
-  padding: 0.35rem 0.85rem;
-  border-radius: var(--radius-pill);
-  font-weight: 500;
-  font-size: 0.85rem;
-  text-align: center;
-  white-space: nowrap;
+/* Table column sizing */
+.admin-table .col-id {
+  width: 60px;
+}
+
+.admin-table .col-image {
+  width: 80px;
+}
+
+.admin-table .col-actions {
+  width: 120px;
+  min-width: 120px;
+}
+
+.admin-table .col-status {
+  width: 120px;
+}
+
+.admin-table .col-price {
+  width: 100px;
+}
+
+.admin-table .col-date {
+  width: 120px;
+}
+
+/* Visual indicator for scrollable tables */
+.admin-table-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 30px;
+  background: linear-gradient(to right, rgba(255,255,255,0), rgba(0,0,0,0.05));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.admin-table-scroll .admin-table-wrapper::after {
+  opacity: 1;
+}
+
+/* Responsive table adjustments */
+@media (max-width: 992px) {
+  .admin-table-wrapper {
+    margin: 0 -1rem; /* Negative margin to allow full bleed on smaller screens */
+    width: calc(100% + 2rem);
+    padding: 0 1rem;
+    border-radius: 0;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: var(--space-sm) var(--space-md);
+  }
+  
+  .admin-table .actions {
+    white-space: nowrap;
+  }
+  
+  /* Optimize column widths for mobile */
+  .admin-table .col-id {
+    width: 50px;
+    min-width: 50px;
+  }
+  
+  .admin-table .col-actions {
+    width: 110px;
+    min-width: 110px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-table {
+    min-width: 500px;
+  }
+  
+  /* ID columns can be narrower */
+  .admin-table .col-id {
+    max-width: 40px;
+    min-width: 40px;
+  }
+  
+  .admin-table .col-image {
+    width: 70px;
+    min-width: 70px;
+  }
+  
+  /* Adjust padding in action buttons for better touch targets */
+  .admin-table .btn-icon {
+    min-width: 36px;
+    min-height: 36px;
+  }
+  
+  /* Prioritize important columns */
+  .admin-table .col-secondary {
+    display: none;
+  }
+}
+
+/* Special case for product tables */
+table .thumbnail,
+table td img.thumbnail,
+table tbody tr td img.thumbnail {
+  width: 60px !important;
+  height: 60px !important;
+  max-width: 60px !important;
+  max-height: 60px !important;
+  min-width: 60px !important;
+  min-height: 60px !important;
+  object-fit: contain !important;
+  border-radius: var(--radius-sm);
+  background-color: var(--light-gray);
+  padding: var(--space-xs);
+  display: block !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+  border: 1px solid #ddd !important;
+}
+
+/* Image column size control */
+table th:nth-child(2),
+table td:nth-child(2) {
+  width: 80px !important;
+  max-width: 80px !important;
+  text-align: center !important;
+  padding: 8px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+@media (max-width: 576px) {
+  .admin-table-wrapper {
+    margin: 0 -var(--space-md);
+    width: calc(100% + var(--space-md)*2);
+    padding: 0 var(--space-md);
+  }
+  
+  /* Further optimize for very small screens */
+  .admin-table .col-image {
+    width: 60px;
+    min-width: 60px;
+  }
+  
+  table .thumbnail,
+  table td img.thumbnail,
+  table tbody tr td img.thumbnail {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+  }
+  
+  table th:nth-child(2),
+  table td:nth-child(2) {
+    width: 60px !important;
+    max-width: 60px !important;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.9rem;
+  }
+  
+  /* Compress action buttons */
+  .admin-table .actions {
+    gap: 2px;
+  }
 }
 
 /* Admin Forms */

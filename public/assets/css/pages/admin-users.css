@@ -291,6 +291,139 @@
   color: var(--primary);
 }
 
+/* Enhanced Responsive Users Table */
+.users-table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  border-radius: var(--radius-md);
+}
+
+.users-table {
+  width: 100%;
+  min-width: 650px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Column sizing for user tables */
+.users-table .col-avatar {
+  width: 60px;
+}
+
+.users-table .col-name {
+  min-width: 180px;
+}
+
+.users-table .col-email {
+  min-width: 200px;
+}
+
+.users-table .col-role {
+  width: 100px;
+}
+
+.users-table .col-date {
+  width: 120px;
+}
+
+.users-table .col-actions {
+  width: 120px;
+  text-align: right;
+}
+
+@media screen and (max-width: 992px) {
+  .users-table {
+    min-width: 600px;
+  }
+  
+  .users-table .col-name {
+    min-width: 150px;
+  }
+  
+  .users-table .col-email {
+    min-width: 180px;
+  }
+  
+  /* Compress content spacing */
+  .users-table th,
+  .users-table td {
+    padding: var(--space-sm);
+  }
+  
+  .user-to-delete {
+    margin-top: var(--space-sm);
+    padding: var(--space-sm);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .users-table-wrapper {
+    margin: 0 -1rem;
+    width: calc(100% + 2rem);
+    padding: 0 1rem;
+  }
+  
+  .users-table {
+    min-width: 500px;
+  }
+  
+  /* Improve touch targets for mobile */
+  .action-buttons {
+    gap: var(--space-xxs);
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .users-table-wrapper {
+    margin: 0 -var(--space-md);
+    width: calc(100% + var(--space-md)*2);
+    padding: 0 var(--space-md);
+  }
+  
+  .users-table {
+    min-width: 450px;
+  }
+  
+  .users-table .col-email {
+    min-width: 140px;
+  }
+  
+  /* Optimize spacing further */
+  .users-table th,
+  .users-table td {
+    padding: var(--space-xs);
+    font-size: 0.85rem;
+  }
+  
+  .users-table .user-name {
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .users-table .user-email {
+    max-width: 130px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Make action buttons more compact */
+  .action-buttons {
+    display: flex;
+    flex-wrap: nowrap;
+  }
+  
+  .btn-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 0.9rem;
+  }
+}
+
 /* Responsive adjustments */
 @media screen and (max-width: 992px) {
   .search-container {
