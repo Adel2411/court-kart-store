@@ -1,495 +1,296 @@
-\documentclass[14pt,a4paper]{article}
+\documentclass[13pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{geometry}
-\geometry{margin=1.5cm}
+\geometry{margin=2cm}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{listings}
 \usepackage{xcolor}
-\usepackage{enumitem}
 \usepackage{float}
 \usepackage{booktabs}
-\usepackage{titlesec}
 \usepackage{titling}
 \usepackage{fancyhdr}
 \usepackage{tcolorbox}
-\usepackage{tikz}
-\usepackage{pgf-umlcd}
-\usepackage{mdframed}
-\usepackage{array}
-\usepackage{tabularx}
-\usepackage{caption}
-\usepackage{subcaption}
+\usepackage{setspace}
+\usepackage{titlesec}
 
 % Enhanced typography
-\usepackage{setspace}
 \onehalfspacing
-
-% Header and footer setup
-\pagestyle{fancy}
-\fancyhf{}
-\fancyhead[L]{\slshape Court Kart: E-Commerce Platform}
-\fancyhead[R]{\slshape \thepage}
-\fancyfoot[C]{\small HADJ ARAB Adel - E-Commerce Project}
-\renewcommand{\headrulewidth}{0.4pt}
-\renewcommand{\footrulewidth}{0.4pt}
-
-% Title formatting
-\pretitle{\begin{center}\LARGE\bfseries}
-\posttitle{\par\end{center}\vspace{0.5em}}
-\preauthor{\begin{center}\large}
-\postauthor{\end{center}}
-\predate{\begin{center}\large}
-\postdate{\end{center}\vspace{1em}}
-
-% Section formatting
-\titleformat{\section}
-  {\normalfont\large\bfseries\color[RGB]{0,83,138}}
-  {\thesection}{1em}{}[\titlerule]
-\titlespacing*{\section}
-  {0pt}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}
-
-\titleformat{\subsection}
-  {\normalfont\normalsize\bfseries\color[RGB]{70,130,180}}
-  {\thesubsection}{1em}{}
-\titlespacing*{\subsection}
-  {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 
 % Define code listing style
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.95}
-\definecolor{customblue}{RGB}{0,83,138}
 
 \lstdefinestyle{mystyle}{
     backgroundcolor=\color{backcolour},   
     commentstyle=\color{codegreen},
     keywordstyle=\color{blue},
     stringstyle=\color{codepurple},
-    basicstyle=\ttfamily\footnotesize,
+    basicstyle=\ttfamily\small,
     breakatwhitespace=false,         
     breaklines=true,                 
     captionpos=b,                    
-    keepspaces=true,                 
-    numbers=left,                    
-    numbersep=5pt,                  
+    keepspaces=true,                  
     showspaces=false,                
     showstringspaces=false,
     showtabs=false,                  
     tabsize=2,
     frame=single,
-    framexleftmargin=5pt,
-    framextopmargin=5pt,
-    framexbottommargin=5pt
 }
 
 \lstset{style=mystyle}
 
-% Custom box environments
-\newtcolorbox{infobox}{
-  colback=blue!5!white,
-  colframe=blue!75!black,
-  coltext=black,
-  boxrule=0.5mm,
-  arc=4pt,
-  title=Note
-}
-
-% Hyperref setup for better PDF metadata and navigation
+% Hyperref setup
 \hypersetup{
     colorlinks=true,
     linkcolor=blue,
     filecolor=magenta,
-    urlcolor=customblue,
-    pdftitle={Court Kart: E-Commerce Platform Design Document},
+    urlcolor=blue,
+    pdftitle={Court Kart: E-Commerce Database Implementation},
     pdfauthor={HADJ ARAB Adel},
-    pdfsubject={E-Commerce Platform},
-    pdfkeywords={e-commerce, database, triggers, stored procedures, PHP, MySQL},
-    pdfcreator={LaTeX},
-    pdfproducer={pdfLaTeX}
+    pdfsubject={E-Commerce Database},
+    pdfkeywords={e-commerce, database, triggers, stored procedures, MySQL}
 }
 
-\title{\textbf{Court Kart: E-Commerce Platform}\\[0.5em]\Large Design and Implementation Document}
-\author{\textbf{HADJ ARAB Adel}}
-\date{\today}
+% Page style setup
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\thepage}
+\fancyhead[L]{Court Kart E-Commerce}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Title formatting
+\pretitle{\begin{center}\LARGE\bfseries}
+\posttitle{\end{center}\vskip 0.5em}
+\preauthor{\begin{center}\large}
+\postauthor{\end{center}}
+\predate{\begin{center}\large}
+\postdate{\end{center}}
+
+\renewcommand{\contentsname}{\centerline{TABLE OF CONTENTS}}
 
 \begin{document}
 
-\maketitle
+% Custom title page
+\begin{titlepage}
+	\centering
+	\vspace*{1cm}
 
-\begin{abstract}
-	\noindent This document presents the design and implementation of Court Kart, an e-commerce platform specializing in basketball equipment and apparel. The system is built using PHP, MySQL, and JavaScript, following the Model-View-Controller (MVC) architectural pattern. Key features include user authentication, product management, shopping cart functionality, order processing, and an administrative interface. The database implementation leverages advanced MySQL features including stored procedures and triggers to ensure data integrity and business rule enforcement. This document provides comprehensive details about the system architecture, database design, and implementation of required features.
-\end{abstract}
+	\includegraphics[width=0.4\textwidth]{../public/assets/images/court-kart-logo.png}\\[1.5cm]
 
+	\textbf{\LARGE Court Kart: E-Commerce Platform}\\[0.5cm]
+	\textbf{\Large Database Implementation Project}\\[2cm]
+
+	\begin{minipage}{0.45\textwidth}
+		\begin{flushleft}
+			\large
+			\textbf{Submitted by:}\\
+			HADJ ARAB Adel\\
+			Student ID: 222231482117\\
+		\end{flushleft}
+	\end{minipage}
+
+	\vfill
+
+	{\large \today}
+
+\end{titlepage}
+
+% Table of contents on separate page
 \newpage
 \tableofcontents
 \newpage
 
 \section{Introduction}
 
-Court Kart is a comprehensive e-commerce platform specializing in sports equipment and apparel, with a primary focus on basketball products. The application follows modern web development patterns with a clean separation of concerns, using PHP for server-side processing, MySQL for database management, and JavaScript for client-side interactivity.
+Court Kart is a specialized e-commerce platform designed for basketball enthusiasts. The platform offers a wide range of basketball-related products including footwear, apparel, gear, and merchandise. This report documents the database implementation of the platform, focusing on its relational schema, stored procedures, triggers, and the overall integration with the web application.
 
-\subsection{Project Overview}
-The Court Kart platform facilitates online shopping for basketball enthusiasts, offering features such as product browsing, detailed product views, user account management, shopping cart functionality, and secure checkout process. The platform also includes an administrative interface for managing products, orders, and users.
-
-\subsection{Technologies Used}
-The platform is built using the following technologies:
-\begin{itemize}
-	\item \textbf{Backend:} PHP 8.1 with custom MVC framework
-	\item \textbf{Database:} MySQL 8.0
-	\item \textbf{Frontend:} HTML5, CSS3, JavaScript (ES6+)
-	\item \textbf{Version Control:} Git
-	\item \textbf{Additional Libraries:} Font Awesome for icons
-\end{itemize}
-
-\begin{figure}[H]
-	\centering
-	% \includegraphics[width=0.9\textwidth]{images/technologies_stack.png}
-	\caption{Technology Stack Architecture}
-	\label{fig:tech-stack}
-\end{figure}
-
-\section{System Architecture}
-
-\subsection{Architectural Pattern}
-Court Kart implements the Model-View-Controller (MVC) architectural pattern to ensure separation of concerns and maintainability:
-
-\begin{itemize}
-	\item \textbf{Model:} Handles data logic and database interactions, encapsulating business rules and data access
-	\item \textbf{View:} Renders the user interface using PHP templates with embedded HTML and CSS
-	\item \textbf{Controller:} Processes user input, coordinates data flow between Model and View components
-	\item \textbf{Core Components:} Provides fundamental functionality like routing, database connections, session management, and security
-\end{itemize}
-
-\begin{figure}[H]
-	\centering
-	% \includegraphics[width=0.8\textwidth]{images/mvc_architecture.png}
-	\caption{Model-View-Controller Architecture Diagram}
-	\label{fig:mvc}
-\end{figure}
-
-\subsection{Directory Structure}
-The application follows a well-organized directory structure that separates different concerns:
-
-\begin{figure}[H]
-	\centering
-	% \includegraphics[width=0.9\textwidth]{images/directory_structure.png}
-	\caption{Project Directory Structure}
-	\label{fig:directory}
-\end{figure}
-
-\begin{lstlisting}[caption={Detailed Directory Structure}, label={lst:directory}]
-/court-kart-store
-  /config           # Application configuration files
-    database.php    # Database connection settings
-    app.php         # Application settings
-  /src              # Application source code
-    /Controllers    # Request handlers
-    /Models         # Data models and business logic
-    /Core           # Framework components
-      Router.php    # URL routing system
-      Database.php  # Database connection and query builder
-      View.php      # Template rendering engine
-      Session.php   # Session management
-      Middleware.php # Request filtering
-    /Services       # Business logic services
-    /Helpers        # Utility functions
-  /views            # UI templates
-    /layouts        # Page templates and partials
-    /shop           # Shop-related views
-    /cart           # Shopping cart views
-    /checkout       # Checkout process views
-    /admin          # Admin interface views
-    /auth           # Authentication views
-    /errors         # Error pages
-  /public           # Publicly accessible files
-    /assets         # Static resources
-      /css          # Stylesheets
-      /js           # JavaScript files
-      /images       # Image files
-      /fonts        # Font files
-  /routes           # Route definitions
-    web.php         # Web routes
-  /sql              # Database schema and scripts
-    schema.sql      # Database tables
-    triggers.sql    # Database triggers
-    procedures.sql  # Stored procedures
-  /docs             # Documentation files
-    report.tex      # This design document
-    images/         # Documentation images
-\end{lstlisting}
-
-\subsection{Request Lifecycle}
-The following sequence diagram illustrates the lifecycle of a typical request in the Court Kart application:
-
-\begin{figure}[H]
-	\centering
-	% \includegraphics[width=0.95\textwidth]{images/request_lifecycle.png}
-	\caption{Request Lifecycle Sequence Diagram}
-\end{figure}
+The database design follows best practices for e-commerce applications, with particular attention to inventory management, order processing, and user account management. The implementation leverages MySQL's advanced features such as stored procedures and triggers to ensure data integrity, automate processes, and enhance application performance.
 
 \section{Database Design}
 
-\subsection{Entity-Relationship Diagram}
-The database schema is designed to support all e-commerce functionality while maintaining data integrity and relational constraints:
+\subsection{Relational Schema and Relationships}
+
+Court Kart's database is structured around the following core entities and relationships:
+
+\begin{itemize}
+	\item \textbf{users}: Stores user account information including authentication details, profile data, and role assignment (user/admin)
+	\item \textbf{products}: Contains comprehensive product details including inventory levels, pricing information, categorization, and media assets
+	\item \textbf{cart\_items}: Represents the shopping cart functionality, linking users to products they intend to purchase
+	\item \textbf{orders}: Records order transactions with status tracking and financial details
+	\item \textbf{order\_items}: Contains the line items within each order, maintaining historical pricing data
+	\item \textbf{canceled\_orders}: Records history and reasons for canceled transactions
+	\item \textbf{logs}: Maintains a comprehensive audit trail of system operations
+\end{itemize}
+
+\subsubsection{Key Relationships}
+
+\begin{itemize}
+	\item One user can have many cart items (one-to-many)
+	\item One user can place many orders (one-to-many)
+	\item One order contains many order items (one-to-many)
+	\item Each product can appear in many carts and orders (many-to-many through junction tables)
+	\item One canceled order references exactly one order (one-to-one)
+	\item System logs can reference users and orders (many-to-one)
+\end{itemize}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth]{../public/assets/images/db-schema.png}
-	\caption{Entity-Relationship Diagram}
+	\includegraphics[width=0.9\textwidth]{../public/assets/images/db-schema.png}
+	\caption{Entity-Relationship Diagram for Court Kart Database}
 \end{figure}
 
-\subsection{Database Schema}
-Court Kart's database consists of several interconnected tables designed to support all e-commerce functionality:
+\subsection{Schema Optimization and Constraints}
 
-\begin{table}[H]
-	\centering
-	\caption{Database Schema Overview}
-	\label{tab:schema}
-	\begin{tabularx}{\textwidth}{|l|l|X|}
-		\hline
-		\textbf{Table Name} & \textbf{Primary Key} & \textbf{Description}                                                                                                         \\
-		\hline
-		users               & id (INT)             & Stores user account information including authentication data, profile details, and role designation (admin or regular user) \\
-		\hline
-		products            & id (INT)             & Contains comprehensive product details including name, description, pricing, stock levels, category, and image references    \\
-		\hline
-		categories          & id (INT)             & Stores product categories for hierarchical organization of the product catalog                                               \\
-		\hline
-		cart\_items         & id (INT)             & Links users to products in their shopping cart with quantity information                                                     \\
-		\hline
-		orders              & id (INT)             & Maintains order headers with status tracking, user references, and timestamps                                                \\
-		\hline
-		order\_items        & id (INT)             & Contains line items associated with each order, including product information, quantity, and price at time of purchase       \\
-		\hline
-		canceled\_orders    & id (INT)             & Records canceled orders with reason information and timestamps for business analytics                                        \\
-		\hline
-		logs                & id (INT)             & Comprehensive system activity tracking for auditing and debugging purposes                                                   \\
-		\hline
-	\end{tabularx}
-\end{table}
-
-\subsection{Table Relationships}
-The database implements the following relationships to maintain data integrity:
+The database schema incorporates several optimization strategies:
 
 \begin{itemize}
-	\item \textbf{users $\rightarrow$ cart\_items:} One-to-many (A user can have multiple items in their cart)
-	\item \textbf{users $\rightarrow$ orders:} One-to-many (A user can place multiple orders)
-	\item \textbf{products $\rightarrow$ cart\_items:} One-to-many (A product can be in multiple users' carts)
-	\item \textbf{products $\rightarrow$ order\_items:} One-to-many (A product can be in multiple orders)
-	\item \textbf{orders $\rightarrow$ order\_items:} One-to-many (An order contains multiple products)
-	\item \textbf{orders $\rightarrow$ canceled\_orders:} One-to-one (A canceled order references exactly one order)
-	\item \textbf{categories $\rightarrow$ products:} One-to-many (A category contains multiple products)
+	\item \textbf{Appropriate data types}: Selected to minimize storage requirements while ensuring data integrity
+	\item \textbf{Foreign key constraints}: Implemented to maintain referential integrity across related tables
+	\item \textbf{CHECK constraints}: Applied to validate data (e.g., ensuring discount values are between 0 and 1)
+	\item \textbf{ENUM types}: Used for fields with predefined values to enforce data consistency
+	\item \textbf{Indexing}: Applied to frequently queried columns to improve performance
+	\item \textbf{Default values}: Provided where appropriate to simplify data insertion
 \end{itemize}
-
-\subsection{Detailed Table Specifications}
-
-\begin{mdframed}[backgroundcolor=blue!5, linecolor=blue!40, linewidth=1pt]
-	\textbf{users}
-	\begin{lstlisting}[language=SQL, numbers=none]
-CREATE TABLE users (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    role ENUM('user', 'admin') DEFAULT 'user',
-    profile_image VARCHAR(255) NULL,
-    remember_token VARCHAR(100) NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-\end{lstlisting}
-\end{mdframed}
-
-\begin{mdframed}[backgroundcolor=blue!5, linecolor=blue!40, linewidth=1pt]
-	\textbf{products}
-	\begin{lstlisting}[language=SQL, numbers=none]
-CREATE TABLE products (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL,
-    price DECIMAL(10,2) NOT NULL,
-    stock INT NOT NULL DEFAULT 0,
-    category VARCHAR(50) NOT NULL,
-    image_url VARCHAR(255) NOT NULL,
-    is_new BOOLEAN DEFAULT FALSE,
-    discount INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-\end{lstlisting}
-\end{mdframed}
-
-\begin{mdframed}[backgroundcolor=blue!5, linecolor=blue!40, linewidth=1pt]
-	\textbf{orders}
-	\begin{lstlisting}[language=SQL, numbers=none]
-CREATE TABLE orders (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    total_price DECIMAL(10,2) NOT NULL,
-    status ENUM('pending', 'confirmed', 'shipped', 'delivered', 'cancelled') DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-\end{lstlisting}
-\end{mdframed}
-
-\begin{mdframed}[backgroundcolor=blue!5, linecolor=blue!40, linewidth=1pt]
-	\textbf{order\_items}
-	\begin{lstlisting}[language=SQL, numbers=none]
-CREATE TABLE order_items (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    order_id INT NOT NULL,
-    product_id INT NOT NULL,
-    quantity INT NOT NULL,
-    price DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE NO ACTION
-);
-\end{lstlisting}
-\end{mdframed}
 
 \section{Stored Procedures Implementation}
 
-The database includes several stored procedures to handle complex business logic directly at the database level. This approach enhances performance, reduces network traffic, and centralizes business rule enforcement.
+Stored procedures are utilized to encapsulate complex business logic and improve application performance. The following key procedures have been implemented:
 
-\subsection{GetOrderDetails}
+\subsection{GetOrderDetails Procedure}
+This procedure retrieves comprehensive details about a specific order, joining multiple tables to provide a complete view of the transaction.
 
-This stored procedure retrieves comprehensive information about a specific order, including all ordered items, product details, and pricing information.
-
-\begin{lstlisting}[language=SQL, caption={GetOrderDetails Stored Procedure}, label={lst:get-order-details}]
-DELIMITER $$
-
-CREATE PROCEDURE GetOrderDetails(IN p_order_id INT)
+\begin{lstlisting}[language=SQL]
+CREATE PROCEDURE GetOrderDetails (IN p_order_id INT)
 BEGIN
-    -- Get order items with product details
-    SELECT 
-        oi.order_id,
-        oi.product_id,
+    SELECT
+        o.id AS order_id,
+        o.created_at AS order_date,
+        o.status,
+        u.name AS customer_name,
+        u.email AS customer_email,
+        p.id AS product_id,
         p.name AS product_name,
+        p.image_url,
         oi.quantity,
         oi.price AS unit_price,
         (oi.quantity * oi.price) AS subtotal,
-        p.image_url
-    FROM 
-        order_items oi
-    JOIN 
-        products p ON oi.product_id = p.id
-    WHERE 
-        oi.order_id = p_order_id;
-END$$
-
-DELIMITER ;
+        o.total_price AS total_amount
+    FROM
+        orders o
+        JOIN users u ON o.user_id = u.id
+        JOIN order_items oi ON o.id = oi.order_id
+        JOIN products p ON oi.product_id = p.id
+    WHERE
+        o.id = p_order_id;
+END
 \end{lstlisting}
 
-\textbf{Usage Example:}
-\begin{lstlisting}[language=SQL, numbers=none]
-CALL GetOrderDetails(123);
-\end{lstlisting}
+\subsubsection{Implementation Notes}
+This procedure:
+\begin{itemize}
+	\item Joins four tables to compile complete order information
+	\item Calculates subtotals for each line item
+	\item Returns both individual product details and aggregate order information
+	\item Supports administrative and customer-facing order viewing
+\end{itemize}
 
-\subsection{FinalizeOrder}
+\subsection{FinalizeOrder Procedure}
+This procedure handles the critical order checkout process, ensuring data consistency through transaction management.
 
-This stored procedure handles the checkout process by confirming the order and removing items from the customer's cart.
-
-\begin{lstlisting}[language=SQL, caption={FinalizeOrder Stored Procedure}, label={lst:finalize-order}]
-DELIMITER $$
-
-CREATE PROCEDURE FinalizeOrder(IN p_order_id INT, IN p_user_id INT)
+\begin{lstlisting}[language=SQL]
+CREATE PROCEDURE FinalizeOrder (
+    IN p_order_id INT,
+    IN p_user_id INT
+)
 BEGIN
     DECLARE v_order_exists INT;
-    
-    -- Start transaction to ensure atomicity
+
     START TRANSACTION;
-    
-    -- Check if order exists and belongs to the user
-    SELECT COUNT(*) INTO v_order_exists 
-    FROM orders 
-    WHERE id = p_order_id AND user_id = p_user_id;
-    
-    IF v_order_exists = 0 THEN
-        SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = 'Order not found or does not belong to this user';
-        ROLLBACK;
-    ELSE
-        -- Update order status to 'confirmed'
-        UPDATE orders 
-        SET status = 'confirmed' 
+
+    SELECT COUNT(*) INTO v_order_exists
+    FROM orders
+    WHERE id = p_order_id AND user_id = p_user_id AND status = 'pending';
+
+    IF v_order_exists = 1 THEN
+        UPDATE orders
+        SET status = 'confirmed'
         WHERE id = p_order_id;
-        
-        -- Clear cart items for this user
-        DELETE FROM cart_items 
+
+        DELETE FROM cart_items
         WHERE user_id = p_user_id;
-        
-        -- Log the order finalization
-        INSERT INTO logs (action, user_id, order_id, message) 
-        VALUES ('ORDER_FINALIZED', p_user_id, p_order_id, CONCAT('Order #', p_order_id, ' has been finalized'));
-        
+
+        INSERT INTO logs (action, user_id, order_id, message)
+        VALUES ('CHECKOUT', p_user_id, p_order_id, 'Order finalized and cart emptied');
+
         COMMIT;
+    ELSE
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Invalid or non-pending order for this user';
     END IF;
-END$$
-
-DELIMITER ;
+END
 \end{lstlisting}
 
-\textbf{Usage Example:}
-\begin{lstlisting}[language=SQL, numbers=none]
-CALL FinalizeOrder(123, 456);
-\end{lstlisting}
+\subsubsection{Implementation Notes}
+This procedure:
+\begin{itemize}
+	\item Validates order existence and ownership before processing
+	\item Uses transactions to ensure atomicity of multi-step operations
+	\item Clears the user's cart after successful order confirmation
+	\item Logs the checkout action for audit purposes
+	\item Provides error handling with descriptive messages
+\end{itemize}
 
-\subsection{GetCustomerOrderHistory}
+\subsection{GetCustomerOrderHistory Procedure}
+This procedure retrieves a customer's complete order history with aggregated product information.
 
-This stored procedure retrieves a customer's complete order history with detailed information.
-
-\begin{lstlisting}[language=SQL, caption={GetCustomerOrderHistory Stored Procedure}, label={lst:customer-order-history}]
-DELIMITER $$
-
-CREATE PROCEDURE GetCustomerOrderHistory(IN p_user_id INT)
+\begin{lstlisting}[language=SQL]
+CREATE PROCEDURE GetCustomerOrderHistory (
+    IN p_user_id INT
+)
 BEGIN
-    -- Get all orders for the user with item counts
-    SELECT 
+    SELECT
         o.id AS order_id,
-        o.created_at,
-        o.total_price AS total,
+        o.created_at AS order_date,
+        o.total_price,
         o.status,
-        COUNT(oi.id) AS items_count,
-        GROUP_CONCAT(p.name SEPARATOR ', ') AS product_names
-    FROM 
+        COUNT(oi.id) AS item_count,
+        GROUP_CONCAT(p.name SEPARATOR ', ') AS products
+    FROM
         orders o
-    LEFT JOIN 
-        order_items oi ON o.id = oi.order_id
-    LEFT JOIN 
-        products p ON oi.product_id = p.id
-    WHERE 
+        LEFT JOIN order_items oi ON o.id = oi.order_id
+        LEFT JOIN products p ON oi.product_id = p.id
+    WHERE
         o.user_id = p_user_id
-    GROUP BY 
-        o.id
-    ORDER BY 
+    GROUP BY
+        o.id, o.created_at, o.total_price, o.status
+    ORDER BY
         o.created_at DESC;
-END$$
-
-DELIMITER ;
+END
 \end{lstlisting}
 
-\textbf{Usage Example:}
-\begin{lstlisting}[language=SQL, numbers=none]
-CALL GetCustomerOrderHistory(456);
-\end{lstlisting}
+\subsubsection{Implementation Notes}
+This procedure:
+\begin{itemize}
+	\item Uses LEFT JOINs to include all orders, even if they have no items
+	\item Employs GROUP\_CONCAT to create a comma-separated list of product names
+	\item Counts items per order for quick reference
+	\item Orders results chronologically for intuitive display
+\end{itemize}
 
-\section{Database Triggers Implementation}
+\section{Triggers Implementation}
 
-Triggers are used to enforce business rules and maintain data integrity automatically when certain database events occur.
+Triggers automate critical business logic and maintain data integrity across the database. The following key triggers have been implemented:
 
-\subsection{AfterOrderConfirmed}
+\subsection{AfterOrderConfirmed Trigger}
+This trigger automatically updates product stock quantities when an order status changes to 'confirmed'.
 
-This trigger automatically updates product stock quantities when an order status changes to "confirmed".
-
-\begin{lstlisting}[language=SQL, caption={AfterOrderConfirmed Trigger}, label={lst:after-order-confirmed}]
-DELIMITER $$
-
+\begin{lstlisting}[language=SQL]
 CREATE TRIGGER AfterOrderConfirmed
 AFTER UPDATE ON orders
 FOR EACH ROW
@@ -502,41 +303,40 @@ BEGIN
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = 1;
 
     IF OLD.status != 'confirmed' AND NEW.status = 'confirmed' THEN
-        -- Log the order confirmation
         INSERT INTO logs (action, user_id, order_id, message)
         VALUES ('CHECKOUT', NEW.user_id, NEW.id, CONCAT('Order #', NEW.id, ' confirmed'));
 
-        -- Update product stock for each item in the order
         OPEN cur;
         read_loop: LOOP
             FETCH cur INTO v_product_id, v_quantity;
             IF v_done THEN
                 LEAVE read_loop;
             END IF;
-            
-            -- Decrease product stock
             UPDATE products
             SET stock = stock - v_quantity
             WHERE id = v_product_id;
         END LOOP;
         CLOSE cur;
         
-        -- Log stock updates
         INSERT INTO logs (action, user_id, order_id, message)
         VALUES ('PRODUCT_UPDATE', NEW.user_id, NEW.id, CONCAT('Stock updated for order #', NEW.id));
     END IF;
-END$$
-
-DELIMITER ;
+END
 \end{lstlisting}
 
-\subsection{BeforeOrderItemInsert}
+\subsubsection{Implementation Notes}
+This trigger:
+\begin{itemize}
+	\item Uses a cursor to iterate through all order items
+	\item Only activates when an order status specifically changes to 'confirmed'
+	\item Automatically decrements product stock levels
+	\item Creates log entries before and after stock updates for audit purposes
+\end{itemize}
 
-This trigger prevents adding products to orders if the requested quantity exceeds available stock.
+\subsection{BeforeOrderItemInsert Trigger}
+This trigger prevents adding items to orders if the requested quantity exceeds available stock.
 
-\begin{lstlisting}[language=SQL, caption={BeforeOrderItemInsert Trigger}, label={lst:before-order-item-insert}]
-DELIMITER $$
-
+\begin{lstlisting}[language=SQL]
 CREATE TRIGGER BeforeOrderItemInsert
 BEFORE INSERT ON order_items
 FOR EACH ROW
@@ -544,285 +344,151 @@ BEGIN
     DECLARE available_stock INT;
     DECLARE v_user_id INT;
     
-    -- Get available stock for the product
     SELECT stock INTO available_stock
     FROM products
     WHERE id = NEW.product_id;
     
-    -- Get user ID for logging
     SELECT user_id INTO v_user_id
     FROM orders
     WHERE id = NEW.order_id;
 
-    -- Check if we have enough stock
     IF NEW.quantity > available_stock THEN
-        -- Log the stock violation attempt
         INSERT INTO logs (action, user_id, order_id, message)
         VALUES ('PRODUCT_UPDATE', v_user_id, NEW.order_id, 
                 CONCAT('Failed to add product #', NEW.product_id, ' to order #', NEW.order_id, 
                        ': Requested ', NEW.quantity, ', Available ', available_stock));
                 
-        -- Raise an error to prevent the insert
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Cannot insert order item: requested quantity exceeds available stock';
     END IF;
-END$$
-
-DELIMITER ;
+END
 \end{lstlisting}
 
-\subsection{AfterOrderCancelled}
+\subsubsection{Implementation Notes}
+This trigger:
+\begin{itemize}
+	\item Acts as a gatekeeper before inserting order items
+	\item Compares requested quantity against available stock
+	\item Creates detailed log entries when stock limitations are encountered
+	\item Throws a descriptive error message when insertion fails
+\end{itemize}
 
-This trigger restores product stock quantities when an order is canceled.
+\subsection{AfterOrderCancelled and LogCanceledOrder Triggers}
+These complementary triggers restore product stock when orders are canceled and maintain a history of canceled orders.
 
-\begin{lstlisting}[language=SQL, caption={AfterOrderCancelled Trigger}, label={lst:after-order-cancelled}]
-DELIMITER $$
-
+\begin{lstlisting}[language=SQL]
+-- Only showing part of these triggers for brevity
 CREATE TRIGGER AfterOrderCancelled
 AFTER UPDATE ON orders
 FOR EACH ROW
 BEGIN
-    DECLARE v_done INT DEFAULT 0;
-    DECLARE v_product_id INT;
-    DECLARE v_quantity INT;
-    DECLARE cur CURSOR FOR 
-        SELECT product_id, quantity FROM order_items WHERE order_id = NEW.id;
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = 1;
-
+    -- ... existing code ...
+    
     IF OLD.status != 'cancelled' AND NEW.status = 'cancelled' THEN
         -- Log the order cancellation
         INSERT INTO logs (action, user_id, order_id, message)
         VALUES ('ORDER_CANCEL', NEW.user_id, NEW.id, CONCAT('Order #', NEW.id, ' canceled'));
         
-        -- Restore stock for each product in the order
-        OPEN cur;
-        read_loop: LOOP
-            FETCH cur INTO v_product_id, v_quantity;
-            IF v_done THEN
-                LEAVE read_loop;
-            END IF;
-            
-            -- Increase product stock
-            UPDATE products
-            SET stock = stock + v_quantity
-            WHERE id = v_product_id;
-        END LOOP;
-        CLOSE cur;
-        
-        -- Log stock restoration
-        INSERT INTO logs (action, user_id, order_id, message)
-        VALUES ('PRODUCT_UPDATE', NEW.user_id, NEW.id, CONCAT('Stock restored for order #', NEW.id));
+        -- Restore product stock using cursor
+        -- ... existing code ...
     END IF;
-END$$
-
-DELIMITER ;
+END
 \end{lstlisting}
 
-\subsection{LogCanceledOrder}
-
-This trigger records detailed information about canceled orders in a dedicated history table.
-
-\begin{lstlisting}[language=SQL, caption={LogCanceledOrder Trigger}, label={lst:log-canceled-order}]
-DELIMITER $$
-
-CREATE TRIGGER LogCanceledOrder
-AFTER UPDATE ON orders
-FOR EACH ROW
-BEGIN
-    IF OLD.status != 'cancelled' AND NEW.status = 'cancelled' THEN
-        -- Insert into canceled_orders table
-        INSERT INTO canceled_orders (order_id, reason, canceled_at)
-        SELECT NEW.id, 'Order was canceled by user or admin', NOW()
-        FROM dual
-        WHERE NOT EXISTS (
-            SELECT 1 FROM canceled_orders WHERE order_id = NEW.id
-        );
-        
-        -- Log the cancellation record
-        INSERT INTO logs (action, user_id, order_id, message)
-        VALUES ('ORDER_CANCEL', NEW.user_id, NEW.id, CONCAT('Order #', NEW.id, ' cancellation recorded'));
-    END IF;
-END$$
-
-DELIMITER ;
-\end{lstlisting}
-
-\section{Key System Features}
-
-\subsection{User Interface}
-The Court Kart user interface is designed with a focus on usability, accessibility, and responsive design to provide an optimal shopping experience across different devices.
-
-\begin{figure}[H]
-	\centering
-	% \includegraphics[width=0.9\textwidth]{images/user_interface.png}
-	\caption{Court Kart User Interface Sample}
-	\label{fig:ui}
-\end{figure}
-
-Key UI features include:
+\subsubsection{Implementation Notes}
+These triggers:
 \begin{itemize}
-	\item Responsive design that automatically adapts to different screen sizes
-	\item Intuitive navigation with clearly labeled menu options
-	\item High-quality product images with zoom functionality
-	\item Consistent color scheme and typography for brand identity
-	\item Accessible design with proper contrast and semantic HTML
-	\item Interactive elements with appropriate visual feedback
+	\item Work together to handle order cancellation workflows
+	\item Restore product stock quantities automatically
+	\item Create audit trail entries
+	\item Maintain historical records of cancellations for reporting
 \end{itemize}
 
-\subsection{User Authentication and Authorization}
+\section{Product Data Structure and Management}
 
-The platform implements a comprehensive authentication and authorization system:
+The Court Kart database maintains a comprehensive product catalog with carefully structured data:
 
+\subsection{Product Categories}
+Products are organized into six primary categories:
 \begin{itemize}
-	\item Secure user registration with email verification
-	\item Password hashing using PHP's password\_hash() function
-	\item Role-based access control (user and admin roles)
-	\item Session management with CSRF protection
-	\item "Remember Me" functionality using secure cookies
-	\item Account management features (profile updates, password changes)
+	\item \textbf{Footwear}: Basketball shoes from major brands (Nike, Adidas, Under Armour)
+	\item \textbf{Apparel}: Jerseys, shorts, and other clothing items
+	\item \textbf{Gear}: Support equipment like ankle braces and protective gear
+	\item \textbf{Accessories}: Complementary items like headbands, water bottles, and bags
+	\item \textbf{Equipment}: Core basketball equipment like balls, pumps, and training aids
+	\item \textbf{Merchandise}: Collectibles, posters, and fan items
 \end{itemize}
 
-\begin{figure}[H]
-	\centering
-	% \includegraphics[width=0.8\textwidth]{images/auth_flow.png}
-	\caption{Authentication Flow Diagram}
-	\label{fig:auth-flow}
-\end{figure}
-
-\subsection{Shopping Cart Implementation}
-
-The shopping cart system provides a seamless experience for users to manage their selected products:
-
+\subsection{Inventory Management}
+The platform implements robust inventory management through:
 \begin{itemize}
-	\item Add products to cart with quantity selection
-	\item Update product quantities directly from the cart
-	\item Remove individual items or clear the entire cart
-	\item Real-time subtotal and total calculations
-	\item Persistent cart storage using database (for logged-in users)
-	\item Stock validation to prevent ordering unavailable quantities
+	\item Real-time stock tracking via database triggers
+	\item Automatic stock deduction upon order confirmation
+	\item Stock restoration when orders are canceled
+	\item Prevention of orders that exceed available stock
+	\item Comprehensive logging of inventory transactions
 \end{itemize}
 
-\subsection{Checkout Process}
+\section{Logging and Auditing}
 
-The checkout process is streamlined to minimize friction while collecting necessary information:
+The Court Kart database implements comprehensive logging capabilities:
 
+\subsection{Log Types}
+The system tracks various event types:
 \begin{itemize}
-	\item Multi-step checkout with progress indicators
-	\item Shipping information collection with validation
-	\item Payment method selection
-	\item Order summary with final review
-	\item Order confirmation with details and receipt
-	\item Stock verification before order finalization
+	\item User authentication events (USER\_REGISTER, USER\_LOGIN, USER\_LOGOUT)
+	\item Cart operations (CART\_ADD, CART\_REMOVE)
+	\item Order processing (CHECKOUT, ORDER\_UPDATE, ORDER\_CANCEL)
+	\item Inventory management (PRODUCT\_ADD, PRODUCT\_UPDATE, PRODUCT\_DELETE)
 \end{itemize}
 
-\begin{figure}[H]
-	\centering
-	% \includegraphics[width=0.9\textwidth]{images/checkout_flow.png}
-	\caption{Checkout Process Flow Diagram}
-	\label{fig:checkout-flow}
-\end{figure}
-
-\subsection{Admin Interface}
-
-The administrative interface provides powerful tools for site management:
-
+\subsection{Log Structure and Implementation}
+Each log entry contains:
 \begin{itemize}
-	\item Dashboard with key performance metrics and recent orders
-	\item Comprehensive product management (add, edit, delete)
-	\item Order processing and status updates
-	\item User management with role assignments
-	\item Inventory tracking and stock management
+	\item Action type (using ENUM for consistency)
+	\item User ID (when applicable)
+	\item Order ID (when applicable)
+	\item Detailed message explaining the event
+	\item Timestamp for chronological tracking
 \end{itemize}
 
-\begin{figure}[H]
-	\centering
-	% \includegraphics[width=0.9\textwidth]{images/admin_dashboard.png}
-	\caption{Admin Interface Dashboard}
-	\label{fig:admin-dashboard}
-\end{figure}
+The logs table is indexed on action type and timestamp to support efficient querying for administrative reporting and troubleshooting.
 
-\section{Security Measures}
+\section{Website Implementation Overview}
 
-\subsection{Data Protection}
-The application implements several security measures to protect user data and prevent unauthorized access:
+The Court Kart web application layers on top of the database infrastructure to provide a complete e-commerce experience:
 
+\subsection{Key Features}
 \begin{itemize}
-	\item Password hashing using PHP's native password\_hash() with bcrypt
-	\item Input validation and sanitization to prevent SQL injection
-	\item HTML escaping to prevent Cross-Site Scripting (XSS) attacks
-	\item CSRF tokens for all form submissions
-	\item Prepared statements for all database queries
-	\item Secure session handling with regeneration
+	\item \textbf{Product browsing and search}: Allows customers to navigate the catalog with filtering options
+	\item \textbf{User account management}: Supports registration, authentication, and profile management
+	\item \textbf{Shopping cart system}: Provides temporary storage of selected items before checkout
+	\item \textbf{Order management}: Facilitates the complete order lifecycle including tracking and history
+	\item \textbf{Admin dashboard}: Offers inventory management, order processing, and reporting for administrators
 \end{itemize}
 
-\subsection{Authentication Security}
-The authentication system includes:
-
+\subsection{Security Measures}
+The application implements several security measures:
 \begin{itemize}
-	\item Rate limiting for login attempts to prevent brute force attacks
-	\item Secure "Remember Me" implementation with token hashing
-	\item Session timeout for inactive users
-	\item Secure password reset mechanism
-\end{itemize}
-
-\subsection{Authorization}
-Access control is implemented using:
-
-\begin{itemize}
-	\item Route-level middleware for access restrictions
-	\item Role-based permissions (user vs. admin)
-	\item Resource ownership verification
-\end{itemize}
-
-\section{Testing and Quality Assurance}
-
-\subsection{Testing Methodology}
-The application was tested using multiple approaches:
-
-\begin{itemize}
-	\item Manual testing of all user flows
-	\item Database integrity testing for transactions
-	\item Security testing for common vulnerabilities
-	\item Cross-browser testing for compatibility
-	\item Mobile responsiveness testing on various devices
-\end{itemize}
-
-\subsection{Test Cases}
-Key test cases included:
-
-\begin{itemize}
-	\item User registration and login process
-	\item Shopping cart operations (add, update, remove)
-	\item Order placement with stock verification
-	\item Order cancellation and stock restoration
-	\item Admin functions (product and order management)
-\end{itemize}
-
-\section{Future Enhancements}
-
-While the current implementation of Court Kart provides a complete e-commerce solution, several potential enhancements could extend its functionality:
-
-\begin{itemize}
-	\item \textbf{Payment Gateway Integration:} Integration with popular payment processors such as PayPal, Stripe, or Square
-	\item \textbf{Advanced Product Recommendations:} Implementation of a recommendation engine based on user browsing and purchase history
-	\item \textbf{Email Notifications:} Automated emails for order confirmations, shipping updates, and promotional content
-	\item \textbf{Customer Reviews and Ratings:} Allow customers to rate products and leave reviews
-	\item \textbf{Wishlist Functionality:} Enable users to save products for future consideration
-	\item \textbf{Advanced Analytics Dashboard:} Enhanced reporting tools for business intelligence
-	\item \textbf{Inventory Forecasting:} Predictive analytics for inventory management
-	\item \textbf{Mobile Application:} Native mobile applications for iOS and Android
+	\item Parameterized queries to prevent SQL injection
+	\item Password hashing for secure credential storage
+	\item Input validation at application and database levels
+	\item Role-based access control for administrative functions
+	\item Comprehensive logging for audit and security monitoring
 \end{itemize}
 
 \section{Conclusion}
 
-The Court Kart e-commerce platform successfully implements all required features for online shopping, with a particular focus on database integrity through stored procedures and triggers. The application follows best practices in web development, including separation of concerns through the MVC pattern, secure authentication and authorization, and responsive design.
+The Court Kart database implementation demonstrates best practices for e-commerce data management with special attention to:
 
-The database design ensures data integrity while supporting complex business operations through the use of stored procedures and triggers. These database features automate critical processes such as inventory management, order processing, and canceled order handling.
+\begin{itemize}
+	\item Data integrity through constraints, triggers, and stored procedures
+	\item Performance optimization through appropriate indexing and query design
+	\item Business logic encapsulation in database operations
+	\item Security and auditing through comprehensive logging
+	\item Scalable design to support future growth
+\end{itemize}
 
-The platform provides intuitive interfaces for both customers and administrators, making it easy to browse products, manage shopping carts, place orders, and handle administrative tasks. The system architecture ensures maintainability and scalability for future enhancements.
-
-\begin{infobox}
-	Court Kart demonstrates how modern web technologies and advanced database features can be combined to create a robust e-commerce solution that meets both business requirements and user expectations.
-\end{infobox}
+The combination of a well-structured relational database with automated processes creates a robust foundation for the Court Kart e-commerce platform, enabling efficient operations and a seamless customer experience.
 
 \end{document}
