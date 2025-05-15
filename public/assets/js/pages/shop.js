@@ -50,47 +50,44 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     /**
-     * Initialize mobile filter panel functionality
+     * Initialize mobile filters functionality
      */
     function initMobileFilters() {
-        function openFilters() {
-            filtersElement.classList.add('active');
-            filtersBackdrop.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        
-        function closeFilters() {
-            filtersElement.classList.remove('active');
-            filtersBackdrop.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-        
-        if (filterToggle) {
-            filterToggle.addEventListener('click', closeFilters);
-        }
-        
+        // Mobile filter toggle button - show filters sidebar
         if (mobileFilterToggle) {
-            mobileFilterToggle.addEventListener('click', openFilters);
+            mobileFilterToggle.addEventListener('click', function() {
+                filtersElement.classList.add('active');
+                filtersBackdrop.style.display = 'block';
+                setTimeout(() => {
+                    filtersBackdrop.classList.add('active');
+                }, 10);
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            });
         }
         
+        // Close button for filters - hide filters sidebar
         if (filterClose) {
             filterClose.addEventListener('click', closeFilters);
         }
         
+        // Backdrop click also closes filters
         if (filtersBackdrop) {
             filtersBackdrop.addEventListener('click', closeFilters);
         }
         
-        // Handle window resize events
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 992 && filtersElement.classList.contains('active')) {
-                closeFilters();
-            }
-        });
+        // Close filters function
+        function closeFilters() {
+            filtersElement.classList.remove('active');
+            filtersBackdrop.classList.remove('active');
+            setTimeout(() => {
+                filtersBackdrop.style.display = 'none';
+            }, 300);
+            document.body.style.overflow = ''; // Re-enable scrolling
+        }
         
-        // Close filters on escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && filtersElement.classList.contains('active')) {
+        // Close filters when window is resized to desktop size
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 992 && filtersElement.classList.contains('active')) {
                 closeFilters();
             }
         });
@@ -187,18 +184,18 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function initPriceRange() {
         if (minPriceInput && maxPriceInput) {
+            // Ensure min price doesn't exceed max price
             minPriceInput.addEventListener('change', function() {
                 if (parseInt(this.value) > parseInt(maxPriceInput.value)) {
-                    maxPriceInput.value = this.value;
+                    this.value = maxPriceInput.value;
                 }
-                updateActiveFilters();
             });
             
+            // Ensure max price doesn't go below min price
             maxPriceInput.addEventListener('change', function() {
                 if (parseInt(this.value) < parseInt(minPriceInput.value)) {
-                    minPriceInput.value = this.value;
+                    this.value = minPriceInput.value;
                 }
-                updateActiveFilters();
             });
         }
     }
@@ -227,20 +224,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     /**
-     * Initialize product grid view switcher
+     * Initialize view switcher between grid and list
      */
     function initViewSwitcher() {
         const viewButtons = document.querySelectorAll('.view-btn');
+        const productsGrid = document.getElementById('products-grid');
         
-        viewButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                viewButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-                
-                const view = this.getAttribute('data-view');
-                productsGrid.className = view === 'list' ? 'product-list' : 'product-grid';
+        if (viewButtons.length && productsGrid) {
+            viewButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    viewButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Change view based on data-view attribute
+                    const viewType = this.getAttribute('data-view');
+                    productsGrid.className = ''; // Reset class
+                    productsGrid.classList.add('product-' + viewType);
+                });
             });
-        });
+        }
     }
     
     /**
