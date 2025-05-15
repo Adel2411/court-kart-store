@@ -99,7 +99,7 @@ class Order
     {
         $db = Database::getInstance();
 
-        $sql = "SELECT SUM(total_price) as total FROM orders WHERE status = 'confirmed'";
+        $sql = "SELECT SUM(total_price) as total FROM orders WHERE status = 'confirmed' OR status = 'shipped' OR status = 'delivered'";
         $result = $db->fetchRow($sql);
 
         return (float) ($result['total'] ?? 0);
@@ -230,18 +230,6 @@ class Order
 
         try {
             $orders = $db->fetchRows('CALL GetCustomerOrderHistory(?)', [$userId]);
-
-            if (empty($orders)) {
-                $sql = 'SELECT o.id, o.total_price, o.status, o.created_at, 
-                       COUNT(oi.id) as items_count
-                       FROM orders o 
-                       LEFT JOIN order_items oi ON o.id = oi.order_id 
-                       WHERE o.user_id = ? 
-                       GROUP BY o.id 
-                       ORDER BY o.created_at DESC';
-
-                $orders = $db->fetchRows($sql, [$userId]);
-            }
 
             foreach ($orders as &$order) {
                 if (isset($order['order_id']) && ! isset($order['id'])) {
