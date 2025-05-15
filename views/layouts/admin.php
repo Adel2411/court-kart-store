@@ -65,7 +65,7 @@
                 <div class="admin-menu-title">Settings</div>
                 <ul>
                     <li class="admin-menu-item">
-                        <a href="/" target="_blank" class="admin-menu-link">
+                        <a href="/" class="admin-menu-link">
                             <span class="admin-menu-icon"><i class="fas fa-home"></i></span>
                             View Store
                         </a>

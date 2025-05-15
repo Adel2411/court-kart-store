@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?? 'Court Kart - Basketball Equipment Store' ?></title>
-    <link rel="icon" type="image/x-icon" href="public/assets/images/court-kart-logo-dark.ico">
+    <link rel="icon" type="image/x-icon" href="/assets/images/court-kart-logo-dark.ico">
     
     <!-- Load main CSS files -->
     <link rel="stylesheet" href="/assets/css/main.css">
@@ -38,139 +38,47 @@
     
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
-    <!-- Mobile navigation styles -->
-    <style>
-        /* Mobile menu styles */
-        @media (max-width: 768px) {
-            .header-content {
-                position: relative;
-            }
-            
-            nav {
-                display: flex;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: #fff;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-                padding: 20px;
-                z-index: 999;
-                transform: translateY(-150%);
-                opacity: 0;
-                transition: transform 0.3s ease, opacity 0.3s ease;
-                visibility: hidden;
-            }
-            
-            nav.active {
-                transform: translateY(0);
-                opacity: 1;
-                visibility: visible;
-            }
-            
-            nav a {
-                margin: 10px 0;
-                display: block;
-                text-align: center;
-            }
-            
-            .nav-right {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                margin-top: 15px;
-                border-top: 1px solid #eee;
-                padding-top: 15px;
-            }
-            
-            .nav-right a {
-                margin: 8px 0;
-            }
-            
-            .mobile-menu-btn {
-                display: flex !important;
-                flex-direction: column;
-                justify-content: space-between;
-                width: 30px;
-                height: 24px;
-                background: transparent;
-                border: none;
-                cursor: pointer;
-                padding: 0;
-                z-index: 10;
-            }
-            
-            .mobile-menu-btn span {
-                width: 100%;
-                height: 3px;
-                background: #333;
-                border-radius: 3px;
-                transition: transform 0.3s ease, opacity 0.3s ease;
-            }
-            
-            .mobile-menu-btn.active span:nth-child(1) {
-                transform: translateY(10px) rotate(45deg);
-            }
-            
-            .mobile-menu-btn.active span:nth-child(2) {
-                opacity: 0;
-            }
-            
-            .mobile-menu-btn.active span:nth-child(3) {
-                transform: translateY(-10px) rotate(-45deg);
-            }
-        }
-        
-        @media (min-width: 769px) {
-            .mobile-menu-btn {
-                display: none !important;
-            }
-            
-            nav {
-                display: flex !important;
-                align-items: center;
-                justify-content: space-between;
-                width: 100%;
-            }
-            
-            .nav-right {
-                display: flex;
-                align-items: center;
-                justify-content: flex-end;
-            }
-        }
-    </style>
 </head>
 <body>
-    <header>
+    <header class="site-header">
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <a href="/">
-                        <img src="/assets/images/court-kart-logo.svg" alt="Court Kart">
+                    <a href="/" aria-label="Court Kart Home">
+                        <img src="/assets/images/court-kart-logo.svg" alt="Court Kart" width="120" height="40">
                     </a>
                 </div>
                 
-                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mainNav">
+                    <span class="hamburger-icon">
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                    </span>
                 </button>
                 
-                <nav id="mainNav">
-                    <a href="/">Home</a>
-                    <a href="/shop">Shop</a>
+                <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="/" class="nav-link <?= $_SERVER['REQUEST_URI'] === '/' ? 'active' : '' ?>">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/shop" class="nav-link <?= strpos($_SERVER['REQUEST_URI'], '/shop') === 0 ? 'active' : '' ?>">Shop</a>
+                        </li>
+                    </ul>
                     
                     <div class="nav-right">
                         <?php if (isset($_SESSION['user_id'])) { ?>
                             <?php if ($_SESSION['user_role'] === 'admin') { ?>
-                                <a href="/admin">Admin Dashboard</a>
+                                <a href="/admin" class="nav-link admin-link" aria-label="Admin Dashboard">
+                                    <i class="fas fa-cog"></i>
+                                    <span>Admin</span>
+                                </a>
                             <?php } ?>
                             
-                            <a href="/cart" class="nav-link cart-icon">
+                            <a href="/cart" class="nav-link cart-link" aria-label="Shopping Cart">
                                 <i class="fas fa-shopping-cart"></i>
+                                <span class="sr-only">Cart</span>
                                 <?php
                                 $cartCount = 0;
                                 if (\App\Core\Session::get('user_id')) {
@@ -178,31 +86,45 @@
                                 }
                                 ?>
                                 <?php if ($cartCount > 0) { ?>
-                                    <span class="cart-count"><?= $cartCount ?></span>
+                                    <span class="cart-badge"><?= $cartCount ?></span>
                                 <?php } ?>
                             </a>
                             
-                            <a href="/account" class="nav-link user-profile-link">
-                                <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin') { ?>
-                                    <span class="user-badge admin">Admin</span>
-                                <?php } ?>
-                                
-                                <?php if (isset($_SESSION['profile_image']) && !empty($_SESSION['profile_image'])) { ?>
-                                    <div class="user-avatar">
-                                        <img src="<?= htmlspecialchars($_SESSION['profile_image']) ?>" alt="Profile" class="user-avatar-img">
+                            <div class="user-menu">
+                                <button class="user-menu-btn" id="userMenuBtn" aria-label="User menu" aria-expanded="false" aria-haspopup="true">
+                                    <?php if (isset($_SESSION['profile_image']) && !empty($_SESSION['profile_image'])) { ?>
+                                        <div class="user-avatar">
+                                            <img src="<?= htmlspecialchars($_SESSION['profile_image']) ?>" alt="" class="user-avatar-img">
+                                        </div>
+                                    <?php } else { ?>
+                                        <div class="user-avatar">
+                                            <?= strtoupper(substr($_SESSION['user_name'] ?? 'U', 0, 1)) ?>
+                                        </div>
+                                    <?php } ?>
+                                    <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin') { ?>
+                                        <span class="user-badge admin">Admin</span>
+                                    <?php } ?>
+                                </button>
+                                <div class="user-dropdown" id="userDropdown">
+                                    <div class="user-info">
+                                        <div class="user-name"><?= htmlspecialchars($_SESSION['user_name'] ?? 'User') ?></div>
+                                        <div class="user-email"><?= htmlspecialchars($_SESSION['user_email'] ?? '') ?></div>
                                     </div>
-                                <?php } else { ?>
-                                    <div class="user-avatar">
-                                        <?= strtoupper(substr($_SESSION['user_name'] ?? 'U', 0, 1)) ?>
-                                    </div>
-                                <?php } ?>
-                            </a>
+                                    <ul class="dropdown-list">
+                                        <li><a href="/account"><i class="fas fa-user"></i> My Account</a></li>
+                                        <li><a href="/orders"><i class="fas fa-box"></i> My Orders</a></li>
+                                        <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                                    </ul>
+                                </div>
+                            </div>
                         <?php } else { ?>
-                            <a href="/login" class="btn btn-primary">Login</a>
-                            <a href="/register" class="btn btn-outline">Register</a>
+                            <a href="/login" class="btn btn-primary btn-sm login-btn">Login</a>
+                            <a href="/register" class="btn btn-outline btn-sm register-btn">Register</a>
                         <?php } ?>
                     </div>
                 </nav>
+                
+                <div class="nav-backdrop" id="navBackdrop"></div>
             </div>
         </div>
     </header>
@@ -258,39 +180,68 @@
     <!-- Mobile navigation script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
             const mainNav = document.getElementById('mainNav');
+            const navBackdrop = document.getElementById('navBackdrop');
+            const body = document.body;
+            
+            function toggleMobileMenu() {
+                const isExpanded = mainNav.classList.contains('active');
+                mainNav.classList.toggle('active');
+                mobileMenuBtn.classList.toggle('active');
+                navBackdrop.classList.toggle('active');
+                body.classList.toggle('menu-open');
+                
+                // Update ARIA attributes
+                mobileMenuBtn.setAttribute('aria-expanded', !isExpanded);
+            }
             
             if (mobileMenuBtn && mainNav) {
-                mobileMenuBtn.addEventListener('click', function() {
-                    mainNav.classList.toggle('active');
-                    mobileMenuBtn.classList.toggle('active');
-                });
+                mobileMenuBtn.addEventListener('click', toggleMobileMenu);
                 
-                // Close menu when clicking outside
-                document.addEventListener('click', function(event) {
-                    const isClickInsideNav = mainNav.contains(event.target);
-                    const isClickOnMenuBtn = mobileMenuBtn.contains(event.target);
-                    
-                    if (!isClickInsideNav && !isClickOnMenuBtn && mainNav.classList.contains('active')) {
-                        mainNav.classList.remove('active');
-                        mobileMenuBtn.classList.remove('active');
-                    }
+                // Close menu when clicking on backdrop
+                navBackdrop.addEventListener('click', toggleMobileMenu);
+                
+                // Close menu when clicking on a nav link on mobile
+                const navLinks = mainNav.querySelectorAll('.nav-link');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        if (window.innerWidth <= 768 && mainNav.classList.contains('active')) {
+                            toggleMobileMenu();
+                        }
+                    });
                 });
                 
                 // Handle window resize
                 window.addEventListener('resize', function() {
-                    if (window.innerWidth > 768) {
+                    if (window.innerWidth > 768 && mainNav.classList.contains('active')) {
                         mainNav.classList.remove('active');
                         mobileMenuBtn.classList.remove('active');
+                        navBackdrop.classList.remove('active');
+                        body.classList.remove('menu-open');
+                        mobileMenuBtn.setAttribute('aria-expanded', 'false');
                     }
                 });
+            }
+            
+            // User dropdown menu
+            const userMenuBtn = document.getElementById('userMenuBtn');
+            const userDropdown = document.getElementById('userDropdown');
+            
+            if (userMenuBtn && userDropdown) {
+                userMenuBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isExpanded = userDropdown.classList.contains('active');
+                    userDropdown.classList.toggle('active');
+                    userMenuBtn.setAttribute('aria-expanded', !isExpanded);
+                });
                 
-                // Add accessibility for keyboard navigation
-                mobileMenuBtn.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        mobileMenuBtn.click();
+                // Close user dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                        userDropdown.classList.remove('active');
+                        userMenuBtn.setAttribute('aria-expanded', 'false');
                     }
                 });
             }
