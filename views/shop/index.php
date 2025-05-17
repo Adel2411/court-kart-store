@@ -185,7 +185,7 @@
                                         <span class="badge new">New</span>
                                     <?php } ?>
                                     <?php if (isset($product['discount']) && $product['discount'] > 0) { ?>
-                                        <span class="badge sale">Sale</span>
+                                        <span class="badge sale">-<?= round($product['discount'] * 100) ?>%</span>
                                     <?php } ?>
                                     
                                     <img src="<?= htmlspecialchars($product['image_url']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
@@ -219,9 +219,17 @@
                                     </div>
                                     
                                     <div class="product-price">
-                                        <span class="current-price">$<?= number_format($product['price'], 2) ?></span>
-                                        <?php if (isset($product['original_price']) && $product['original_price'] > $product['price']) { ?>
-                                            <span class="original-price">$<?= number_format($product['original_price'], 2) ?></span>
+                                        <?php
+                                        // Calculate discounted price from original price
+                                        $originalPrice = $product['price'];
+                                        $discountedPrice = $originalPrice;
+                                        if (isset($product['discount']) && $product['discount'] > 0) {
+                                            $discountedPrice = round($originalPrice * (1 - $product['discount']), 2);
+                                        }
+                                        ?>
+                                        <span class="current-price">$<?= number_format($discountedPrice, 2) ?></span>
+                                        <?php if (isset($product['discount']) && $product['discount'] > 0) { ?>
+                                            <span class="original-price">$<?= number_format($originalPrice, 2) ?></span>
                                         <?php } ?>
                                     </div>
                                     

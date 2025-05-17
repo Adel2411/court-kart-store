@@ -22,9 +22,19 @@ class CartController
         foreach ($cartItems as &$item) {
             $product = Product::getById($item['product_id']);
             $item['name'] = $product['name'];
-            $item['price'] = $product['price'];
+            
+            // Apply discount if available
+            if (isset($product['discount']) && $product['discount'] > 0) {
+                $item['original_price'] = $product['price'];
+                $item['price'] = round($product['price'] * (1 - $product['discount']), 2);
+                $item['discount'] = $product['discount'];
+            } else {
+                $item['price'] = $product['price'];
+                $item['discount'] = 0;
+            }
+            
             $item['image_url'] = $product['image_url'];
-            $item['subtotal'] = $product['price'] * $item['quantity'];
+            $item['subtotal'] = $item['price'] * $item['quantity'];
             $totalPrice += $item['subtotal'];
         }
 

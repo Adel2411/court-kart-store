@@ -67,6 +67,7 @@
                     <th>Name</th>
                     <th>Category</th>
                     <th>Price</th>
+                    <th>Discount</th>
                     <th>Stock</th>
                     <th>Actions</th>
                 </tr>
@@ -74,7 +75,7 @@
             <tbody>
                 <?php if (empty($products)) { ?>
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 2rem;">
+                        <td colspan="8" style="text-align: center; padding: 2rem;">
                             <div style="color: var(--gray);">
                                 <i class="fas fa-box-open" style="font-size: 2rem; margin-bottom: 1rem;"></i>
                                 <p>No products found</p>
@@ -98,7 +99,32 @@
                                 <span class="chip"><?= htmlspecialchars($product['category']) ?></span>
                             </td>
                             <td>
-                                <span style="font-weight: 600; color: var(--primary);">$<?= number_format($product['price'], 2) ?></span>
+                                <?php 
+                                    // Calculate discounted price from original price
+                                    $originalPrice = $product['price'];
+                                    $discountedPrice = $originalPrice;
+                                    if (isset($product['discount']) && $product['discount'] > 0) {
+                                        $discountedPrice = round($originalPrice * (1 - $product['discount']), 2);
+                                    }
+                                ?>
+                                <?php if (isset($product['discount']) && $product['discount'] > 0) { ?>
+                                    <span style="font-weight: 600; color: var(--primary);">$<?= number_format($discountedPrice, 2) ?></span>
+                                    <br>
+                                    <span style="text-decoration: line-through; color: var(--gray); font-size: 0.85rem;">
+                                        $<?= number_format($originalPrice, 2) ?>
+                                    </span>
+                                <?php } else { ?>
+                                    <span style="font-weight: 600; color: var(--primary);">$<?= number_format($product['price'], 2) ?></span>
+                                <?php } ?>
+                            </td>
+                            <td>
+                                <?php if (isset($product['discount']) && $product['discount'] > 0) { ?>
+                                    <span class="chip bg-danger text-white">
+                                        <?= round($product['discount'] * 100) ?>% OFF
+                                    </span>
+                                <?php } else { ?>
+                                    <span class="chip bg-light">No discount</span>
+                                <?php } ?>
                             </td>
                             <td>
                                 <?php if ($product['stock'] > 10) { ?>
@@ -123,8 +149,7 @@
                                     <input type="hidden" name="id" value="<?= $product['id'] ?>">
                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?')">
                                         <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                                    </form>
                             </td>
                         </tr>
                     <?php } ?>
@@ -164,6 +189,12 @@
                         <div class="admin-form-group">
                             <label for="productPrice">Price ($)</label>
                             <input type="number" id="productPrice" name="price" min="0.01" step="0.01" class="form-control" required>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label for="productDiscount">Discount (%)</label>
+                            <input type="number" id="productDiscount" name="discount" min="0" max="100" step="0.01" class="form-control" value="0">
+                            <small class="form-text text-muted">Enter discount percentage (0-100)</small>
                         </div>
                         
                         <div class="admin-form-group">
@@ -263,6 +294,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('productName').value = productData.name;
             document.getElementById('productDescription').value = productData.description;
             document.getElementById('productPrice').value = productData.price;
+            document.getElementById('productDiscount').value = productData.discount ? (productData.discount * 100).toFixed(2) : 0;
             document.getElementById('productStock').value = productData.stock;
             document.getElementById('productCategory').value = productData.category;
             document.getElementById('productImage').value = productData.image_url;
@@ -329,48 +361,48 @@ document.addEventListener('DOMContentLoaded', function() {
     gap: 1rem;
 }
 
-.filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
 .filter-group label {
     font-size: 0.85rem;
     color: var(--secondary);
+}   gap: 0.5rem;
 }
-
 .search-group {
     grid-column: span 2;
-}
-
+}   font-size: 0.85rem;
+    color: var(--secondary);
 .search-input-wrapper {
     position: relative;
-}
-
+}search-group {
+    grid-column: span 2;
 .clear-search {
     position: absolute;
-    top: 50%;
-    right: 10px;
+    top: 50%;-wrapper {
+    right: 10px;lative;
     transform: translateY(-50%);
     color: var(--gray);
     cursor: pointer;
-}
-
+}   position: absolute;
+    top: 50%;
 .filter-actions {
-    display: flex;
+    display: flex;nslateY(-50%);
     align-items: flex-end;
-    gap: 0.5rem;
+    gap: 0.5rem;ter;
 }
 
 @media (max-width: 992px) {
     .product-filters-form {
         grid-template-columns: 1fr;
-    }
+    }ap: 0.5rem;
     
     .search-group {
         grid-column: span 1;
-    }
+    }product-filters-form {
+}       grid-template-columns: 1fr;
+</style>
+    
+<div class="db-connection-success">
+    <p style="color: green; font-weight: bold;">Database connection successful! Product data loaded from database.</p>
+</div>
 }
 </style>
 

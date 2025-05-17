@@ -182,13 +182,14 @@ class Product
     {
         $db = Database::getInstance();
 
-        return $db->execute('INSERT INTO products (name, description, price, stock, image_url, category) VALUES (?, ?, ?, ?, ?, ?)', [
+        return $db->execute('INSERT INTO products (name, description, price, stock, image_url, category, discount) VALUES (?, ?, ?, ?, ?, ?, ?)', [
             $data['name'],
             $data['description'],
             $data['price'],
             $data['stock'],
             $data['image_url'],
             $data['category'],
+            $data['discount'],
         ]);
     }
 
@@ -199,13 +200,14 @@ class Product
     {
         $db = Database::getInstance();
 
-        return $db->execute('UPDATE products SET name = ?, description = ?, price = ?, stock = ?, image_url = ?, category = ? WHERE id = ?', [
+        return $db->execute('UPDATE products SET name = ?, description = ?, price = ?, stock = ?, image_url = ?, category = ?, discount = ? WHERE id = ?', [
             $data['name'],
             $data['description'],
             $data['price'],
             $data['stock'],
             $data['image_url'],
             $data['category'],
+            $data['discount'],
             $id,
         ]);
     }

@@ -18,20 +18,28 @@ class HomeController
 
         foreach ($newProducts as &$product) {
             $product['is_new'] = true;
-            if (! isset($product['original_price'])) {
-                $product['original_price'] = 0;
+            
+            if (isset($product['discount']) && $product['discount'] > 0) {
+                // Store the original price (before discount)
+                $product['original_price'] = $product['price'];
+                // Calculate the discounted price correctly
+                $product['price'] = round($product['price'] * (1 - $product['discount']), 2);
+            } else {
+                $product['original_price'] = $product['price'];
+                $product['discount'] = 0;
             }
         }
 
         foreach ($topProducts as &$product) {
-            if (rand(0, 1) && ! isset($product['original_price'])) {
-                $product['original_price'] = round($product['price'] * (1 + (rand(10, 30) / 100)), 2);
-                $product['discount'] = round(($product['original_price'] - $product['price']) / $product['original_price'] * 100);
+            if (isset($product['discount']) && $product['discount'] > 0) {
+                // Store the original price (before discount)
+                $product['original_price'] = $product['price'];
+                // Calculate the discounted price correctly
+                $product['price'] = round($product['price'] * (1 - $product['discount']), 2);
             } else {
+                // For products without discount, don't randomly assign discounts
+                $product['original_price'] = $product['price'];
                 $product['discount'] = 0;
-                if (! isset($product['original_price'])) {
-                    $product['original_price'] = 0;
-                }
             }
         }
 

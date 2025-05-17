@@ -33,10 +33,16 @@ class ApiController
         }
         $product['is_new'] = (strtotime($product['created_at'] ?? 'now') > strtotime('-7 days'));
 
-        if (isset($product['original_price']) && $product['original_price'] > $product['price']) {
-            $product['discount'] = round(($product['original_price'] - $product['price']) / $product['original_price'] * 100);
+        // Ensure proper discount handling
+        if (isset($product['discount']) && $product['discount'] > 0) {
+            $product['original_price'] = $product['price'];
+            $product['discounted_price'] = round($product['price'] * (1 - $product['discount']), 2);
+            $product['price'] = $product['discounted_price']; // Update price to be the discounted price
+            $product['discount_percent'] = round($product['discount'] * 100); // For display purposes
         } else {
+            $product['original_price'] = $product['price'];
             $product['discount'] = 0;
+            $product['discount_percent'] = 0;
         }
 
         header('Content-Type: application/json');

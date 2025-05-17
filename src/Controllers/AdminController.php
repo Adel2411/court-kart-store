@@ -100,6 +100,7 @@ class AdminController
             'stock' => $_POST['stock'] ?? 0,
             'category' => $_POST['category'] ?? '',
             'image_url' => $_POST['image_url'] ?? '',
+            'discount' => isset($_POST['discount']) ? ($_POST['discount'] / 100) : 0, // Convert percentage to decimal
         ];
 
         if (empty($data['name']) || empty($data['description']) ||
@@ -107,6 +108,13 @@ class AdminController
             empty($data['category']) || empty($data['image_url'])) {
 
             Session::set('error', 'Please fill in all required fields correctly.');
+            header('Location: /admin/products');
+            exit;
+        }
+
+        // Validate discount value
+        if ($data['discount'] < 0 || $data['discount'] > 1) {
+            Session::set('error', 'Discount must be between 0% and 100%.');
             header('Location: /admin/products');
             exit;
         }

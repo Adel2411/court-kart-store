@@ -81,25 +81,34 @@ class ShopController
     public function show($id)
     {
         $product = Product::getById($id);
-
+        
         if (! $product) {
-            header('HTTP/1.0 404 Not Found');
-            require_once BASE_PATH.'/views/errors/404.php';
-
+            header('HTTP/1.1 404 Not Found');
+            // Handle product not found
             return;
         }
-
+        
+        // Store the original price 
+        $originalPrice = $product['price'];
+        
+        // Calculate the discounted price if discount exists
+        $discountedPrice = $originalPrice;
+        if (isset($product['discount']) && $product['discount'] > 0) {
+            $discountedPrice = round($originalPrice * (1 - $product['discount']), 2);
+        }
+        
         echo View::renderWithLayout('shop/product', 'main', [
-            'title' => $product['name'].' - Court Kart',
+            'title' => $product['name'] . ' - Court Kart',
             'id' => $product['id'],
             'product_name' => $product['name'],
             'description' => $product['description'],
-            'price' => $product['price'],
+            'price' => $discountedPrice,
+            'original_price' => $originalPrice,
             'stock' => $product['stock'],
-            'image_url' => $product['image_url'],
             'category' => $product['category'],
-            'page_css' => 'product',
-            'page_js' => 'product',
+            'image_url' => $product['image_url'],
+            'discount' => $product['discount'],
+            'page_css' => 'product'
         ]);
     }
 
