@@ -7,7 +7,7 @@ TRUNCATE TABLE canceled_orders;
 TRUNCATE TABLE order_items;
 TRUNCATE TABLE orders;
 TRUNCATE TABLE cart_items;
--- TRUNCATE TABLE products;
+TRUNCATE TABLE products;
 TRUNCATE TABLE users;
 
 -- Verify all tables are empty
