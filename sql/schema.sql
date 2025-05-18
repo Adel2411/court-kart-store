@@ -25,6 +25,17 @@ CREATE TABLE products (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- WISHLISTS table
+CREATE TABLE wishlists (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  product_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE,
+  UNIQUE KEY user_product (user_id, product_id)  -- Prevent duplicate entries
+);
+
 -- CART_ITEMS table
 CREATE TABLE cart_items (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -65,10 +76,25 @@ CREATE TABLE canceled_orders (
   FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE
 );
 
+-- PRODUCT_REVIEWS table
+CREATE TABLE product_reviews (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  product_id INT NOT NULL,
+  rating DECIMAL(2,1) NOT NULL CHECK (rating >= 0 AND rating <= 5),
+  review_text TEXT,
+  status ENUM('pending', 'approved', 'rejected') DEFAULT 'approved',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE,
+  UNIQUE KEY user_product (user_id, product_id)  -- One review per product per user
+);
+
 -- LOGS table
 CREATE TABLE logs (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  action ENUM ('USER_REGISTER', 'USER_LOGIN', 'USER_LOGOUT', 'USER_UPDATE', 'USER_DELETE', 'CART_ADD', 'CART_REMOVE', 'CHECKOUT', 'ORDER_UPDATE', 'ORDER_CANCEL', 'PRODUCT_ADD', 'PRODUCT_UPDATE', 'PRODUCT_DELETE') NOT NULL,
+  action ENUM ('USER_REGISTER', 'USER_LOGIN', 'USER_LOGOUT', 'USER_UPDATE', 'USER_DELETE', 'CART_ADD', 'CART_REMOVE', 'CHECKOUT', 'ORDER_UPDATE', 'ORDER_CANCEL', 'PRODUCT_ADD', 'PRODUCT_UPDATE', 'PRODUCT_DELETE', 'REVIEW_ADD', 'REVIEW_UPDATE', 'REVIEW_DELETE') NOT NULL,
   user_id INT,
   order_id INT,
   message TEXT,

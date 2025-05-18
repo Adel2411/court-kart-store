@@ -11,13 +11,13 @@ TRUNCATE TABLE products;
 TRUNCATE TABLE users;
 
 -- Verify all tables are empty
-SELECT * FROM logs;
-SELECT * FROM canceled_orders;
-SELECT * FROM order_items;
-SELECT * FROM orders;
-SELECT * FROM cart_items;
-SELECT * FROM products;
-SELECT * FROM users;
+-- SELECT * FROM logs;
+-- SELECT * FROM canceled_orders;
+-- SELECT * FROM order_items;
+-- SELECT * FROM orders;
+-- SELECT * FROM cart_items;
+-- SELECT * FROM products;
+-- SELECT * FROM users;
 
 
 -- Re-enable foreign key checks
