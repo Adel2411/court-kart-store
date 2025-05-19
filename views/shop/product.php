@@ -104,7 +104,7 @@
                                 <i class="fas fa-shopping-cart"></i> Add to Cart
                             </button>
                             <button type="button" class="btn btn-outline wishlist-btn" data-action="wishlist" data-id="<?= $id ?>">
-                                <i class="far fa-heart"></i> Add to Wishlist
+                                <i class="far fa-heart"></i> <span>Add to Wishlist</span>
                             </button>
                         </div>
                     </form>

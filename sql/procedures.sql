@@ -1,7 +1,7 @@
 -- Clean up: remove procedures if they exist
--- DROP PROCEDURE IF EXISTS GetOrderDetails;
--- DROP PROCEDURE IF EXISTS FinalizeOrder;
--- DROP PROCEDURE IF EXISTS GetCustomerOrderHistory;
+DROP PROCEDURE IF EXISTS GetOrderDetails;
+DROP PROCEDURE IF EXISTS FinalizeOrder;
+DROP PROCEDURE IF EXISTS GetCustomerOrderHistory;
 
 
 DELIMITER $$

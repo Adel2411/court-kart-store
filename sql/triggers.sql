@@ -1,8 +1,8 @@
 -- Drop existing triggers if they exist
--- DROP TRIGGER IF EXISTS AfterOrderConfirmed;
--- DROP TRIGGER IF EXISTS BeforeOrderItemInsert;
--- DROP TRIGGER IF EXISTS AfterOrderCancelled;
--- DROP TRIGGER IF EXISTS LogCanceledOrder;
+DROP TRIGGER IF EXISTS AfterOrderConfirmed;
+DROP TRIGGER IF EXISTS BeforeOrderItemInsert;
+DROP TRIGGER IF EXISTS AfterOrderCancelled;
+DROP TRIGGER IF EXISTS LogCanceledOrder;
 
 
 -- 1. Trigger to update stock after order status changes to 'confirmed'

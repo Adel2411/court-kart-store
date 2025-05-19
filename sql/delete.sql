@@ -20,8 +20,8 @@ TRUNCATE TABLE users;
 -- SELECT * FROM cart_items;
 -- SELECT * FROM products;
 -- SELECT * FROM users;
-SELECT * FROM product_reviews;
-SELECT * FROM wishlists;
+-- SELECT * FROM product_reviews;
+-- SELECT * FROM wishlists;
 
 
 -- Re-enable foreign key checks

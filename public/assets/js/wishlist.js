@@ -39,6 +39,9 @@ const WishlistManager = {
                     callback(data.is_added);
                 }
                 
+                // Update all wishlist buttons for this product
+                this.updateAllProductButtons(productId, data.is_added);
+                
                 // Show toast notification
                 this.showNotification(data.message, 'success');
             } else {
@@ -73,6 +76,35 @@ const WishlistManager = {
             console.error('Error checking wishlist status:', error);
             if (typeof callback === 'function') {
                 callback(false);
+            }
+        });
+    },
+    
+    /**
+     * Update all wishlist buttons for a specific product
+     * @param {number} productId - Product ID
+     * @param {boolean} isAdded - Whether product is in wishlist
+     */
+    updateAllProductButtons: function(productId, isAdded) {
+        // Update all buttons for this product across the page
+        document.querySelectorAll(`[data-action="wishlist"][data-id="${productId}"]`).forEach(button => {
+            // Handle buttons with different structures
+            const icon = button.querySelector('i');
+            if (icon) {
+                if (isAdded) {
+                    button.classList.add('in-wishlist');
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                } else {
+                    button.classList.remove('in-wishlist');
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                }
+            }
+            
+            // Update button text if applicable
+            if (button.querySelector('span')) {
+                button.querySelector('span').textContent = isAdded ? 'Remove from Wishlist' : 'Add to Wishlist';
             }
         });
     },
@@ -149,7 +181,7 @@ const WishlistManager = {
 
 // Initialize wishlist functionality on all pages
 document.addEventListener('DOMContentLoaded', function() {
-    // Get all wishlist buttons on the page
+    // Get all wishlist buttons on the page (all variants)
     const wishlistButtons = document.querySelectorAll('[data-action="wishlist"]');
     
     wishlistButtons.forEach(button => {
@@ -159,26 +191,80 @@ document.addEventListener('DOMContentLoaded', function() {
         WishlistManager.checkProduct(productId, function(inWishlist) {
             if (inWishlist) {
                 button.classList.add('in-wishlist');
-                button.querySelector('i').classList.remove('far');
-                button.querySelector('i').classList.add('fas');
+                const icon = button.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                }
+                
+                // Update button text if it has one
+                const span = button.querySelector('span');
+                if (span && !span.classList.contains('remove-text')) {
+                    span.textContent = 'Remove from Wishlist';
+                }
             }
         });
         
         // Add click event for toggling wishlist
         button.addEventListener('click', function(e) {
             e.preventDefault();
+            e.stopPropagation(); // Prevent event bubbling
+            
             const productId = this.dataset.id;
             
             WishlistManager.toggleProduct(productId, function(isAdded) {
-                if (isAdded) {
-                    button.classList.add('in-wishlist');
-                    button.querySelector('i').classList.remove('far');
-                    button.querySelector('i').classList.add('fas');
+                // Button state will be updated by the updateAllProductButtons method
+            });
+        });
+    });
+    
+    // Handle specialized remove buttons in wishlist page
+    const removeWishlistForms = document.querySelectorAll('.remove-from-wishlist-form');
+    removeWishlistForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const productId = this.querySelector('input[name="product_id"]').value;
+            
+            // Send request to remove from wishlist
+            fetch('/wishlist/remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `product_id=${productId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove the item from wishlist page
+                    const wishlistItem = form.closest('.wishlist-item');
+                    if (wishlistItem) {
+                        wishlistItem.style.opacity = '0';
+                        setTimeout(() => {
+                            wishlistItem.remove();
+                            
+                            // If no more items, refresh the page to show empty state
+                            const wishlistItems = document.querySelectorAll('.wishlist-item');
+                            if (wishlistItems.length === 0) {
+                                location.reload();
+                            }
+                        }, 300);
+                    }
+                    
+                    // Update count in header
+                    WishlistManager.updateWishlistCount(data.count);
+                    
+                    // Show notification
+                    WishlistManager.showNotification('Item removed from wishlist', 'success');
                 } else {
-                    button.classList.remove('in-wishlist');
-                    button.querySelector('i').classList.remove('fas');
-                    button.querySelector('i').classList.add('far');
+                    WishlistManager.showNotification('Failed to remove item from wishlist', 'error');
                 }
+            })
+            .catch(error => {
+                console.error('Error removing item from wishlist:', error);
+                WishlistManager.showNotification('Failed to remove item from wishlist', 'error');
             });
         });
     });

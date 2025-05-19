@@ -49,4 +49,8 @@ INSERT INTO products (id, name, description, price, stock, image_url, category, 
 (48, 'Team Jersey - Hawks', 'Official Hawks jersey.', 82.00, 100, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR09qktI0ME4BxhaCr5DeiPUiXP4z5AmgGwvw&s', 'Apparel', '2025-04-30 02:53:40', '2025-05-11 05:03:53', 0.00),
 (49, 'Basketball Training Cone Set', 'Set of training cones.', 25.00, 142, 'https://m.media-amazon.com/images/I/61RwKCSTQHL._AC_UF1000,1000_QL80_.jpg', 'Equipment', '2025-04-30 02:53:40', '2025-05-11 21:15:49', 0.20),
 (50, 'Nikola Jokic Poster', 'Limited edition Jokic poster.', 40.00, 65, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSouIPYxCDeAZ4ozXYsJ8tny6IzdB-7qEFVFA&s', 'Merchandise', '2025-04-30 02:53:40', '2025-05-11 04:51:39', 0.00),
-(52, 'Basketball Hoop', 'A very good quality basketball hoop', 250.00, 1, 'https://m.media-amazon.com/images/I/51BXpn8ed+L._AC_SL1500_.jpg', 'Equipment', '2025-05-11 05:39:51', '2025-05-11 21:15:49', 0.08);
+(52, 'Basketball Hoop', 'A very good quality basketball hoop', 250.00, 10, 'https://m.media-amazon.com/images/I/51BXpn8ed+L._AC_SL1500_.jpg', 'Equipment', '2025-05-11 05:39:51', '2025-05-11 21:15:49', 0.08);
+
+-- USERS with sample data
+INSERT INTO users (id, profile_image, name, email, password, role, remember_token, created_at, updated_at) VALUES
+(1, 'https://images.vexels.com/media/users/3/129332/isolated/svg/b3f0ad2e079ac9027c5eb0a2d1c8549b.svg', 'Adel HADJ ARAB', 'hadjarabadel.2411@gmail.com', '$2a$12$yOXVnIFG2lIKcSpWpevgw.CBkp2HuGu8F.KvtpT2E.AjZM3AMPBba', 'admin', NULL, '2025-04-30 02:53:40', '2025-05-11 01:23:21');

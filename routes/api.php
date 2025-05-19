@@ -7,3 +7,4 @@
  */
 $router->get('/api/products/(\d+)', 'ApiController@getProduct');
 $router->get('/api/orders/(\d+)', 'ApiController@getOrder');
+$router->get('/api/wishlist/check/(\d+)', 'ApiController@checkWishlistItem');

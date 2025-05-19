@@ -19,6 +19,12 @@ $router->post('/login', 'AuthController@login');
 $router->get('/register', 'AuthController@registerForm', 'guest');
 $router->post('/register', 'AuthController@register');
 
+// Wishlist routes
+$router->get('/wishlist', 'WishlistController@index', 'auth');
+$router->post('/wishlist/add', 'WishlistController@add');
+$router->post('/wishlist/remove', 'WishlistController@remove');
+$router->get('/wishlist/check', 'WishlistController@check');
+
 // Authenticated user routes
 $router->get('/cart', 'CartController@index', 'auth');
 $router->post('/cart/add', 'CartController@add', 'auth');
