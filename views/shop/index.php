@@ -320,12 +320,18 @@
     </div>
 </main>
 
-<!-- Wishlist filter toggle button -->
-<button type="button" class="wishlist-filter-toggle" aria-label="Show wishlist items" id="wishlistFilterToggle">
-    <i class="<?= isset($isWishlistFilterActive) && $isWishlistFilterActive ? 'fas' : 'far' ?> fa-heart"></i>
-    <span><?= isset($isWishlistFilterActive) && $isWishlistFilterActive ? 'Show All Products' : 'Show Wishlist Only' ?></span>
+<!-- Filters Sidebar Toggle for Mobile -->
+<button class="mobile-filters-toggle" aria-label="Open filters" id="mobileFiltersToggle">
+    <i class="fas fa-filter"></i>
 </button>
 
+<!-- Wishlist Filter Toggle Button - positioned separately from the filters button on mobile -->
+<button id="wishlistFilterToggle" class="wishlist-filter-toggle <?= $isWishlistFilterActive ? 'active' : '' ?>" aria-label="Toggle wishlist filter">
+    <i class="<?= $isWishlistFilterActive ? 'fas' : 'far' ?> fa-heart"></i>
+    <span><?= $isWishlistFilterActive ? 'All Products' : 'Show Wishlist Only' ?></span>
+</button>
+
+<!-- Filters Backdrop for Mobile -->
 <div class="filters-backdrop"></div>
 
 <!-- Quick View Modal -->

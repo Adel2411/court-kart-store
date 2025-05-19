@@ -16,6 +16,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const isWishlistActive = urlParams.get('wishlist_only') === '1';
     
+    // Set initial state based on URL parameter
+    if (isWishlistActive) {
+        wishlistToggle.classList.add('active');
+        if (wishlistToggle.querySelector('i')) {
+            wishlistToggle.querySelector('i').classList.remove('far');
+            wishlistToggle.querySelector('i').classList.add('fas');
+        }
+        if (wishlistToggle.querySelector('span')) {
+            wishlistToggle.querySelector('span').textContent = 'All Products';
+        }
+    }
+    
     // Toggle wishlist filter when clicked
     wishlistToggle.addEventListener('click', function(e) {
         e.preventDefault();

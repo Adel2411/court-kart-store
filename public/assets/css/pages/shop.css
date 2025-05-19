@@ -156,6 +156,32 @@ h3 {
   transition: transform 0.3s ease; /* Add transition for mobile slide-in */
 }
 
+/* Mobile filters toggle button */
+.mobile-filters-toggle {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: var(--white);
+  display: none; /* Hidden by default, shown on mobile */
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  z-index: 5;
+  font-size: 1.25rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mobile-filters-toggle:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
 /* Replace mobile-filters-toggle with wishlist-filter-toggle */
 .wishlist-filter-toggle {
   position: fixed;
@@ -500,6 +526,10 @@ details:not([open]) .filter-title::after {
     display: flex;
   }
   
+  .mobile-filters-toggle {
+    display: flex;
+  }
+  
   .filters-close {
     display: block;
   }
@@ -561,6 +591,14 @@ details:not([open]) .filter-title::after {
   .filter-actions .btn {
     padding: 12px;
     font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Further adjust for very small screens */
+  .wishlist-filter-toggle {
+    padding: 10px 12px;
+    font-size: 0.9rem;
   }
 }
 

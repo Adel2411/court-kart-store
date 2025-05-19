@@ -49,43 +49,45 @@ document.addEventListener("DOMContentLoaded", function () {
    * Initialize mobile filters functionality
    */
   function initMobileFilters() {
+    const mobileFilterToggle = document.querySelector('.mobile-filters-toggle');
+    const filtersElement = document.querySelector('.filters');
+    const filtersBackdrop = document.querySelector('.filters-backdrop');
+    const filterClose = document.querySelector('.filters-close');
+    
     if (mobileFilterToggle) {
-      mobileFilterToggle.addEventListener("click", function () {
-        filtersElement.classList.add("active");
-        filtersBackdrop.style.display = "block";
+      mobileFilterToggle.addEventListener('click', function () {
+        filtersElement.classList.add('active');
+        filtersBackdrop.style.display = 'block';
         setTimeout(() => {
-          filtersBackdrop.classList.add("active");
+          filtersBackdrop.classList.add('active');
         }, 10);
-        document.body.style.overflow = "hidden"; // Prevent scrolling
+        document.body.style.overflow = 'hidden'; // Prevent scrolling
       });
     }
 
     // Close button for filters - hide filters sidebar
     if (filterClose) {
-      filterClose.addEventListener("click", closeFilters);
+      filterClose.addEventListener('click', closeFilters);
     }
 
     // Backdrop click also closes filters
     if (filtersBackdrop) {
-      filtersBackdrop.addEventListener("click", closeFilters);
+      filtersBackdrop.addEventListener('click', closeFilters);
     }
 
     // Close filters function
     function closeFilters() {
-      filtersElement.classList.remove("active");
-      filtersBackdrop.classList.remove("active");
+      filtersElement.classList.remove('active');
+      filtersBackdrop.classList.remove('active');
       setTimeout(() => {
-        filtersBackdrop.style.display = "none";
+        filtersBackdrop.style.display = 'none';
       }, 300);
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     }
 
     // Close filters when window is resized to desktop size
-    window.addEventListener("resize", function () {
-      if (
-        window.innerWidth >= 992 &&
-        filtersElement.classList.contains("active")
-      ) {
+    window.addEventListener('resize', function () {
+      if (window.innerWidth >= 992 && filtersElement.classList.contains('active')) {
         closeFilters();
       }
     });
@@ -755,6 +757,8 @@ document.addEventListener("DOMContentLoaded", function () {
    * This adds a fallback in case the dedicated wishlist-filter.js doesn't load
    */
   function initWishlistFilterToggle() {
+    const wishlistFilterToggle = document.getElementById('wishlistFilterToggle');
+    
     if (wishlistFilterToggle && !wishlistFilterToggle.hasInitialized) {
       // Check if already has event listeners (from wishlist-filter.js)
       wishlistFilterToggle.hasInitialized = true;
