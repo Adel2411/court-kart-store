@@ -33,7 +33,7 @@ CREATE TABLE wishlists (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
   FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE,
-  UNIQUE KEY user_product (user_id, product_id)  -- Prevent duplicate entries
+  UNIQUE KEY user_product (user_id, product_id)
 );
 
 -- CART_ITEMS table

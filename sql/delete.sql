@@ -7,6 +7,8 @@ TRUNCATE TABLE canceled_orders;
 TRUNCATE TABLE order_items;
 TRUNCATE TABLE orders;
 TRUNCATE TABLE cart_items;
+TRUNCATE TABLE product_reviews;
+TRUNCATE TABLE wishlists;
 TRUNCATE TABLE products;
 TRUNCATE TABLE users;
 
@@ -18,6 +20,8 @@ TRUNCATE TABLE users;
 -- SELECT * FROM cart_items;
 -- SELECT * FROM products;
 -- SELECT * FROM users;
+SELECT * FROM product_reviews;
+SELECT * FROM wishlists;
 
 
 -- Re-enable foreign key checks
@@ -29,6 +33,8 @@ DROP TABLE IF EXISTS logs;
 DROP TABLE IF EXISTS canceled_orders;
 DROP TABLE IF EXISTS order_items;
 DROP TABLE IF EXISTS cart_items;
+DROP TABLE IF EXISTS product_reviews;
+DROP TABLE IF EXISTS wishlists;
 DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS users;
