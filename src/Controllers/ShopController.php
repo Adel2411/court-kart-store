@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Core\View;
 use App\Models\Product;
 use App\Models\Review;
+use App\Models\Wishlist;
 
 class ShopController
 {
@@ -13,28 +14,70 @@ class ShopController
      */
     public function index()
     {
+        // Get filter parameters
+        $categoryFilter = $_GET['category'] ?? null;
+        $minPrice = isset($_GET['min_price']) ? (float)$_GET['min_price'] : 0;
+        $maxPrice = isset($_GET['max_price']) ? (float)$_GET['max_price'] : 1000;
+        $search = $_GET['search'] ?? '';
+        $sort = $_GET['sort'] ?? 'newest';
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $perPage = 12;
+        $wishlistOnly = isset($_GET['wishlist_only']) && $_GET['wishlist_only'] === '1';
+        
+        // Set up filtering parameters
         $filters = [
-            'search' => $_GET['search'] ?? null,
-            'category' => $_GET['category'] ?? null,
-            'min_price' => $_GET['min_price'] ?? null,
-            'max_price' => $_GET['max_price'] ?? null,
-            'sort' => $_GET['sort'] ?? 'newest',
+            'category' => $categoryFilter,
+            'min_price' => $minPrice,
+            'max_price' => $maxPrice,
+            'search' => $search,
         ];
-
-        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-
-        $result = Product::getFiltered($filters, $page, 9);
-        $products = $result['products'];
-        $pagination = $result['pagination'];
-
-        $pagination['query_string'] = $this->buildQueryString($filters);
-
+        
+        // Get user's wishlist items if wishlist filter is active and user is logged in
+        $wishlistItems = [];
+        if ($wishlistOnly && isset($_SESSION['user_id'])) {
+            $wishlistModel = new Wishlist();
+            $wishlistItems = $wishlistModel->getUserWishlistProductIds($_SESSION['user_id']);
+            $filters['product_ids'] = $wishlistItems;
+        }
+        
+        // If wishlist filter is active but user has no items or is not logged in
+        if ($wishlistOnly && empty($wishlistItems)) {
+            // Force empty results by adding an impossible condition
+            $filters['product_ids'] = [-1]; // Non-existent ID to ensure empty results
+        }
+        
+        // Query products with filters
+        $productModel = new Product();
+        $products = $productModel->getProductsWithFilters($filters, $sort, $page, $perPage);
+        $totalItems = $productModel->countProductsWithFilters($filters);
+        
+        // Set up pagination
+        $totalPages = ceil($totalItems / $perPage);
+        $pagination = [
+            'current_page' => $page,
+            'per_page' => $perPage,
+            'total_items' => $totalItems,
+            'total_pages' => $totalPages,
+            'query_string' => $this->buildQueryString([
+                'category' => $categoryFilter,
+                'min_price' => $minPrice > 0 ? $minPrice : null,
+                'max_price' => $maxPrice < 1000 ? $maxPrice : null,
+                'search' => $search,
+                'sort' => $sort,
+                'wishlist_only' => $wishlistOnly ? '1' : null
+            ])
+        ];
+        
+        // Check if wishlist filtering is active
+        $isWishlistFilterActive = $wishlistOnly;
+        
+        // Render the view
         echo View::renderWithLayout('shop/index', 'main', [
-            'title' => 'Shop - Court Kart',
             'products' => $products,
             'pagination' => $pagination,
-            'page_css' => ['shop'],
-            'page_js' => ['shop'],
+            'isWishlistFilterActive' => $isWishlistFilterActive,
+            'wishlistOnly' => $wishlistOnly,
+            'totalItems' => $totalItems
         ]);
     }
 

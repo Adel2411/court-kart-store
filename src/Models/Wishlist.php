@@ -144,4 +144,31 @@ class Wishlist
             return 0;
         }
     }
+    
+    /**
+     * Get all product IDs in a user's wishlist
+     * 
+     * @param int $userId
+     * @return array
+     */
+    public function getUserWishlistProductIds($userId)
+    {
+        try {
+            $sql = "SELECT product_id 
+                    FROM wishlists 
+                    WHERE user_id = :user_id";
+            
+            $params = [':user_id' => $userId];
+            
+            $result = $this->db->fetchRows($sql, $params);
+            
+            // Extract just the product_id values
+            return array_map(function($item) {
+                return $item['product_id'];
+            }, $result);
+        } catch (\PDOException $e) {
+            error_log($e->getMessage());
+            return [];
+        }
+    }
 }

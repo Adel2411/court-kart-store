@@ -7,6 +7,9 @@
     <link rel="icon" type="image/x-icon" href="public/assets/images/court-kart-logo-dark.ico">
     <link rel="stylesheet" href="/assets/css/pages/shop.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <?php if (isset($_SESSION['user_id'])): ?>
+    <meta name="user-logged-in" content="true">
+    <?php endif; ?>
 </head>
 <body>
 
@@ -15,6 +18,11 @@
         <div class="container">
             <h1>Basketball Collection</h1>
             <p>Discover premium gear designed for champions on and off the court</p>
+            <?php if (isset($isWishlistFilterActive) && $isWishlistFilterActive): ?>
+                <div class="filter-badge">
+                    <i class="fas fa-heart"></i> Showing Wishlist Items Only
+                </div>
+            <?php endif; ?>
         </div>
     </header>
 
@@ -35,6 +43,11 @@
                 <div class="active-filters" id="active-filters"></div>
                 
                 <form action="/shop" method="GET" id="filters-form">
+                    <!-- Keep wishlist filter value if active -->
+                    <?php if (isset($wishlistOnly) && $wishlistOnly): ?>
+                    <input type="hidden" name="wishlist_only" value="1">
+                    <?php endif; ?>
+                    
                     <details class="filter-group" open>
                         <summary class="filter-title">
                             <i class="fas fa-search"></i> 
@@ -307,10 +320,10 @@
     </div>
 </main>
 
-<!-- Mobile filter toggle -->
-<button type="button" class="mobile-filters-toggle" aria-label="Show filters">
-    <i class="fas fa-filter"></i>
-    <span>Filters</span>
+<!-- Wishlist filter toggle button -->
+<button type="button" class="wishlist-filter-toggle" aria-label="Show wishlist items" id="wishlistFilterToggle">
+    <i class="<?= isset($isWishlistFilterActive) && $isWishlistFilterActive ? 'fas' : 'far' ?> fa-heart"></i>
+    <span><?= isset($isWishlistFilterActive) && $isWishlistFilterActive ? 'Show All Products' : 'Show Wishlist Only' ?></span>
 </button>
 
 <div class="filters-backdrop"></div>
@@ -340,11 +353,13 @@
         <p>Product added to your cart!</p>
     </div>
     <button type="button" class="toast-close">
-        <i class="fas fa-times"></i>
-    </button>
+        <i class="fas fa-times"></i>ript>
+    </button> src="/assets/js/pages/shop.js"></script>
 </div>
-
-<script src="/assets/js/wishlist.js"></script>
-<script src="/assets/js/pages/shop.js"></script>
-</body>
 </html>
+
+
+
+
+
+</html></body><script src="/assets/js/pages/shop.js"></script><script src="/assets/js/wishlist.js"></script>

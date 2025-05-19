@@ -156,12 +156,12 @@ h3 {
   transition: transform 0.3s ease; /* Add transition for mobile slide-in */
 }
 
-/* Mobile filters toggle button styling */
-.mobile-filters-toggle {
+/* Replace mobile-filters-toggle with wishlist-filter-toggle */
+.wishlist-filter-toggle {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  display: none; /* Hidden by default, shown on mobile */
+  display: flex;
   align-items: center;
   justify-content: center;
   padding: 12px 20px;
@@ -177,9 +177,27 @@ h3 {
   transition: all 0.3s ease;
 }
 
-.mobile-filters-toggle:hover {
+.wishlist-filter-toggle:hover {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
+}
+
+/* Active state for wishlist toggle */
+.wishlist-filter-toggle.active {
+  background-color: var(--danger);
+}
+
+.wishlist-filter-toggle.active .fa-heart {
+  font-weight: 900; /* Switch to solid heart when active */
+}
+
+.wishlist-filter-toggle .fa-heart {
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
+}
+
+.wishlist-filter-toggle:hover .fa-heart {
+  transform: scale(1.2);
 }
 
 /* Filters close button styling */
@@ -478,7 +496,7 @@ details:not([open]) .filter-title::after {
   }
   
   /* Show mobile filter controls */
-  .mobile-filters-toggle {
+  .wishlist-filter-toggle {
     display: flex;
   }
   
@@ -1283,4 +1301,23 @@ details:not([open]) .filter-title::after {
   margin-top: var(--space-sm);
   max-width: 100%;
   overflow-wrap: break-word;
+}
+
+/* Filter badge to show when wishlist filter is active */
+.filter-badge {
+  display: inline-flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: var(--white);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-pill);
+  margin-top: var(--space-md);
+  gap: var(--space-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  backdrop-filter: blur(4px);
+}
+
+.filter-badge i {
+  color: var(--danger-light);
 }

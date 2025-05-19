@@ -299,4 +299,145 @@ class Product
 
         return $db->fetchRows($sql, $params);
     }
+
+    /**
+     * Get products with filters
+     * 
+     * @param array $filters
+     * @param string $sort
+     * @param int $page
+     * @param int $perPage
+     * @return array
+     */
+    public static function getProductsWithFilters($filters, $sort = 'newest', $page = 1, $perPage = 12)
+    {
+        try {
+            $db = Database::getInstance();
+            $sql = "SELECT * FROM products WHERE 1=1";
+            $params = [];
+            
+            // Apply category filter
+            if (isset($filters['category']) && !empty($filters['category'])) {
+                if (is_array($filters['category'])) {
+                    $placeholders = implode(',', array_fill(0, count($filters['category']), '?'));
+                    $sql .= " AND category IN ($placeholders)";
+                    $params = array_merge($params, $filters['category']);
+                } else {
+                    $sql .= " AND category = ?";
+                    $params[] = $filters['category'];
+                }
+            }
+            
+            // Apply price range filter
+            if (isset($filters['min_price'])) {
+                $sql .= " AND price >= ?";
+                $params[] = $filters['min_price'];
+            }
+            
+            if (isset($filters['max_price'])) {
+                $sql .= " AND price <= ?";
+                $params[] = $filters['max_price'];
+            }
+            
+            // Apply search filter
+            if (isset($filters['search']) && !empty($filters['search'])) {
+                $sql .= " AND (name LIKE ? OR description LIKE ?)";
+                $searchTerm = '%' . $filters['search'] . '%';
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+            }
+            
+            // Apply product IDs filter (for wishlist filtering)
+            if (isset($filters['product_ids']) && !empty($filters['product_ids'])) {
+                $placeholders = implode(',', array_fill(0, count($filters['product_ids']), '?'));
+                $sql .= " AND id IN ($placeholders)";
+                $params = array_merge($params, $filters['product_ids']);
+            }
+            
+            // Apply sorting
+            switch ($sort) {
+                case 'price_asc':
+                    $sql .= " ORDER BY price ASC";
+                    break;
+                case 'price_desc':
+                    $sql .= " ORDER BY price DESC";
+                    break;
+                case 'popularity':
+                    $sql .= " ORDER BY views DESC, created_at DESC";
+                    break;
+                case 'newest':
+                default:
+                    $sql .= " ORDER BY created_at DESC";
+                    break;
+            }
+            
+            // Apply pagination
+            $offset = ($page - 1) * $perPage;
+            $sql .= " LIMIT $perPage OFFSET $offset";
+            
+            return $db->fetchRows($sql, $params);
+        } catch (\PDOException $e) {
+            error_log($e->getMessage());
+            return [];
+        }
+    }
+
+        /**
+         * Count products with filters
+         * 
+         * @param array $filters
+         * @return int
+         */
+        public static function countProductsWithFilters($filters)
+        {
+            try {
+                $db = Database::getInstance();
+                $sql = "SELECT COUNT(*) as count FROM products WHERE 1=1";
+                $params = [];
+                
+                // Apply category filter
+                if (isset($filters['category']) && !empty($filters['category'])) {
+                    if (is_array($filters['category'])) {
+                        $placeholders = implode(',', array_fill(0, count($filters['category']), '?'));
+                        $sql .= " AND category IN ($placeholders)";
+                        $params = array_merge($params, $filters['category']);
+                    } else {
+                        $sql .= " AND category = ?";
+                        $params[] = $filters['category'];
+                    }
+                }
+                
+                // Apply price range filter
+                if (isset($filters['min_price'])) {
+                    $sql .= " AND price >= ?";
+                    $params[] = $filters['min_price'];
+                }
+                
+                if (isset($filters['max_price'])) {
+                    $sql .= " AND price <= ?";
+                    $params[] = $filters['max_price'];
+                }
+                
+                // Apply search filter
+                if (isset($filters['search']) && !empty($filters['search'])) {
+                    $sql .= " AND (name LIKE ? OR description LIKE ?)";
+                    $searchTerm = '%' . $filters['search'] . '%';
+                    $params[] = $searchTerm;
+                    $params[] = $searchTerm;
+                }
+                
+                // Apply product IDs filter (for wishlist filtering)
+                if (isset($filters['product_ids']) && !empty($filters['product_ids'])) {
+                    $placeholders = implode(',', array_fill(0, count($filters['product_ids']), '?'));
+                    $sql .= " AND id IN ($placeholders)";
+                    $params = array_merge($params, $filters['product_ids']);
+                }
+                
+                $result = $db->fetchRow($sql, $params);
+                return (int)$result['count'];
+            } catch (\PDOException $e) {
+                error_log($e->getMessage());
+                return 0;
+        }
+    }
 }

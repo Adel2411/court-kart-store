@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const maxPriceInput = document.getElementById("max-price");
   const productsGrid = document.getElementById("products-grid");
   const filtersForm = document.getElementById("filters-form");
+  const wishlistFilterToggle = document.getElementById("wishlistFilterToggle");
 
   // Initialize the page components
   initFilterAccordions();
@@ -23,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
   initQuickView();
   initModalHandlers();
   initWishlistButtons();
+  initWishlistFilterToggle(); // Add this new function call
 
   /**
    * Initialize filter accordion functionality
@@ -745,6 +747,67 @@ document.addEventListener("DOMContentLoaded", function () {
               });
           });
         });
+    }
+  }
+
+  /**
+   * Initialize wishlist filter toggle
+   * This adds a fallback in case the dedicated wishlist-filter.js doesn't load
+   */
+  function initWishlistFilterToggle() {
+    if (wishlistFilterToggle && !wishlistFilterToggle.hasInitialized) {
+      // Check if already has event listeners (from wishlist-filter.js)
+      wishlistFilterToggle.hasInitialized = true;
+      
+      // Check URL to see if wishlist filter is already active
+      const urlParams = new URLSearchParams(window.location.search);
+      const isWishlistActive = urlParams.get('wishlist_only') === '1';
+      
+      // Set initial state based on URL
+      if (isWishlistActive) {
+        wishlistFilterToggle.classList.add('active');
+        if (wishlistFilterToggle.querySelector('i')) {
+          wishlistFilterToggle.querySelector('i').classList.remove('far');
+          wishlistFilterToggle.querySelector('i').classList.add('fas');
+        }
+        if (wishlistFilterToggle.querySelector('span')) {
+          wishlistFilterToggle.querySelector('span').textContent = 'All Products';
+        }
+      }
+      
+      // Toggle wishlist filter when clicked
+      wishlistFilterToggle.addEventListener('click', function() {
+        const isActive = this.classList.contains('active');
+        
+        // Check if user is logged in
+        const isLoggedIn = document.body.classList.contains('user-logged-in') || 
+                          document.querySelector('meta[name="user-logged-in"]')?.getAttribute('content') === 'true';
+        
+        if (!isActive && !isLoggedIn) {
+          // Redirect to login page if not logged in
+          window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
+          return;
+        }
+        
+        // Create current URL object
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        
+        if (isActive) {
+          // Switch to showing all products
+          params.delete('wishlist_only');
+        } else {
+          // Switch to showing only wishlist products
+          params.set('wishlist_only', '1');
+        }
+        
+        // Reset to page 1 when toggling filter
+        params.delete('page');
+        
+        // Update URL and reload
+        url.search = params.toString();
+        window.location.href = url.toString();
+      });
     }
   }
 
