@@ -160,7 +160,7 @@ h3 {
 .mobile-filters-toggle {
   position: fixed;
   bottom: 20px;
-  left: 20px;
+  right: 20px;
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -182,52 +182,6 @@ h3 {
   background-color: var(--primary-dark);
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(230, 57, 70, 0.3);
-}
-
-/* Wishlist filter toggle */
-.wishlist-filter-toggle {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 14px 24px;
-  background-color: var(--primary);
-  color: var(--white);
-  border-radius: var(--radius-pill);
-  border: none;
-  box-shadow: 0 6px 16px rgba(230, 57, 70, 0.25);
-  z-index: 5;
-  cursor: pointer;
-  font-weight: 600;
-  gap: var(--space-sm);
-  transition: all 0.3s ease;
-}
-
-.wishlist-filter-toggle:hover,
-.wishlist-filter-toggle:focus {
-  background-color: var(--primary-dark);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(230, 57, 70, 0.3);
-}
-
-.wishlist-filter-toggle.active {
-  background-color: var(--danger);
-}
-
-.wishlist-filter-toggle.active:hover,
-.wishlist-filter-toggle.active:focus {
-  background-color: var(--danger-dark, #c0392b);
-}
-
-.wishlist-filter-toggle .fa-heart {
-  font-size: 1.1rem;
-  transition: transform 0.3s ease;
-}
-
-.wishlist-filter-toggle:hover .fa-heart {
-  transform: scale(1.2);
 }
 
 /* Filters close button styling */
@@ -687,7 +641,6 @@ details[open] .filter-title .toggle-icon {
   }
   
   /* Show mobile filter controls */
-  .wishlist-filter-toggle,
   .mobile-filters-toggle {
     display: flex;
   }
@@ -734,10 +687,6 @@ details[open] .filter-title .toggle-icon {
     max-width: none;
   }
   
-  .wishlist-filter-toggle {
-    padding: 12px 16px;
-    font-size: 0.9rem;
-  }
   
   .mobile-filters-toggle {
     width: 50px;

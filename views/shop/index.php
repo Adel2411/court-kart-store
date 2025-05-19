@@ -330,12 +330,6 @@
     <i class="fas fa-sliders-h"></i>
 </button>
 
-<!-- Wishlist Filter Toggle Button -->
-<button id="wishlistFilterToggle" class="wishlist-filter-toggle <?= $isWishlistFilterActive ? 'active' : '' ?>" aria-label="Toggle wishlist filter">
-    <i class="<?= $isWishlistFilterActive ? 'fas' : 'far' ?> fa-heart"></i>
-    <span><?= $isWishlistFilterActive ? 'All Products' : 'Show Wishlist' ?></span>
-</button>
-
 <!-- Filters Backdrop for Mobile -->
 <div class="filters-backdrop"></div>
 
