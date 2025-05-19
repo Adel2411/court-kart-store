@@ -194,7 +194,7 @@
                 <a href="/shop?collection=signature" class="btn btn-light btn-lg">Shop The Collection</a>
             </div>
             <div class="banner-image">
-                <img src="https://yi-files.yellowimages.com/products/1905000/1905756/3063945-cover.jpg" alt="Basketball player with Court Kart products">
+                <img src="/assets/images/collection-image.png" alt="Basketball player with Court Kart products">
             </div>
         </div>
     </div>

@@ -38,7 +38,7 @@
             </div>
         </div>
         <div class="copyright">
-            &copy; <?= date('Y') ?> Court Kart. All rights reserved.
+            &copy; <?= date('Y') ?> Court Kart. All rights reserved. | Developed by <a href="https://github.com/Adel2411" target="_blank">Adel HB</a>
         </div>
     </div>
 </footer>

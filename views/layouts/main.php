@@ -169,7 +169,7 @@
                     <h3>Contact Us</h3>
                     <div class="contact-info">
                         <i class="fas fa-envelope"></i>
-                        <p>info@courtkart.com</p>
+                        <p>adel.info@courtkart.com</p>
                     </div>
                     <div class="contact-info">
                         <i class="fas fa-phone-alt"></i>
@@ -177,12 +177,12 @@
                     </div>
                     <div class="contact-info">
                         <i class="fas fa-map-marker-alt"></i>
-                        <p>123 Basketball Ave, Sports City</p>
+                        <p>123 Basketball Ave, Belcourt City</p>
                     </div>
                 </div>
             </div>
             <div class="copyright">
-                &copy; <?= date('Y') ?> Court Kart. All rights reserved.
+                &copy; <?= date('Y') ?> Court Kart. All rights reserved. | Developed by <a href="https://github.com/Adel2411" target="_blank">Adel</a>
             </div>
         </div>
     </footer>
