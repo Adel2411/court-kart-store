@@ -32,8 +32,8 @@
             <aside class="filters">
                 <div class="filters-header">
                     <h2>Filters</h2>
-                    <button type="button" class="filters-toggle" aria-label="Toggle filters">
-                        <i class="fas fa-sliders-h"></i>
+                    <button id="wishlistFilterToggle" class="filters-toggle <?= $isWishlistFilterActive ? 'active' : '' ?>" aria-label="Toggle wishlist filter">
+                        <i class="<?= $isWishlistFilterActive ? 'fas' : 'far' ?> fa-heart"></i>
                     </button>
                     <button type="button" class="filters-close" aria-label="Close filters">
                         <i class="fas fa-times"></i>
