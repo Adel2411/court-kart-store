@@ -92,7 +92,7 @@
                             <?php } ?>
                             <img src="<?= htmlspecialchars($product['image_url']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
                             <div class="product-quick-actions">
-                                <button class="quick-action-btn add-to-wishlist" data-id="<?= $product['id'] ?>" title="Add to Wishlist">
+                                <button class="quick-action-btn add-to-wishlist" data-action="wishlist" data-id="<?= $product['id'] ?>" title="Add to Wishlist">
                                     <i class="far fa-heart"></i>
                                 </button>
                                 <button class="quick-action-btn quick-view" data-id="<?= $product['id'] ?>" title="Quick View">

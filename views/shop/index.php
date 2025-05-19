@@ -344,6 +344,7 @@
     </button>
 </div>
 
+<script src="/assets/js/wishlist.js"></script>
 <script src="/assets/js/pages/shop.js"></script>
 </body>
 </html>

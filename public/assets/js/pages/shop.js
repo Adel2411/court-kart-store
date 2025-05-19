@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
   initViewSwitcher();
   initQuickView();
   initModalHandlers();
+  initWishlistButtons();
 
   /**
    * Initialize filter accordion functionality
@@ -388,7 +389,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <button type="submit" class="btn primary" ${data.stock < 1 ? "disabled" : ""}>
                                 <i class="fas fa-shopping-cart"></i> Add to Cart
                             </button>
-                            <button type="button" class="btn outline wishlist-btn">
+                            <button type="button" class="btn outline wishlist-btn" data-action="wishlist" data-id="${data.id}">
                                 <i class="far fa-heart"></i> Add to Wishlist
                             </button>
                         </div>
@@ -408,6 +409,51 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Set up Ajax form submission
     setupQuickAddToCart();
+    
+    // Initialize wishlist button in quick view modal
+    const wishlistBtn = quickViewContent.querySelector('[data-action="wishlist"]');
+    if (wishlistBtn && window.WishlistManager) {
+        // Check initial wishlist status
+        window.WishlistManager.checkProduct(data.id, function(inWishlist) {
+            if (inWishlist) {
+                wishlistBtn.classList.add('in-wishlist');
+                wishlistBtn.querySelector('i').classList.remove('far');
+                wishlistBtn.querySelector('i').classList.add('fas');
+            }
+        });
+        
+        // Add click event
+        wishlistBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.WishlistManager.toggleProduct(data.id, function(isAdded) {
+                if (isAdded) {
+                    wishlistBtn.classList.add('in-wishlist');
+                    wishlistBtn.querySelector('i').classList.remove('far');
+                    wishlistBtn.querySelector('i').classList.add('fas');
+                    
+                    // Also update the button in the product grid
+                    const gridBtn = document.querySelector(`.product-card [data-action="wishlist"][data-id="${data.id}"]`);
+                    if (gridBtn) {
+                        gridBtn.classList.add('in-wishlist');
+                        gridBtn.querySelector('i').classList.remove('far');
+                        gridBtn.querySelector('i').classList.add('fas');
+                    }
+                } else {
+                    wishlistBtn.classList.remove('in-wishlist');
+                    wishlistBtn.querySelector('i').classList.remove('fas');
+                    wishlistBtn.querySelector('i').classList.add('far');
+                    
+                    // Also update the button in the product grid
+                    const gridBtn = document.querySelector(`.product-card [data-action="wishlist"][data-id="${data.id}"]`);
+                    if (gridBtn) {
+                        gridBtn.classList.remove('in-wishlist');
+                        gridBtn.querySelector('i').classList.remove('fas');
+                        gridBtn.querySelector('i').classList.add('far');
+                    }
+                }
+            });
+        });
+    }
   }
 
   /**
@@ -603,4 +649,304 @@ document.addEventListener("DOMContentLoaded", function () {
 
     return tag;
   }
+
+  /**
+   * Initialize wishlist button functionality
+   */
+  function initWishlistButtons() {
+    const wishlistButtons = document.querySelectorAll('.product-card .quick-action-btn[data-action="wishlist"]');
+    
+    if (window.WishlistManager) {
+        wishlistButtons.forEach(button => {
+            const productId = button.dataset.id;
+            
+            // Check initial wishlist status
+            window.WishlistManager.checkProduct(productId, function(inWishlist) {
+                if (inWishlist) {
+                    button.classList.add('in-wishlist');
+                    button.querySelector('i').classList.remove('far');
+                    button.querySelector('i').classList.add('fas');
+                }
+            });
+            
+            // Add click event for toggling wishlist
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                window.WishlistManager.toggleProduct(productId, function(isAdded) {
+                    if (isAdded) {
+                        button.classList.add('in-wishlist');
+                        button.querySelector('i').classList.remove('far');
+                        button.querySelector('i').classList.add('fas');
+                    } else {
+                        button.classList.remove('in-wishlist');
+                        button.querySelector('i').classList.remove('fas');
+                        button.querySelector('i').classList.add('far');
+                    }
+                });
+            });
+        });
+    } else {
+        document.querySelectorAll('[data-action="wishlist"]').forEach((button) => {
+          button.addEventListener("click", function(e) {
+            e.preventDefault();
+            const productId = this.getAttribute("data-id");
+            const icon = this.querySelector("i");
+
+            // Check if user is logged in
+            if (!isUserLoggedIn()) {
+              window.location.href = "/login?redirect=" + window.location.pathname;
+              return;
+            }
+
+            const formData = new FormData();
+            formData.append("product_id", productId);
+
+            // Show loading state
+            icon.className = "fas fa-spinner fa-spin";
+            this.disabled = true;
+
+            // Send AJAX request
+            fetch("/wishlist/add", {
+              method: "POST",
+              body: formData,
+              headers: {
+                "X-Requested-With": "XMLHttpRequest",
+              },
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                this.disabled = false;
+
+                if (data.success) {
+                  if (data.is_added) {
+                    // Added to wishlist
+                    icon.className = "fas fa-heart";
+                    icon.style.color = "#e74c3c";
+                    showToast("success", "Added to your wishlist");
+                  } else {
+                    // Removed from wishlist
+                    icon.className = "far fa-heart";
+                    icon.style.color = "";
+                    showToast("info", "Removed from your wishlist");
+                  }
+                } else {
+                  // Error occurred
+                  icon.className = "far fa-heart";
+                  showToast("error", data.message || "An error occurred");
+                }
+              })
+              .catch((error) => {
+                console.error("Error toggling wishlist:", error);
+                this.disabled = false;
+                icon.className = "far fa-heart";
+                showToast("error", "An error occurred");
+              });
+          });
+        });
+    }
+  }
+
+  /**
+   * Check if user is logged in
+   */
+  function isUserLoggedIn() {
+    return (
+      document.body.classList.contains("user-logged-in") ||
+      document.querySelector('meta[name="user-logged-in"]')?.getAttribute("content") ===
+        "true"
+    );
+  }
+  
+  /**
+   * Show toast notification
+   */
+  function showToast(type, message) {
+    const toast = document.getElementById("toast-notification") || createToastElement();
+    toast.className = `toast ${type}`;
+    toast.querySelector(".toast-message").textContent = message;
+    toast.classList.add("show");
+    
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 3000);
+  }
+  
+  /**
+   * Create toast notification element if it doesn't exist
+   */
+  function createToastElement() {
+    const toast = document.createElement("div");
+    toast.id = "toast-notification";
+    toast.className = "toast";
+    toast.innerHTML = `
+      <div class="toast-content">
+        <span class="toast-message"></span>
+        <button class="toast-close">&times;</button>
+      </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    toast.querySelector(".toast-close").addEventListener("click", () => {
+      toast.classList.remove("show");
+    });
+    
+    return toast;
+  }
 });
+
+// Wishlist Manager Module
+window.WishlistManager = (function() {
+  const wishlistKey = 'court_kart_wishlist';
+  
+  function getWishlist() {
+    const list = localStorage.getItem(wishlistKey);
+    return list ? JSON.parse(list) : [];
+  }
+  
+  function saveWishlist(wishlist) {
+    localStorage.setItem(wishlistKey, JSON.stringify(wishlist));
+  }
+  
+  return {
+    checkProduct: function(productId, callback) {
+      // If user is logged in, check on server
+      if (document.body.classList.contains("user-logged-in")) {
+        fetch(`/api/wishlist/check/${productId}`)
+          .then(response => response.json())
+          .then(data => {
+            callback(data.in_wishlist);
+          })
+          .catch(() => {
+            // Fallback to local storage
+            const wishlist = getWishlist();
+            callback(wishlist.includes(productId));
+          });
+      } else {
+        // Use local storage for guests
+        const wishlist = getWishlist();
+        callback(wishlist.includes(productId));
+      }
+    },
+    
+    toggleProduct: function(productId, callback) {
+      const wishlist = getWishlist();
+      const index = wishlist.indexOf(productId);
+      
+      if (index === -1) {
+        wishlist.push(productId);
+        saveWishlist(wishlist);
+        callback(true);
+      } else {
+        wishlist.splice(index, 1);
+        saveWishlist(wishlist);
+        callback(false);
+      }
+    }
+  };
+})();
+
+// Initialize Quick View Modal if present
+if (document.getElementById("quickViewModal")) {
+  document.addEventListener("DOMContentLoaded", function() {
+    const initQuickViewModal = function() {
+      const quickViewModal = document.getElementById("quickViewModal");
+      const quickViewContent = document.getElementById("quickViewContent");
+      
+      function loadQuickViewContent(productId) {
+        quickViewContent.innerHTML = '<div class="loader"><i class="fas fa-basketball-ball fa-spin"></i><p>Loading product details...</p></div>';
+        
+        fetch(`/api/products/${productId}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            // After content is loaded, initialize wishlist button in modal
+            renderQuickView(data);
+            
+            // Initialize wishlist button in modal
+            const wishlistBtn = quickViewContent.querySelector('[data-action="wishlist"]');
+            if (wishlistBtn && window.WishlistManager) {
+                // Check initial wishlist status
+                window.WishlistManager.checkProduct(productId, function(inWishlist) {
+                    if (inWishlist) {
+                        wishlistBtn.classList.add('in-wishlist');
+                        wishlistBtn.querySelector('i').classList.remove('far');
+                        wishlistBtn.querySelector('i').classList.add('fas');
+                    }
+                });
+                
+                // Add click event
+                wishlistBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.WishlistManager.toggleProduct(productId, function(isAdded) {
+                        if (isAdded) {
+                            wishlistBtn.classList.add('in-wishlist');
+                            wishlistBtn.querySelector('i').classList.remove('far');
+                            wishlistBtn.querySelector('i').classList.add('fas');
+                            
+                            // Also update the button in the product grid
+                            const gridBtn = document.querySelector(`.product-card [data-action="wishlist"][data-id="${productId}"]`);
+                            if (gridBtn) {
+                                gridBtn.classList.add('in-wishlist');
+                                gridBtn.querySelector('i').classList.remove('far');
+                                gridBtn.querySelector('i').classList.add('fas');
+                            }
+                        } else {
+                            wishlistBtn.classList.remove('in-wishlist');
+                            wishlistBtn.querySelector('i').classList.remove('fas');
+                            wishlistBtn.querySelector('i').classList.add('far');
+                            
+                            // Also update the button in the product grid
+                            const gridBtn = document.querySelector(`.product-card [data-action="wishlist"][data-id="${productId}"]`);
+                            if (gridBtn) {
+                                gridBtn.classList.remove('in-wishlist');
+                                gridBtn.querySelector('i').classList.remove('fas');
+                                gridBtn.querySelector('i').classList.add('far');
+                            }
+                        }
+                    });
+                });
+            }
+          })
+          .catch(error => {
+            console.error("Error loading quick view:", error);
+            quickViewContent.innerHTML = `
+              <div class="error">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Failed to load product details</p>
+                <p class="error-message">${error.message}</p>
+                <button class="btn outline" data-close>Close</button>
+              </div>`;
+          });
+      }
+      
+      // Initialize quick view triggers
+      document.querySelectorAll('[data-action="quickview"]').forEach(button => {
+        button.addEventListener('click', function() {
+          const productId = this.getAttribute('data-id');
+          
+          if (window.CourtKartModals && window.CourtKartModals.quickViewModal) {
+            window.CourtKartModals.quickViewModal.open();
+          } else {
+            quickViewModal.setAttribute('aria-hidden', 'false');
+          }
+          
+          loadQuickViewContent(productId);
+        });
+      });
+    };
+    
+    if (window.CourtKartModals) {
+      initQuickViewModal();
+    } else {
+      // If modal component isn't loaded yet, wait for it
+      window.addEventListener('CourtKartModalsLoaded', initQuickViewModal);
+    }
+  });
+}

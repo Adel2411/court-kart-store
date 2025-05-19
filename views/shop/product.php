@@ -85,9 +85,7 @@
                         <div class="quantity-control">
                             <label for="quantity">Quantity</label>
                             <div class="quantity-wrapper">
-                                <button type="button" class="quantity-btn" data-action="decrease">-</button>
                                 <input type="number" id="quantity" name="quantity" value="1" min="1" max="<?= $stock ?>" <?= $stock < 1 ? 'disabled' : '' ?>>
-                                <button type="button" class="quantity-btn" data-action="increase" <?= $stock < 1 ? 'disabled' : '' ?>>+</button>
                             </div>
                         </div>
                         
@@ -105,7 +103,7 @@
                             <button type="submit" class="btn btn-primary" <?= $stock < 1 ? 'disabled' : '' ?>>
                                 <i class="fas fa-shopping-cart"></i> Add to Cart
                             </button>
-                            <button type="button" class="btn btn-outline wishlist-btn">
+                            <button type="button" class="btn btn-outline wishlist-btn" data-action="wishlist" data-id="<?= $id ?>">
                                 <i class="far fa-heart"></i> Add to Wishlist
                             </button>
                         </div>
@@ -338,4 +336,6 @@
     </div>
 </div>
 
+<!-- Add wishlist functionality -->
+<script src="/assets/js/wishlist.js"></script>
 <script src="/assets/js/pages/product.js"></script>

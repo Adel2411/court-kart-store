@@ -57,6 +57,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Star rating system
     initStarRating();
     
+    // Initialize wishlist button
+    initWishlistButton();
+    
     console.log('Product page JavaScript initialized');
 });
 
@@ -89,211 +92,224 @@ function initTabs() {
  * Initialize quantity control buttons
  */
 function initQuantityControls() {
-    const quantityBtns = document.querySelectorAll('.quantity-btn');
-    
-    quantityBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
+    document.querySelectorAll('.quantity-btn').forEach(button => {
+        button.addEventListener('click', function() {
             const input = this.parentNode.querySelector('input');
             const currentValue = parseInt(input.value);
             const action = this.getAttribute('data-action');
             const max = parseInt(input.getAttribute('max'));
             
-            if (action === 'increase' && currentValue < max) {
-                input.value = currentValue + 1;
-            } else if (action === 'decrease' && currentValue > 1) {
+            if (action === 'decrease' && currentValue > 1) {
                 input.value = currentValue - 1;
+            } else if (action === 'increase' && currentValue < max) {
+                input.value = currentValue + 1;
             }
         });
     });
 }
 
 /**
- * Initialize review form display toggle
+ * Initialize review form functionality
  */
 function initReviewForm() {
     const writeReviewBtn = document.getElementById('writeReviewBtn');
-    const reviewFormContainer = document.getElementById('reviewFormContainer');
     const cancelReviewBtn = document.getElementById('cancelReviewBtn');
+    const reviewFormContainer = document.getElementById('reviewFormContainer');
+    const starRating = document.querySelectorAll('.star-rating .star');
+    const ratingInput = document.getElementById('ratingInput');
+    const ratingText = document.querySelector('.rating-text');
     
     if (writeReviewBtn && reviewFormContainer) {
         writeReviewBtn.addEventListener('click', function() {
             reviewFormContainer.style.display = 'block';
-            writeReviewBtn.style.display = 'none';
-            
-            // Scroll to the form
-            reviewFormContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
     }
     
-    if (cancelReviewBtn) {
+    if (cancelReviewBtn && reviewFormContainer) {
         cancelReviewBtn.addEventListener('click', function() {
             reviewFormContainer.style.display = 'none';
-            if (writeReviewBtn) writeReviewBtn.style.display = 'block';
+        });
+    }
+    
+    if (starRating && ratingInput) {
+        starRating.forEach(star => {
+            star.addEventListener('click', function() {
+                const rating = this.getAttribute('data-rating');
+                ratingInput.value = rating;
+                
+                // Update stars
+                starRating.forEach(s => {
+                    const r = s.getAttribute('data-rating');
+                    if (r <= rating) {
+                        s.innerHTML = '<i class="fas fa-star"></i>';
+                    } else {
+                        s.innerHTML = '<i class="far fa-star"></i>';
+                    }
+                });
+                
+                // Update rating text
+                const ratingTexts = {
+                    1: 'Poor',
+                    2: 'Fair',
+                    3: 'Good',
+                    4: 'Very Good',
+                    5: 'Excellent'
+                };
+                
+                if (ratingText) {
+                    ratingText.textContent = ratingTexts[rating] || 'Select a rating';
+                }
+            });
+            
+            star.addEventListener('mouseover', function() {
+                const rating = this.getAttribute('data-rating');
+                
+                starRating.forEach(s => {
+                    const r = s.getAttribute('data-rating');
+                    if (r <= rating) {
+                        s.querySelector('i').classList.add('fas');
+                        s.querySelector('i').classList.remove('far');
+                    }
+                });
+            });
+            
+            star.addEventListener('mouseout', function() {
+                const currentRating = ratingInput.value;
+                
+                starRating.forEach(s => {
+                    const r = s.getAttribute('data-rating');
+                    if (r <= currentRating) {
+                        s.querySelector('i').classList.add('fas');
+                        s.querySelector('i').classList.remove('far');
+                    } else {
+                        s.querySelector('i').classList.add('far');
+                        s.querySelector('i').classList.remove('fas');
+                    }
+                });
+            });
         });
     }
 }
 
 /**
- * Initialize star rating functionality
+ * Initialize wishlist button functionality
  */
-function initStarRating() {
-    const stars = document.querySelectorAll('.star');
-    const ratingInput = document.getElementById('ratingInput');
-    const ratingText = document.querySelector('.rating-text');
+function initWishlistButton() {
+    const wishlistBtn = document.querySelector('.wishlist-btn');
+    if (!wishlistBtn) return;
     
-    if (!stars.length || !ratingInput) return;
+    const productId = document.querySelector('input[name="product_id"]').value;
     
-    // Rating descriptions for different star levels
-    const ratingDescriptions = {
-        0: 'Select a rating',
-        0.5: 'Terrible',
-        1: 'Very Bad',
-        1.5: 'Bad',
-        2: 'Disappointing',
-        2.5: 'Below Average',
-        3: 'Average',
-        3.5: 'Above Average',
-        4: 'Good',
-        4.5: 'Very Good',
-        5: 'Excellent'
-    };
-    
-    // Handle star hover
-    stars.forEach(star => {
-        // Show filled stars on hover
-        star.addEventListener('mouseenter', function() {
-            const rating = parseFloat(this.getAttribute('data-rating'));
-            highlightStars(rating);
-            
-            if (ratingText) {
-                ratingText.textContent = ratingDescriptions[rating] || `${rating} Stars`;
-            }
-        });
-        
-        // Handle half-star hovers
-        star.addEventListener('mousemove', function(e) {
-            const rating = parseFloat(this.getAttribute('data-rating'));
-            const rect = this.getBoundingClientRect();
-            const isHalfStar = (e.clientX - rect.left) < rect.width / 2;
-            
-            if (isHalfStar && rating > 0.5) {
-                // If on the left half of the star
-                highlightStars(rating - 0.5);
-                if (ratingText) {
-                    ratingText.textContent = ratingDescriptions[rating - 0.5] || `${rating - 0.5} Stars`;
-                }
-            }
-        });
-        
-        // Handle click on star
-        star.addEventListener('click', function(e) {
-            const rating = parseFloat(this.getAttribute('data-rating'));
-            const rect = this.getBoundingClientRect();
-            const isHalfStar = (e.clientX - rect.left) < rect.width / 2;
-            
-            let selectedRating = rating;
-            if (isHalfStar && rating > 0.5) {
-                selectedRating = rating - 0.5;
-            }
-            
-            // Update the hidden form input with the selected rating
-            ratingInput.value = selectedRating;
-            
-            // Update the UI to show the selected stars
-            updateSelectedStars(selectedRating);
-            
-            if (ratingText) {
-                ratingText.textContent = ratingDescriptions[selectedRating] || `${selectedRating} Stars`;
-            }
-        });
+    // Check if product is in wishlist
+    WishlistManager.checkProduct(productId, function(inWishlist) {
+        updateWishlistButtonState(wishlistBtn, inWishlist);
     });
     
-    // Reset stars when mouse leaves the rating area
-    const starRating = document.querySelector('.star-rating');
-    if (starRating) {
-        starRating.addEventListener('mouseleave', function() {
-            const currentRating = parseFloat(ratingInput.value);
-            if (currentRating > 0) {
-                // If a rating is already selected, show it
-                updateSelectedStars(currentRating);
-                if (ratingText) {
-                    ratingText.textContent = ratingDescriptions[currentRating] || `${currentRating} Stars`;
-                }
-            } else {
-                // Otherwise reset to empty stars
-                resetStars();
-                if (ratingText) {
-                    ratingText.textContent = ratingDescriptions[0];
-                }
-            }
+    // Add click event listener
+    wishlistBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        WishlistManager.toggleProduct(productId, function(isAdded) {
+            updateWishlistButtonState(wishlistBtn, isAdded);
+        });
+    });
+}
+
+// Update the wishlist button state
+function updateWishlistButtonState(button, isInWishlist) {
+    const icon = button.querySelector('i');
+    
+    if (isInWishlist) {
+        button.classList.add('in-wishlist');
+        icon.classList.remove('far');
+        icon.classList.add('fas');
+        button.innerHTML = `<i class="fas fa-heart"></i> Remove from Wishlist`;
+    } else {
+        button.classList.remove('in-wishlist');
+        icon.classList.remove('fas');
+        icon.classList.add('far');
+        button.innerHTML = `<i class="far fa-heart"></i> Add to Wishlist`;
+    }
+}
+
+/**
+ * Check if product is in the user's wishlist
+ */
+function checkWishlistStatus(productId) {
+    if (!isUserLoggedIn()) {
+        return Promise.resolve(false);
+    }
+    
+    return fetch(`/wishlist/check?product_id=${productId}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        return data.in_wishlist;
+    })
+    .catch(error => {
+        console.error('Error checking wishlist status:', error);
+        return false;
+    });
+}
+
+/**
+ * Check if user is logged in
+ */
+function isUserLoggedIn() {
+    // This is a simple client-side check that will be complemented by server-side validation
+    return document.body.classList.contains('user-logged-in') || 
+           document.querySelector('meta[name="user-logged-in"]')?.getAttribute('content') === 'true';
+}
+
+/**
+ * Show toast notification
+ */
+function showToast(type, message) {
+    // Create toast element if it doesn't exist
+    let toast = document.getElementById('toast-notification');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast-notification';
+        toast.className = 'toast-notification';
+        document.body.appendChild(toast);
+    }
+    
+    // Set content based on type
+    let iconClass = 'info-circle';
+    if (type === 'success') {
+        iconClass = 'check-circle';
+    } else if (type === 'error') {
+        iconClass = 'exclamation-circle';
+    }
+    
+    toast.innerHTML = `
+        <div class="toast-icon ${type}">
+            <i class="fas fa-${iconClass}"></i>
+        </div>
+        <div class="toast-content">
+            <p>${message}</p>
+        </div>
+        <button type="button" class="toast-close">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    // Show the toast
+    toast.classList.add('active');
+    
+    // Set up close button
+    const closeBtn = toast.querySelector('.toast-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            toast.classList.remove('active');
         });
     }
     
-    // Update review form validation
-    const productReviewForm = document.getElementById('productReviewForm');
-    if (productReviewForm) {
-        productReviewForm.addEventListener('submit', function(e) {
-            if (ratingInput.value === '0') {
-                e.preventDefault();
-                alert('Please select a rating before submitting.');
-                return false;
-            }
-        });
-    }
-    
-    /**
-     * Highlights stars up to a specific rating
-     */
-    function highlightStars(rating) {
-        stars.forEach(s => {
-            const starRating = parseInt(s.getAttribute('data-rating'));
-            const icon = s.querySelector('i');
-            
-            if (starRating <= Math.floor(rating)) {
-                // Full star
-                icon.className = 'fas fa-star';
-                s.classList.add('hover');
-            } else if (starRating === Math.ceil(rating) && rating % 1 !== 0) {
-                // Half star
-                icon.className = 'fas fa-star-half-alt';
-                s.classList.add('hover');
-            } else {
-                // Empty star
-                icon.className = 'far fa-star';
-                s.classList.remove('hover');
-            }
-        });
-    }
-    
-    /**
-     * Updates the star display to show the selected rating
-     */
-    function updateSelectedStars(rating) {
-        stars.forEach(s => {
-            const starRating = parseInt(s.getAttribute('data-rating'));
-            const icon = s.querySelector('i');
-            
-            if (starRating <= Math.floor(rating)) {
-                // Full star
-                icon.className = 'fas fa-star';
-            } else if (starRating === Math.ceil(rating) && rating % 1 !== 0) {
-                // Half star
-                icon.className = 'fas fa-star-half-alt';
-            } else {
-                // Empty star
-                icon.className = 'far fa-star';
-            }
-        });
-    }
-    
-    /**
-     * Reset all stars to empty state
-     */
-    function resetStars() {
-        stars.forEach(s => {
-            const icon = s.querySelector('i');
-            icon.className = 'far fa-star';
-            s.classList.remove('hover');
-        });
-    }
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove('active');
+    }, 3000);
 }
