@@ -393,9 +393,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             <button type="submit" class="btn primary" ${data.stock < 1 ? "disabled" : ""}>
                                 <i class="fas fa-shopping-cart"></i> Add to Cart
                             </button>
-                            <button type="button" class="btn outline wishlist-btn" data-action="wishlist" data-id="${data.id}">
-                                <i class="far fa-heart"></i> Add to Wishlist
-                            </button>
                         </div>
                     </form>
                     

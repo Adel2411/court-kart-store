@@ -53,4 +53,4 @@ INSERT INTO products (id, name, description, price, stock, image_url, category, 
 
 -- USERS with sample data
 INSERT INTO users (id, profile_image, name, email, password, role, remember_token, created_at, updated_at) VALUES
-(1, 'https://images.vexels.com/media/users/3/129332/isolated/svg/b3f0ad2e079ac9027c5eb0a2d1c8549b.svg', 'Adel HADJ ARAB', 'hadjarabadel.2411@gmail.com', '$2a$12$yOXVnIFG2lIKcSpWpevgw.CBkp2HuGu8F.KvtpT2E.AjZM3AMPBba', 'admin', NULL, '2025-04-30 02:53:40', '2025-05-11 01:23:21');
+(1, 'https://bulldogbugle.com/wp-content/uploads/2024/05/Anthony-Edwards-Homescreen-Wallpaper-e1716487827944.jpg', 'Adel HADJ ARAB', 'hadjarabadel.2411@gmail.com', '$2a$12$yOXVnIFG2lIKcSpWpevgw.CBkp2HuGu8F.KvtpT2E.AjZM3AMPBba', 'admin', NULL, '2025-04-30 02:53:40', '2025-05-11 01:23:21');
