@@ -424,3 +424,49 @@ document.addEventListener('DOMContentLoaded', () => {
   
   console.log("Orders script fully initialized"); // Debugging
 });
+
+/**
+ * Filter functionality for order status
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all filter pills
+    const filterPills = document.querySelectorAll('.filter-pill');
+    const orderRows = document.querySelectorAll('.orders-table tbody tr');
+    const filteredCountElement = document.getElementById('filtered-count');
+    
+    // Add click event to each filter pill
+    filterPills.forEach(pill => {
+        pill.addEventListener('click', function() {
+            // Remove active class from all pills
+            filterPills.forEach(p => p.classList.remove('active'));
+            
+            // Add active class to clicked pill
+            this.classList.add('active');
+            
+            // Get the status to filter by
+            const status = this.getAttribute('data-status');
+            
+            // Count how many orders are shown
+            let visibleCount = 0;
+            
+            // Filter table rows
+            orderRows.forEach(row => {
+                const orderStatus = row.querySelector('.status-badge').className
+                    .replace('status-badge', '')
+                    .replace('status-', '')
+                    .trim();
+                
+                if (status === 'all' || orderStatus === status) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update the count
+            filteredCountElement.textContent = status === 'all' ? 'All' : 
+                status.charAt(0).toUpperCase() + status.slice(1);
+        });
+    });
+});

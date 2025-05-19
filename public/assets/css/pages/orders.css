@@ -592,6 +592,155 @@
   border: 1px solid var(--gray);
 }
 
+/* Orders Page Styling */
+
+/* Order Filter Component */
+.order-filters-container {
+    background-color: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.filter-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    color: var(--secondary-dark);
+    font-size: 1.1rem;
+}
+
+.order-filters-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.filter-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.filter-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--light);
+    border: 1px solid var(--light-gray);
+    border-radius: var(--radius-pill);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-pill:hover {
+    background-color: var(--light-gray);
+}
+
+.filter-pill.active {
+    background-color: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+.pill-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.pill-dot.all {
+    background: linear-gradient(to right, var(--primary), var(--warning), var(--success), var(--danger));
+}
+
+.pill-dot.pending {
+    background-color: var(--warning);
+}
+
+.pill-dot.confirmed {
+    background-color: var(--info);
+}
+
+.pill-dot.shipped {
+    background-color: var(--primary);
+}
+
+.pill-dot.delivered {
+    background-color: var(--success);
+}
+
+.pill-dot.cancelled {
+    background-color: var(--danger);
+}
+
+.order-count {
+    font-size: 0.9rem;
+    color: var(--gray);
+    background-color: var(--light);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+}
+
+.order-count span {
+    font-weight: 600;
+    color: var(--secondary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .order-filters-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .filter-pills {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Make sure the status badges maintain their existing styles */
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-pending {
+    background-color: rgba(var(--warning-rgb), 0.15);
+    color: var(--warning-dark);
+}
+
+.status-confirmed {
+    background-color: rgba(var(--info-rgb), 0.15);
+    color: var(--info-dark);
+}
+
+.status-shipped {
+    background-color: rgba(var(--primary-rgb), 0.15);
+    color: var(--primary-dark);
+}
+
+.status-delivered {
+    background-color: rgba(var(--success-rgb), 0.15);
+    color: var(--success-dark);
+}
+
+.status-cancelled {
+    background-color: rgba(var(--danger-rgb), 0.15);
+    color: var(--danger-dark);
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .order-header {

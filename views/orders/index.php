@@ -16,15 +16,34 @@
         <a href="/shop" class="btn btn-primary">Start Shopping</a>
     </div>
 <?php } else { ?>
-    <div class="order-filters">
-        <div class="filter-title">Filter by status:</div>
-        <div class="filter-options">
-            <button class="status-filter active" data-status="all">All</button>
-            <button class="status-filter" data-status="pending">Pending</button>
-            <button class="status-filter" data-status="confirmed">Confirmed</button>
-            <button class="status-filter" data-status="shipped">Shipped</button>
-            <button class="status-filter" data-status="delivered">Delivered</button>
-            <button class="status-filter" data-status="cancelled">Cancelled</button>
+    <div class="order-filters-container">
+        <h3 class="filter-heading">
+            <i class="fas fa-filter"></i> Filter Orders
+        </h3>
+        <div class="order-filters-wrapper">
+            <div class="filter-pills">
+                <button class="filter-pill active" data-status="all">
+                    <span class="pill-dot all"></span>All
+                </button>
+                <button class="filter-pill" data-status="pending">
+                    <span class="pill-dot pending"></span>Pending
+                </button>
+                <button class="filter-pill" data-status="confirmed">
+                    <span class="pill-dot confirmed"></span>Confirmed
+                </button>
+                <button class="filter-pill" data-status="shipped">
+                    <span class="pill-dot shipped"></span>Shipped
+                </button>
+                <button class="filter-pill" data-status="delivered">
+                    <span class="pill-dot delivered"></span>Delivered
+                </button>
+                <button class="filter-pill" data-status="cancelled">
+                    <span class="pill-dot cancelled"></span>Cancelled
+                </button>
+            </div>
+            <div class="order-count">
+                <span id="filtered-count">All</span> orders
+            </div>
         </div>
     </div>
 

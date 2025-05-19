@@ -22,6 +22,10 @@
         <link rel="stylesheet" href="/assets/css/pages/account.css">
     <?php } ?>
     
+    <?php if (str_contains($_SERVER['REQUEST_URI'], '/orders') && !str_contains($_SERVER['REQUEST_URI'], '/admin')): ?>
+        <link rel="stylesheet" href="/assets/css/pages/orders.css">
+    <?php endif; ?>
+    
     <?php if (isset($page_css)) { ?>
         <?php if (is_array($page_css)) { ?>
             <?php foreach ($page_css as $css) { ?>
@@ -264,6 +268,10 @@
         <?php } ?>
     <?php } ?>
 
+    <?php if (str_contains($_SERVER['REQUEST_URI'], '/orders') && !str_contains($_SERVER['REQUEST_URI'], '/admin')): ?>
+        <script src="/assets/js/pages/orders.js"></script>
+    <?php endif; ?>
+
     <?php if (isset($_GET['debug_css']) && $_GET['debug_css'] === '1') { ?>
     <div style="position:fixed; bottom:0; left:0; background:#000; color:#fff; padding:5px; font-size:12px; z-index:9999;">
         <p>CSS Files:</p>
@@ -284,6 +292,9 @@
             <?php if (strpos($_SERVER['REQUEST_URI'], '/account') === 0) { ?>
                 <li>/assets/css/pages/account.css</li>
             <?php } ?>
+            <?php if (str_contains($_SERVER['REQUEST_URI'], '/orders') && !str_contains($_SERVER['REQUEST_URI'], '/admin')): ?>
+                <li>/assets/css/pages/orders.css</li>
+            <?php endif; ?>
         </ul>
     </div>
     <?php } ?>

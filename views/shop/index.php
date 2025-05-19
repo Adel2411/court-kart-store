@@ -28,10 +28,10 @@
 
     <div class="container">
         <div class="shop-layout">
-            <!-- Filters sidebar -->
+            <!-- Redesigned Filters sidebar -->
             <aside class="filters">
                 <div class="filters-header">
-                    <h2>Filters</h2>
+                    <h2>Shop Filters</h2>
                     <button id="wishlistFilterToggle" class="filters-toggle <?= $isWishlistFilterActive ? 'active' : '' ?>" aria-label="Toggle wishlist filter">
                         <i class="<?= $isWishlistFilterActive ? 'fas' : 'far' ?> fa-heart"></i>
                     </button>
@@ -40,10 +40,11 @@
                     </button>
                 </div>
                 
-                <div class="active-filters" id="active-filters"></div>
+                <div class="active-filters" id="active-filters">
+                    <!-- Active filters will be populated via JS -->
+                </div>
                 
                 <form action="/shop" method="GET" id="filters-form">
-                    <!-- Keep wishlist filter value if active -->
                     <?php if (isset($wishlistOnly) && $wishlistOnly): ?>
                     <input type="hidden" name="wishlist_only" value="1">
                     <?php endif; ?>
@@ -51,11 +52,12 @@
                     <details class="filter-group" open>
                         <summary class="filter-title">
                             <i class="fas fa-search"></i> 
-                            <span>Search</span>
+                            <span>Search Products</span>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
                         </summary>
                         <div class="filter-content">
                             <div class="search-input">
-                                <input type="text" name="search" id="search" placeholder="Search products..." 
+                                <input type="text" name="search" id="search" placeholder="What are you looking for?" 
                                     value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
                             </div>
                         </div>
@@ -64,7 +66,8 @@
                     <details class="filter-group" open>
                         <summary class="filter-title">
                             <i class="fas fa-tags"></i> 
-                            <span>Category</span>
+                            <span>Categories</span>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
                         </summary>
                         <div class="filter-content">
                             <div class="checkbox-group">
@@ -78,18 +81,18 @@
                                     'Merchandise' => '<i class="fas fa-store"></i>',
                                 ];
 
-                                    foreach ($categories as $category => $icon) {
-                                        $isChecked = isset($_GET['category']) && in_array($category, (array) $_GET['category']);
-                                        ?>
-                                    <label class="checkbox">
-                                        <input type="checkbox" name="category[]" value="<?= $category ?>" 
-                                              <?= $isChecked ? 'checked' : '' ?>>
-                                        <span class="checkbox-mark"></span>
-                                        <div class="checkbox-label">
-                                            <?= $icon ?> <?= $category ?>
-                                            <span class="count" id="count-<?= strtolower($category) ?>"></span>
-                                        </div>
-                                    </label>
+                                foreach ($categories as $category => $icon) {
+                                    $isChecked = isset($_GET['category']) && in_array($category, (array) $_GET['category']);
+                                ?>
+                                <label class="checkbox">
+                                    <input type="checkbox" name="category[]" value="<?= $category ?>" 
+                                          <?= $isChecked ? 'checked' : '' ?>>
+                                    <span class="checkbox-mark"></span>
+                                    <div class="checkbox-label">
+                                        <?= $icon ?> <?= $category ?>
+                                        <span class="count" id="count-<?= strtolower($category) ?>"></span>
+                                    </div>
+                                </label>
                                 <?php } ?>
                             </div>
                         </div>
@@ -99,6 +102,7 @@
                         <summary class="filter-title">
                             <i class="fas fa-dollar-sign"></i> 
                             <span>Price Range</span>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
                         </summary>
                         <div class="filter-content">
                             <div class="price-range">
@@ -122,42 +126,43 @@
                     <details class="filter-group" open>
                         <summary class="filter-title">
                             <i class="fas fa-sort"></i> 
-                            <span>Sort By</span>
+                            <span>Sort Products</span>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
                         </summary>
                         <div class="filter-content">
                             <div class="radio-group">
                                 <?php
-                                        $sortOptions = [
-                                            'newest' => ['label' => 'Newest First', 'icon' => 'fa-clock'],
-                                            'price_asc' => ['label' => 'Price: Low to High', 'icon' => 'fa-sort-amount-down'],
-                                            'price_desc' => ['label' => 'Price: High to Low', 'icon' => 'fa-sort-amount-up'],
-                                            'popularity' => ['label' => 'Popularity', 'icon' => 'fa-fire'],
-                                        ];
+                                $sortOptions = [
+                                    'newest' => ['label' => 'Newest First', 'icon' => 'fa-clock'],
+                                    'price_asc' => ['label' => 'Price: Low to High', 'icon' => 'fa-sort-amount-down'],
+                                    'price_desc' => ['label' => 'Price: High to Low', 'icon' => 'fa-sort-amount-up'],
+                                    'popularity' => ['label' => 'Popularity', 'icon' => 'fa-fire'],
+                                ];
 
-                                    $currentSort = $_GET['sort'] ?? 'newest';
+                                $currentSort = $_GET['sort'] ?? 'newest';
 
-                                    foreach ($sortOptions as $value => $option) {
-                                        ?>
-                                    <label class="radio">
-                                        <input type="radio" name="sort" value="<?= $value ?>" 
-                                             <?= ($currentSort == $value) ? 'checked' : '' ?>>
-                                        <span class="radio-mark"></span>
-                                        <div class="radio-label">
-                                            <i class="fas <?= $option['icon'] ?>"></i>
-                                            <?= $option['label'] ?>
-                                        </div>
-                                    </label>
+                                foreach ($sortOptions as $value => $option) {
+                                ?>
+                                <label class="radio">
+                                    <input type="radio" name="sort" value="<?= $value ?>" 
+                                         <?= ($currentSort == $value) ? 'checked' : '' ?>>
+                                    <span class="radio-mark"></span>
+                                    <div class="radio-label">
+                                        <i class="fas <?= $option['icon'] ?>"></i>
+                                        <?= $option['label'] ?>
+                                    </div>
+                                </label>
                                 <?php } ?>
                             </div>
                         </div>
                     </details>
                     
                     <div class="filter-actions">
-                        <button type="submit" class="btn btn-primary" >
-                            <i class="fas fa-check"></i> Apply Filters
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter"></i> Apply Filters
                         </button>
                         <button type="button" id="clear-filters" class="btn outline">
-                            <i class="fas fa-times"></i> Clear All
+                            <i class="fas fa-undo"></i> Reset
                         </button>
                     </div>
                 </form>
@@ -322,13 +327,13 @@
 
 <!-- Filters Sidebar Toggle for Mobile -->
 <button class="mobile-filters-toggle" aria-label="Open filters" id="mobileFiltersToggle">
-    <i class="fas fa-filter"></i>
+    <i class="fas fa-sliders-h"></i>
 </button>
 
-<!-- Wishlist Filter Toggle Button - positioned separately from the filters button on mobile -->
+<!-- Wishlist Filter Toggle Button -->
 <button id="wishlistFilterToggle" class="wishlist-filter-toggle <?= $isWishlistFilterActive ? 'active' : '' ?>" aria-label="Toggle wishlist filter">
     <i class="<?= $isWishlistFilterActive ? 'fas' : 'far' ?> fa-heart"></i>
-    <span><?= $isWishlistFilterActive ? 'All Products' : 'Show Wishlist Only' ?></span>
+    <span><?= $isWishlistFilterActive ? 'All Products' : 'Show Wishlist' ?></span>
 </button>
 
 <!-- Filters Backdrop for Mobile -->
