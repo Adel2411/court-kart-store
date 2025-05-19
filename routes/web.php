@@ -11,6 +11,7 @@ $router->get('/', 'HomeController@index');
 $router->get('/shop', 'ShopController@index');
 $router->get('/shop/product/{id}', 'ShopController@show');
 $router->get('/shop/category/{id}', 'ShopController@category');
+$router->post('/shop/product/{id}/review', 'ShopController@submitReview', 'auth');
 
 // Guest routes (only for non-authenticated users)
 $router->get('/login', 'AuthController@loginForm', 'guest');

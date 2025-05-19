@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\View;
 use App\Models\Product;
+use App\Models\Review;
 
 class ShopController
 {
@@ -97,6 +98,28 @@ class ShopController
             $discountedPrice = round($originalPrice * (1 - $product['discount']), 2);
         }
         
+        // Get reviews for this product
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        $perPage = 5;
+        
+        $reviewsData = Review::getByProductId($id, $page, $perPage);
+        $reviews = $reviewsData['reviews'] ?? [];
+        $reviewsCount = $reviewsData['total'] ?? 0;
+        
+        // Calculate average rating
+        $averageRating = Review::getAverageRating($id);
+        
+        // Get rating distribution (how many 5-star, 4-star, etc.)
+        $ratingDistribution = Review::getRatingDistribution($id);
+        
+        // Pagination for reviews
+        $totalPages = ceil($reviewsCount / $perPage);
+        $pagination = [
+            'current_page' => $page,
+            'total_pages' => $totalPages,
+            'total_items' => $reviewsCount
+        ];
+        
         echo View::renderWithLayout('shop/product', 'main', [
             'title' => $product['name'] . ' - Court Kart',
             'id' => $product['id'],
@@ -108,8 +131,85 @@ class ShopController
             'category' => $product['category'],
             'image_url' => $product['image_url'],
             'discount' => $product['discount'],
+            'average_rating' => $averageRating,
+            'reviews_count' => $reviewsCount,
+            'reviews' => $reviews,
+            'rating_distribution' => $ratingDistribution,
+            'pagination' => $pagination,
             'page_css' => 'product'
         ]);
+    }
+
+    /**
+     * Submit a new product review
+     *
+     * @param  int  $id  The product ID
+     */
+    public function submitReview($id)
+    {
+        // Check if user is logged in
+        if (!isset($_SESSION['user_id'])) {
+            // Redirect to login page
+            header('Location: /login?redirect=/shop/product/' . $id);
+            exit;
+        }
+        
+        // Validate form data
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $rating = isset($_POST['rating']) ? (float) $_POST['rating'] : 0;
+            $reviewText = isset($_POST['review_text']) ? trim($_POST['review_text']) : '';
+            
+            // Validate rating
+            if ($rating < 0.5 || $rating > 5) {
+                $_SESSION['error'] = 'Please provide a valid rating (0.5 to 5 stars).';
+                header('Location: /shop/product/' . $id);
+                exit;
+            }
+            
+            // Validate review text
+            if (empty($reviewText)) {
+                $_SESSION['error'] = 'Please provide a review text.';
+                header('Location: /shop/product/' . $id);
+                exit;
+            }
+            
+            // Check if user already reviewed this product
+            $existingReview = Review::getByUserAndProduct($_SESSION['user_id'], $id);
+            
+            if ($existingReview) {
+                // Update existing review
+                $result = Review::update([
+                    'id' => $existingReview['id'],
+                    'rating' => $rating,
+                    'review_text' => $reviewText
+                ]);
+                
+                $message = 'Your review has been updated.';
+            } else {
+                // Create new review
+                $result = Review::create([
+                    'user_id' => $_SESSION['user_id'],
+                    'product_id' => $id,
+                    'rating' => $rating,
+                    'review_text' => $reviewText
+                ]);
+                
+                $message = 'Thank you for your review!';
+            }
+            
+            if ($result) {
+                $_SESSION['success'] = $message;
+            } else {
+                $_SESSION['error'] = 'There was an error saving your review. Please try again.';
+            }
+            
+            // Redirect back to product page
+            header('Location: /shop/product/' . $id);
+            exit;
+        }
+        
+        // If not POST, redirect to product page
+        header('Location: /shop/product/' . $id);
     }
 
     /**

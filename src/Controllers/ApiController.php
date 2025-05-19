@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Review;
 
 class ApiController
 {
@@ -25,12 +26,16 @@ class ApiController
             return;
         }
 
-        if (! isset($product['rating'])) {
-            $product['rating'] = rand(3, 5);
+        // Get actual rating data from Review model
+        if (!isset($product['rating'])) {
+            $product['rating'] = Review::getAverageRating($id);
         }
-        if (! isset($product['reviews_count'])) {
-            $product['reviews_count'] = rand(5, 50);
+        
+        if (!isset($product['reviews_count'])) {
+            $reviewsData = Review::getByProductId($id);
+            $product['reviews_count'] = $reviewsData['total'] ?? 0;
         }
+        
         $product['is_new'] = (strtotime($product['created_at'] ?? 'now') > strtotime('-7 days'));
 
         // Ensure proper discount handling
