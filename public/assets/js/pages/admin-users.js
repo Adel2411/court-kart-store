@@ -103,7 +103,10 @@ function initRoleFilter() {
  */
 function initViewModal() {
   const viewButtons = document.querySelectorAll('.view-user');
+  const viewModal = document.getElementById('viewUserModal');
   const editUserBtn = document.getElementById('editUserBtn');
+  
+  if (!viewModal || !viewButtons.length) return;
   
   viewButtons.forEach(button => {
     button.addEventListener('click', function() {
@@ -135,15 +138,27 @@ function initViewModal() {
       // Set edit button data
       editUserBtn.setAttribute('data-id', userId);
       
-      // Open the modal using our modal component
-      if (window.CourtKartModals && window.CourtKartModals.viewUserModal) {
-        window.CourtKartModals.viewUserModal.open();
-      } else {
-        // Fallback if modal component isn't loaded yet
-        document.getElementById('viewUserModal').classList.add('active');
-      }
+      // Show modal
+      viewModal.classList.add('active');
     });
   });
+  
+  // Close modal functionality
+  const closeViewModalFn = function() {
+    viewModal.classList.remove('active');
+  };
+  
+  // Add click handler to close buttons and backdrop
+  const closeButtons = viewModal.querySelectorAll('.modal-close, [data-close]');
+  closeButtons.forEach(button => {
+    button.addEventListener('click', closeViewModalFn);
+  });
+  
+  // Also add click handler to close button in footer
+  const closeViewModalBtn = document.getElementById('closeViewModalBtn');
+  if (closeViewModalBtn) {
+    closeViewModalBtn.addEventListener('click', closeViewModalFn);
+  }
   
   // Edit button functionality
   if (editUserBtn) {
@@ -151,11 +166,7 @@ function initViewModal() {
       const userId = this.getAttribute('data-id');
       
       // Close the view modal
-      if (window.CourtKartModals && window.CourtKartModals.viewUserModal) {
-        window.CourtKartModals.viewUserModal.close();
-      } else {
-        document.getElementById('viewUserModal').classList.remove('active');
-      }
+      closeViewModalFn();
       
       // Find and trigger the edit button for this user
       setTimeout(() => {
