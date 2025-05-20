@@ -86,7 +86,7 @@
                                 }
                                 ?>
                                 <?php if ($wishlistCount > 0) { ?>
-                                    <span class="wishlist-count"><i class="fas fa-heart"></i> <?= $wishlistCount ?></span>
+                                    <span class="wishlist-count"><?= $wishlistCount ?></span>
                                 <?php } ?>
                             </a>
                             

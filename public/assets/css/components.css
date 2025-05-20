@@ -1131,23 +1131,17 @@
 .wishlist-count {
     display: inline-flex;
     align-items: center;
-    background-color: var(--light);
-    color: var(--secondary);
-    padding: 3px 8px;
+    background-color: var(--primary);
+    color: var(--light);
+    padding: 1px 6px;
     border-radius: var(--radius-pill);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 500;
     position: absolute;
-    top: -8px;
-    right: -15px;
+    top: -6px;
+    right: -10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     white-space: nowrap;
-}
-
-.wishlist-count i {
-    color: var(--primary);
-    margin-right: 3px;
-    font-size: 0.7rem;
 }
 
 /* Adjust for mobile */
