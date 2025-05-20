@@ -114,157 +114,44 @@ Court Kart is a specialized e-commerce platform designed for basketball enthusia
 \subsection{Main Shop Page Features}
 The shop page implements all required features:
 \begin{itemize}
-    \item \textbf{Product display} with images, descriptions, and prices
-    \item \textbf{Advanced search and filtering}:
-        \begin{itemize}
-            \item Text search (name, description)
-            \item Category filters
-            \item Price range filters
-            \item Sort options (price, popularity, newest)
-        \end{itemize}
-    \item \textbf{Pagination} for browsing large product catalogs
-    \item \textbf{Wishlist integration} for saving products
+	\item \textbf{Product display} with images, descriptions, and prices
+	\item \textbf{Advanced search and filtering}:
+	      \begin{itemize}
+		      \item Text search (name, description)
+		      \item Category filters
+		      \item Price range filters
+		      \item Sort options (price, popularity, newest)
+	      \end{itemize}
+	\item \textbf{Pagination} for browsing large product catalogs
+	\item \textbf{Wishlist integration} for saving products
 \end{itemize}
 
-\begin{lstlisting}[language=PHP, caption=Shop filtering implementation]
-// From Product model - getFiltered method
-public static function getFiltered($filters, $page = 1, $perPage = 9)
-{
-    $db = Database::getInstance();
-    $params = [];
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{images/shop-filtering-implementation.png}
+	\caption{Shop Filtering Implementation}
+\end{figure}
 
-    $sql = 'SELECT * FROM products WHERE 1=1';
-    $countSql = 'SELECT COUNT(*) as count FROM products WHERE 1=1';
-
-    if (! empty($filters['search'])) {
-        $searchCondition = ' AND (name LIKE ? OR description LIKE ?)';
-        $sql .= $searchCondition;
-        $countSql .= $searchCondition;
-        $params[] = '%' . $filters['search'] . '%';
-        $params[] = '%' . $filters['search'] . '%';
-    }
-    
-    // More filter conditions...
-}
-\end{lstlisting}
-
-\begin{lstlisting}[caption=Wishlist toggle functionality]
-// WishlistManager from wishlist.js
-toggleProduct: function(productId, callback) {
-    // Send AJAX request to toggle product in wishlist
-    fetch('/wishlist/add', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: `product_id=${productId}`
-    })
-    .then(response => {
-        if (!response.ok) {
-            if (response.status === 401) {
-                window.location.href = '/login?redirect=' 
-                    + encodeURIComponent(window.location.pathname);
-                throw new Error('Please log in to add items to your wishlist');
-            }
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Update UI based on response
-        if (data.success) {
-            this.updateWishlistCount(data.count);
-            if (typeof callback === 'function') {
-                callback(data.is_added);
-            }
-            this.updateAllProductButtons(productId, data.is_added);
-            this.showNotification(data.message, 'success');
-        } else {
-            this.showNotification(data.message, 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error toggling wishlist item:', error);
-    });
-}
-\end{lstlisting}
 
 \subsection{User Features}
 \begin{itemize}
-    \item \textbf{User Authentication}: Secure login/logout with session management
-    \item \textbf{Product Detail Views}: Complete product information, specifications, and reviews
-    \item \textbf{Shopping Cart System}:
-        \begin{itemize}
-            \item Add/remove items
-            \item Update quantities
-            \item View cart state and totals
-            \item Session-based for guest users, database-synced for logged-in users
-        \end{itemize}
-    \item \textbf{Order Tracking}: View status and history of placed orders
+	\item \textbf{User Authentication}: Secure login/logout with session management
+	\item \textbf{Product Detail Views}: Complete product information, specifications, and reviews
+	\item \textbf{Shopping Cart System}:
+	      \begin{itemize}
+		      \item Add/remove items
+		      \item Update quantities
+		      \item View cart state and totals
+		      \item Session-based for guest users, database-synced for logged-in users
+	      \end{itemize}
+	\item \textbf{Order Tracking}: View status and history of placed orders
 \end{itemize}
 
-\begin{lstlisting}[language=PHP, caption=User authentication with session management]
-// From AuthService.php
-public function login(string $email, string $password, bool $remember = false): bool
-{
-    $db = Database::getInstance();
-    $sql = 'SELECT * FROM users WHERE email = ?';
-    $user = $db->fetchRow($sql, [$email]);
-
-    if (! $user) {
-        return false;
-    }
-
-    if (! Security::verifyPassword($password, $user['password'])) {
-        return false;
-    }
-
-    $this->setUserSession($user);
-
-    if ($remember) {
-        $this->createRememberToken($user['id']);
-    }
-
-    $db->execute(
-        'INSERT INTO logs (action, user_id, message) VALUES (?, ?, ?)',
-        ['USER_LOGIN', $user['id'], 'User logged in successfully']
-    );
-
-    return true;
-}
-\end{lstlisting}
-
-\begin{lstlisting}[language=PHP, caption=Shopping cart functionality]
-// From CartController.php
-public function add()
-{
-    $userId = Session::get('user_id');
-    $productId = $_POST['product_id'] ?? null;
-    $quantity = (int) ($_POST['quantity'] ?? 1);
-    $returnUrl = $_POST['return_url'] ?? '/shop';
-
-    $isAjaxRequest = ! empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-        strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
-
-    // Validation checks...
-    
-    $success = Cart::addItem($userId, $productId, $quantity);
-
-    if ($isAjaxRequest) {
-        header('Content-Type: application/json');
-        $cartCount = Cart::getItemCount($userId);
-        echo json_encode([
-            'success' => $success,
-            'message' => $success ? 'Product added to your cart.' : 'Failed to add product to cart.',
-            'count' => $cartCount,
-        ]);
-        return;
-    } else {
-        // Handle standard form submission...
-    }
-}
-\end{lstlisting}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{images/user-auth-session-management.png}
+	\caption{User Authentication with Session Management}
+\end{figure}
 
 \begin{lstlisting}[language=PHP, caption=Order tracking implementation]
 // From OrderController.php
@@ -299,9 +186,9 @@ public function show($id)
 \subsection{Administrative Features}
 An admin interface allows store management:
 \begin{itemize}
-    \item \textbf{Product Management}: Add, edit, delete products, update inventory
-    \item \textbf{Order Processing}: View and update order status
-    \item \textbf{Inventory Control}: Stock level monitoring with automatic alerts
+	\item \textbf{Product Management}: Add, edit, delete products, update inventory
+	\item \textbf{Order Processing}: View and update order status
+	\item \textbf{Inventory Control}: Stock level monitoring with automatic alerts
 \end{itemize}
 
 \begin{lstlisting}[language=PHP, caption=Admin order status update]
@@ -361,44 +248,44 @@ public static function admin(): bool
 Court Kart's database consists of the following key tables and relationships:
 
 \begin{itemize}
-    \item \textbf{users}: Stores authentication details and profile data
-        \begin{itemize}
-            \item One-to-many relationship with \texttt{orders} and \texttt{cart\_items}
-        \end{itemize}
-    \item \textbf{products}: Contains product details including inventory levels and pricing
-        \begin{itemize}
-            \item Many-to-many with \texttt{orders} (via \texttt{order\_items})
-            \item Many-to-many with users' wishlists (via \texttt{wishlists})
-        \end{itemize}
-    \item \textbf{cart\_items}: Links users to products in their cart
-        \begin{itemize}
-            \item Many-to-one relationship with \texttt{users} and \texttt{products}
-        \end{itemize}
-    \item \textbf{orders}: Records transactions with status tracking
-        \begin{itemize}
-            \item Many-to-one relationship with \texttt{users}
-            \item One-to-many relationship with \texttt{order\_items}
-            \item One-to-one relationship with \texttt{canceled\_orders}
-        \end{itemize}
-    \item \textbf{order\_items}: Contains line items within each order
-        \begin{itemize}
-            \item Many-to-one relationship with \texttt{orders} and \texttt{products}
-        \end{itemize}
-    \item \textbf{canceled\_orders}: Records history and reasons for cancellations
-        \begin{itemize}
-            \item One-to-one relationship with \texttt{orders}
-        \end{itemize}
-    \item \textbf{product\_reviews}: Stores customer ratings and reviews
-        \begin{itemize}
-            \item Many-to-one relationship with \texttt{products} and \texttt{users}
-        \end{itemize}
-    \item \textbf{logs}: Maintains a comprehensive audit trail of operations
+	\item \textbf{users}: Stores authentication details and profile data
+	      \begin{itemize}
+		      \item One-to-many relationship with \texttt{orders} and \texttt{cart\_items}
+	      \end{itemize}
+	\item \textbf{products}: Contains product details including inventory levels and pricing
+	      \begin{itemize}
+		      \item Many-to-many with \texttt{orders} (via \texttt{order\_items})
+		      \item Many-to-many with users' wishlists (via \texttt{wishlists})
+	      \end{itemize}
+	\item \textbf{cart\_items}: Links users to products in their cart
+	      \begin{itemize}
+		      \item Many-to-one relationship with \texttt{users} and \texttt{products}
+	      \end{itemize}
+	\item \textbf{orders}: Records transactions with status tracking
+	      \begin{itemize}
+		      \item Many-to-one relationship with \texttt{users}
+		      \item One-to-many relationship with \texttt{order\_items}
+		      \item One-to-one relationship with \texttt{canceled\_orders}
+	      \end{itemize}
+	\item \textbf{order\_items}: Contains line items within each order
+	      \begin{itemize}
+		      \item Many-to-one relationship with \texttt{orders} and \texttt{products}
+	      \end{itemize}
+	\item \textbf{canceled\_orders}: Records history and reasons for cancellations
+	      \begin{itemize}
+		      \item One-to-one relationship with \texttt{orders}
+	      \end{itemize}
+	\item \textbf{product\_reviews}: Stores customer ratings and reviews
+	      \begin{itemize}
+		      \item Many-to-one relationship with \texttt{products} and \texttt{users}
+	      \end{itemize}
+	\item \textbf{logs}: Maintains a comprehensive audit trail of operations
 \end{itemize}
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{../public/assets/images/db-schema.png}
-    \caption{Court Kart Database Schema}
+	\centering
+	\includegraphics[width=0.9\textwidth]{../public/assets/images/db-schema.png}
+	\caption{Court Kart Database Schema}
 \end{figure}
 
 \section{Stored Procedures Implementation}
@@ -635,14 +522,14 @@ END
 The Court Kart e-commerce platform successfully implements all required features specified in the project instructions:
 
 \begin{itemize}
-    \item A complete shop page with product listings and filters
-    \item Detailed product views with descriptions and prices
-    \item User authentication with session management
-    \item Shopping cart functionality for adding/removing items
-    \item Admin interface for managing products
-    \item Database integration for all aspects of the application
-    \item Stored procedures for order management and history
-    \item Triggers for inventory control and order handling
+	\item A complete shop page with product listings and filters
+	\item Detailed product views with descriptions and prices
+	\item User authentication with session management
+	\item Shopping cart functionality for adding/removing items
+	\item Admin interface for managing products
+	\item Database integration for all aspects of the application
+	\item Stored procedures for order management and history
+	\item Triggers for inventory control and order handling
 \end{itemize}
 
 The platform balances user experience with robust back-end functionality, creating a complete e-commerce solution for basketball enthusiasts while meeting all technical requirements.
