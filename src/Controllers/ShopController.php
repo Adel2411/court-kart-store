@@ -21,7 +21,7 @@ class ShopController
         $search = $_GET['search'] ?? '';
         $sort = $_GET['sort'] ?? 'newest';
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $perPage = 12;
+        $perPage = 9;
         $wishlistOnly = isset($_GET['wishlist_only']) && $_GET['wishlist_only'] === '1';
         
         // Set up filtering parameters

@@ -276,33 +276,33 @@
             </div>
         </div>
         <div class="category-cards modern-style-grid">
-            <a href="/shop?category=Casual" class="category-style-card">
+            <a href="/shop?category=Apparel" class="category-style-card">
                 <div class="category-image">
                     <img src="https://i.pinimg.com/736x/f1/6f/a1/f16fa1eb21d483327a8294881aefa719.jpg" alt="Casual">
                     <div class="style-overlay"></div>
                 </div>
-                <span class="category-title">Casual</span>
+                <span class="category-title">Apparel</span>
             </a>
-            <a href="/shop?category=Formal" class="category-style-card">
+            <a href="/shop?category=Gear" class="category-style-card">
                 <div class="category-image">
                     <img src="https://www.spalding.com/on/demandware.static/-/Sites-masterCatalog_SPALDING/default/dwbb5284e5/images/hi-res/77015E__FRONT.jpg" alt="Formal">
                     <div class="style-overlay"></div>
                 </div>
-                <span class="category-title">Formal</span>
+                <span class="category-title">Gear</span>
             </a>
-            <a href="/shop?category=Party" class="category-style-card">
+            <a href="/shop?category=Merchandise" class="category-style-card">
                 <div class="category-image">
                     <img src="https://m.media-amazon.com/images/I/71E9R7iFKbS.jpg" alt="Party">
                     <div class="style-overlay"></div>
                 </div>
-                <span class="category-title">Party</span>
+                <span class="category-title">Merchandise</span>
             </a>
-            <a href="/shop?category=Gym" class="category-style-card">
+            <a href="/shop?category=Equipment" class="category-style-card">
                 <div class="category-image">
                     <img src="https://st.hzcdn.com/simgs/pictures/home-gyms/2019-fall-parade-of-homes-dream-home-zawadski-homes-inc-img~2d71f2520d8ceb3c_14-1578-1-03c3984.jpg" alt="Gym">
                     <div class="style-overlay"></div>
                 </div>
-                <span class="category-title">Gym</span>
+                <span class="category-title">Equipment</span>
             </a>
         </div>
     </div>

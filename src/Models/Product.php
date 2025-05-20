@@ -309,7 +309,7 @@ class Product
      * @param int $perPage
      * @return array
      */
-    public static function getProductsWithFilters($filters, $sort = 'newest', $page = 1, $perPage = 12)
+    public static function getProductsWithFilters($filters, $sort = 'newest', $page = 1, $perPage = 9)
     {
         try {
             $db = Database::getInstance();
