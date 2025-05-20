@@ -150,4 +150,21 @@ class Review
             $data['id']
         ]) > 0;
     }
+    
+    /**
+     * Get count of reviews for a specific product
+     *
+     * @param int $productId
+     * @return int
+     */
+    public static function getCountByProductId($productId)
+    {
+        $db = Database::getInstance();
+        $totalReviews = $db->fetchOne('
+            SELECT COUNT(*) as total FROM product_reviews 
+            WHERE product_id = ? AND status = "approved"
+        ', [$productId]);
+        
+        return $totalReviews ? (int)$totalReviews : 0;
+    }
 }

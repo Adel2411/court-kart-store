@@ -321,11 +321,27 @@ document.addEventListener("DOMContentLoaded", function () {
         '<span class="stock-status out-of-stock"><i class="fas fa-times-circle"></i> Out of Stock</span>';
     }
 
-    const rating = data.rating || 0;
+    // Enhanced star rating display with half stars - matching product.php approach
+    const rating = parseFloat(data.average_rating || 0);
     const reviewCount = data.reviews_count || 0;
+    
+    // Calculate stars exactly like product.php does
+    const fullStars = Math.floor(rating);
+    const halfStar = rating - fullStars >= 0.5;
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+    
     let stars = "";
-    for (let i = 1; i <= 5; i++) {
-      stars += `<i class="${i <= rating ? "fas" : "far"} fa-star"></i>`;
+    // Add full stars
+    for (let i = 0; i < fullStars; i++) {
+      stars += '<i class="fas fa-star"></i>';
+    }
+    // Add half star if needed
+    if (halfStar) {
+      stars += '<i class="fas fa-star-half-alt"></i>';
+    }
+    // Add empty stars
+    for (let i = 0; i < emptyStars; i++) {
+      stars += '<i class="far fa-star"></i>';
     }
 
     // Create badges for special product statuses
@@ -334,15 +350,19 @@ document.addEventListener("DOMContentLoaded", function () {
       badges += '<span class="badge new">New</span>';
     }
     if (data.discount > 0) {
-      badges += `<span class="badge sale">-${data.discount_percent || Math.round(data.discount * 100)}%</span>`;
+      badges += `<span class="badge sale">-${Math.round(data.discount * 100)}%</span>`;
     }
 
-    let priceDisplay = `<div class="quick-view-price">$${parseFloat(data.price).toFixed(2)}</div>`;
+    // Calculate prices exactly like in product.php
+    const originalPrice = data.original_price || data.price;
+    const discountedPrice = data.discount > 0 ? data.price : originalPrice;
+
+    let priceDisplay = `<div class="quick-view-price">$${parseFloat(discountedPrice).toFixed(2)}</div>`;
     if (data.discount > 0) {
       priceDisplay = `
                 <div class="quick-view-price">
-                    <span class="current-price">$${parseFloat(data.price).toFixed(2)}</span>
-                    <span class="original-price">$${parseFloat(data.original_price).toFixed(2)}</span>
+                    <span class="current-price">$${parseFloat(discountedPrice).toFixed(2)}</span>
+                    <span class="original-price">$${parseFloat(originalPrice).toFixed(2)}</span>
                 </div>`;
     }
 
@@ -363,7 +383,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         <span class="product-category"><i class="fas fa-tag"></i> ${data.category}</span>
                         <div class="product-rating">
                             ${stars}
-                            <span>(${reviewCount})</span>
+                            <span class="rating-number">${rating.toFixed(1)}</span>
+                            <span class="reviews-count">(${reviewCount} reviews)</span>
                         </div>
                     </div>
                     
@@ -392,6 +413,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="quick-view-actions">
                             <button type="submit" class="btn primary" ${data.stock < 1 ? "disabled" : ""}>
                                 <i class="fas fa-shopping-cart"></i> Add to Cart
+                            </button>
+                            <button type="button" class="quick-action-btn" data-action="wishlist" data-id="${data.id}">
+                                <i class="far fa-heart"></i>
                             </button>
                         </div>
                     </form>

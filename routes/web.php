@@ -53,6 +53,10 @@ $router->get('/admin/users', 'AdminController@users', 'admin');
 $router->post('/admin/users/update', 'AdminController@updateUser', 'admin');
 $router->post('/admin/users/delete', 'AdminController@deleteUser', 'admin');
 
+// API Routes
+$router->get('/api/products/{id}', 'ApiController@getProduct');
+$router->get('/api/wishlist/check/{id}', 'ApiController@checkWishlist');
+
 // Error handlers
 $router->get('/unauthorized', function () {
     require_once BASE_PATH.'/views/errors/unauthorized.php';

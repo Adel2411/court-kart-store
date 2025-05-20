@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Core\View;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Review;
@@ -14,6 +15,7 @@ class ApiController
      */
     public function getProduct($id)
     {
+        // Get product details from database
         $product = Product::getById($id);
         
         if (!$product) {
@@ -21,20 +23,35 @@ class ApiController
             return;
         }
         
-        // Calculate discounted price if applicable
+        // Calculate discounted price if discount exists
+        $originalPrice = $product['price'];
+        $discountedPrice = $originalPrice;
+        
         if (isset($product['discount']) && $product['discount'] > 0) {
-            $product['original_price'] = $product['price'];
-            $product['price'] = round($product['price'] * (1 - $product['discount']), 2);
-            $product['discount_percent'] = round($product['discount'] * 100);
+            $discountedPrice = round($originalPrice * (1 - $product['discount']), 2);
         }
         
-        // Check if product is in user's wishlist if logged in
-        if (isset($_SESSION['user_id'])) {
-            $wishlistModel = new Wishlist();
-            $product['in_wishlist'] = $wishlistModel->isInWishlist($_SESSION['user_id'], $id);
-        }
+        // Get review data - same as in ShopController
+        $averageRating = Review::getAverageRating($id);
+        $reviewsCount = Review::getCountByProductId($id);
         
-        $this->jsonResponse($product);
+        // Format response to match product.php expectations
+        $response = [
+            'id' => $product['id'],
+            'name' => $product['name'],
+            'description' => $product['description'],
+            'price' => $discountedPrice,
+            'original_price' => $originalPrice,
+            'stock' => $product['stock'],
+            'category' => $product['category'],
+            'image_url' => $product['image_url'],
+            'discount' => $product['discount'],
+            'average_rating' => $averageRating,
+            'reviews_count' => $reviewsCount,
+            'is_new' => (time() - strtotime($product['created_at']) < 604800) // 7 days
+        ];
+        
+        $this->jsonResponse($response);
     }
     
     /**
@@ -76,12 +93,15 @@ class ApiController
     
     /**
      * Send JSON response
+     * 
+     * @param mixed $data
+     * @param int $statusCode
+     * @return void
      */
     private function jsonResponse($data, $statusCode = 200)
     {
         http_response_code($statusCode);
         header('Content-Type: application/json');
         echo json_encode($data);
-        exit;
     }
 }
