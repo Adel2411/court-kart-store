@@ -399,13 +399,3 @@ document.addEventListener('DOMContentLoaded', function() {
     }product-filters-form {
 }       grid-template-columns: 1fr;
 </style>
-    
-<div class="db-connection-success">
-    <p style="color: green; font-weight: bold;">Database connection successful! Product data loaded from database.</p>
-</div>
-}
-</style>
-
-<div class="db-connection-success">
-    <p style="color: green; font-weight: bold;">Database connection successful! Product data loaded from database.</p>
-</div>

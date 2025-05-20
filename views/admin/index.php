@@ -128,10 +128,6 @@
     </div>
 </div>
 
-<div class="db-connection-success">
-    <p style="color: green; font-weight: bold;">Database connection successful! Admin dashboard data loaded from database.</p>
-</div>
-
 <style>
     .bg-warning {
         background-color: var(--warning);
