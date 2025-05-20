@@ -1,28 +1,11 @@
 <h1>Edit Profile</h1>
 
 <div class="account-container">
-    <div class="account-sidebar">
-        <div class="account-avatar">
-            <?php if (! empty($user['profile_image'])) { ?>
-                <div class="avatar-container">
-                    <img src="<?= htmlspecialchars($user['profile_image']) ?>" alt="<?= htmlspecialchars($user['name']) ?>" class="avatar-image">
-                </div>
-            <?php } else { ?>
-                <div class="avatar-image">
-                    <?= strtoupper(substr($user['name'] ?? 'A', 0, 1)) ?>
-                </div>
-            <?php } ?>
-            <h2><?= htmlspecialchars($user['name']) ?></h2>
-            <p><?= htmlspecialchars($user['email']) ?></p>
-        </div>
-        
-        <div class="account-menu">
-            <a href="/account" class="account-menu-item">Account Overview</a>
-            <a href="/orders" class="account-menu-item">My Orders</a>
-            <a href="/account/edit" class="account-menu-item active">Edit Profile</a>
-            <a href="/logout" class="account-menu-item">Logout</a>
-        </div>
-    </div>
+    <?php 
+    // Set the active page for the sidebar
+    $activePage = 'edit';
+    include __DIR__ . '/../partials/account-sidebar.php'; 
+    ?>
     
     <div class="account-content">
         <?php if (isset($error)) { ?>
@@ -140,6 +123,9 @@
         </div>
     </div>
 </div>
+
+<!-- Link to the external account stylesheet if not already included -->
+<link rel="stylesheet" href="/assets/css/pages/account.css">
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
