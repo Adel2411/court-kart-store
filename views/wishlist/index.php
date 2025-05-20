@@ -53,7 +53,7 @@
                         </form>
                         <?php if (isset($item['discount']) && $item['discount'] > 0): ?>
                             <span class="discount-badge">
-                                <?= $item['discount'] ?>% OFF
+                                <?= $item['discount'] * 100 ?>% OFF
                             </span>
                         <?php endif; ?>
                     </div>

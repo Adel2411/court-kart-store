@@ -407,9 +407,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             <button type="submit" class="btn primary" ${data.stock < 1 ? "disabled" : ""}>
                                 <i class="fas fa-shopping-cart"></i> Add to Cart
                             </button>
-                            <button type="button" class="quick-action-btn" data-action="wishlist" data-id="${data.id}">
-                                <i class="far fa-heart"></i>
-                            </button>
                         </div>
                     </form>
                     
@@ -880,16 +877,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Wishlist Manager Module
 window.WishlistManager = (function() {
-  const wishlistKey = 'court_kart_wishlist';
-  
-  function getWishlist() {
-    const list = localStorage.getItem(wishlistKey);
-    return list ? JSON.parse(list) : [];
-  }
-  
-  function saveWishlist(wishlist) {
-    localStorage.setItem(wishlistKey, JSON.stringify(wishlist));
-  }
+  // In-memory wishlist state for current session (non-persistent)
+  const inMemoryWishlist = [];
   
   return {
     checkProduct: function(productId, callback) {
@@ -901,28 +890,23 @@ window.WishlistManager = (function() {
             callback(data.in_wishlist);
           })
           .catch(() => {
-            // Fallback to local storage
-            const wishlist = getWishlist();
-            callback(wishlist.includes(productId));
+            // Fallback to in-memory state
+            callback(inMemoryWishlist.includes(productId));
           });
       } else {
-        // Use local storage for guests
-        const wishlist = getWishlist();
-        callback(wishlist.includes(productId));
+        // Use in-memory state for current session
+        callback(inMemoryWishlist.includes(productId));
       }
     },
     
     toggleProduct: function(productId, callback) {
-      const wishlist = getWishlist();
-      const index = wishlist.indexOf(productId);
+      const index = inMemoryWishlist.indexOf(productId);
       
       if (index === -1) {
-        wishlist.push(productId);
-        saveWishlist(wishlist);
+        inMemoryWishlist.push(productId);
         callback(true);
       } else {
-        wishlist.splice(index, 1);
-        saveWishlist(wishlist);
+        inMemoryWishlist.splice(index, 1);
         callback(false);
       }
     }
