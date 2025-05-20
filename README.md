@@ -47,22 +47,19 @@ This project demonstrates advanced PHP concepts including MVC architecture, sess
 
 ## Technology Stack
 
-- **Frontend**: 
+- **Frontend**:
   - HTML5, CSS3 with responsive design
   - Vanilla JavaScript with modular organization
   - Font Awesome icons
-  
-- **Backend**: 
+- **Backend**:
   - PHP 8.0+ (no frameworks)
   - MVC architecture
   - Custom routing system
-  
-- **Database**: 
+- **Database**:
   - MySQL 8.0+
   - Stored procedures
   - Database triggers
-  
-- **Development Environment**: 
+- **Development Environment**:
   - XAMPP/LAMP stack
 
 ---
@@ -86,65 +83,30 @@ court-kart-store/
 │   │   ├── Session.php       # Session management
 │   │   └── View.php          # Template rendering
 │   ├── Controllers/          # Request handlers
-│   │   ├── HomeController.php
-│   │   ├── ShopController.php
-│   │   ├── CartController.php
-│   │   ├── WishlistController.php
-│   │   ├── AuthController.php
-│   │   ├── OrderController.php
-│   │   ├── CheckoutController.php
-│   │   ├── AccountController.php
-│   │   ├── AdminController.php
-│   │   └── ApiController.php
 │   ├── Models/               # Data models
-│   │   ├── User.php
-│   │   ├── Product.php
-│   │   ├── Cart.php
-│   │   ├── Wishlist.php
-│   │   ├── Order.php
-│   │   ├── Review.php
-│   │   └── Category.php
 │   ├── Services/             # Business logic services
-│   │   └── AuthService.php
 │   └── Helpers/              # Utility functions
-│       ├── Security.php
-│       └── Validator.php
 ├── views/                     # Template files
 │   ├── layouts/              # Reusable layouts
 │   │   ├── main.php          # Main site layout
 │   │   ├── admin.php         # Admin panel layout
 │   │   └── footer.php        # Footer partial
 │   ├── partials/             # Partial templates
-│   │   └── account-sidebar.php
 │   ├── shop/                 # Shop pages
 │   │   ├── index.php         # Product listing page
 │   │   └── product.php       # Product detail page
 │   ├── wishlist/             # Wishlist views
-│   │   └── index.php
 │   ├── cart/                 # Shopping cart views
-│   │   └── index.php
 │   ├── checkout/             # Checkout process views
-│   │   └── index.php
 │   ├── orders/               # Order management
-│   │   ├── index.php
-│   │   └── show.php
 │   ├── account/              # User account views
-│   │   ├── index.php
-│   │   └── edit.php
 │   ├── admin/                # Admin panel views
-│   │   ├── products.php
-│   │   ├── orders.php
-│   │   └── order-detail.php
 │   ├── home.php              # Homepage template
 │   └── errors/               # Error pages
-│       ├── 404.php
-│       └── unauthorized.php
 ├── routes/                    # Routing configuration
 │   ├── web.php               # Web routes definition
 │   └── api.php               # API routes definition
 ├── config/                    # Configuration files
-│   ├── app.php
-│   └── database.php
 ├── docs/                      # Documentation
 │   └── report.tex            # Technical documentation
 └── bootstrap.php              # Application initialization
@@ -155,6 +117,7 @@ court-kart-store/
 ## Key Components
 
 ### 1. Routing System
+
 The application uses a custom routing system located in `routes/web.php` that maps URLs to controller actions and supports middleware for authentication:
 
 ```php
@@ -174,6 +137,7 @@ $router->get('/admin/products', 'AdminController@products', 'admin');
 ```
 
 ### 2. View Rendering
+
 Templates are managed through the `View` class which supports layouts and partial templates:
 
 ```php
@@ -188,6 +152,7 @@ echo View::renderWithLayout('shop/product', 'main', [
 ```
 
 ### 3. Database Interaction
+
 Models interact with the database and encapsulate data operations:
 
 ```php
@@ -202,6 +167,7 @@ $products = Product::getProductsWithFilters([
 ```
 
 ### 4. Middleware System
+
 The application uses middleware to protect routes and enforce authentication:
 
 ```php
@@ -220,6 +186,7 @@ public static function auth(): bool
 ```
 
 ### 5. Wishlist Management
+
 The application includes a complete wishlist system for users to save products:
 
 ```php
@@ -304,12 +271,6 @@ The database uses a normalized schema with tables for users, products, categorie
 
 Made with ❤️ by [Adel2411](https://github.com/Adel2411)  
 For educational purposes — crafted for basketball enthusiasts and clean code advocates.
-
----
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
