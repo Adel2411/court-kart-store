@@ -75,6 +75,21 @@
                                 </a>
                             <?php } ?>
                             
+                            <a href="/wishlist" class="nav-link wishlist-link" aria-label="My Wishlist">
+                                <i class="fas fa-heart"></i>
+                                <span class="sr-only">Wishlist</span>
+                                <?php
+                                $wishlistCount = 0;
+                                if (\App\Core\Session::get('user_id')) {
+                                    $wishlistModel = new \App\Models\Wishlist();
+                                    $wishlistCount = $wishlistModel->countWishlistItems(\App\Core\Session::get('user_id'));
+                                }
+                                ?>
+                                <?php if ($wishlistCount > 0) { ?>
+                                    <span class="wishlist-count"><i class="fas fa-heart"></i> <?= $wishlistCount ?></span>
+                                <?php } ?>
+                            </a>
+                            
                             <a href="/cart" class="nav-link cart-link" aria-label="Shopping Cart">
                                 <i class="fas fa-shopping-cart"></i>
                                 <span class="sr-only">Cart</span>

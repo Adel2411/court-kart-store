@@ -1,9 +1,7 @@
 <?php
 
-// Define base path
 define('BASE_PATH', __DIR__);
 
-// Register autoloader
 spl_autoload_register(function ($class) {
     $prefix = 'App\\';
 
@@ -19,7 +17,7 @@ spl_autoload_register(function ($class) {
     }
 });
 
-// Core initialization
+// Start session and initialize core
 \App\Core\Session::start();
 require_once BASE_PATH.'/src/Core/Database.php';
 $router = new App\Core\Router;

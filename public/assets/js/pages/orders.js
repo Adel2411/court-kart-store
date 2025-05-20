@@ -83,7 +83,6 @@ function animateOnScroll(element) {
       }
     });
   }, { threshold: 0.1 });
-  
   observer.observe(element);
 }
 
@@ -92,16 +91,10 @@ function animateOnScroll(element) {
  */
 function initOrderRowHighlighting() {
   const orderRows = document.querySelectorAll('.orders-table tbody tr');
-  
   orderRows.forEach(row => {
     row.addEventListener('click', function() {
-      // Remove clicked class from all rows
       orderRows.forEach(r => r.classList.remove('row-clicked'));
-      
-      // Add clicked class to this row
       this.classList.add('row-clicked');
-      
-      // Get the order details link and navigate to it
       const detailsLink = this.querySelector('a[href^="/orders/"]');
       if (detailsLink) {
         window.location.href = detailsLink.getAttribute('href');

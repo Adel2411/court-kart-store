@@ -1122,3 +1122,38 @@
     font-size: 16px; /* prevent zoom on iOS */
   }
 }
+
+/* Wishlist Count Styling */
+.nav-link.wishlist-link {
+    position: relative;
+}
+
+.wishlist-count {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--light);
+    color: var(--secondary);
+    padding: 3px 8px;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 500;
+    position: absolute;
+    top: -8px;
+    right: -15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+}
+
+.wishlist-count i {
+    color: var(--primary);
+    margin-right: 3px;
+    font-size: 0.7rem;
+}
+
+/* Adjust for mobile */
+@media (max-width: 768px) {
+    .wishlist-count {
+        position: static;
+        margin-left: 8px;
+    }
+}

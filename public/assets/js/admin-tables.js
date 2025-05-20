@@ -3,19 +3,12 @@
  * This script adds visual indicators and improves table responsiveness
  */
 document.addEventListener('DOMContentLoaded', function() {
-    // Find all table wrappers
     const tableWrappers = document.querySelectorAll('.admin-table-wrapper, .users-table-wrapper');
-    
     tableWrappers.forEach(wrapper => {
-        // Check if table is wider than its container
         checkTableOverflow(wrapper);
-        
-        // Check again on window resize
         window.addEventListener('resize', () => {
             checkTableOverflow(wrapper);
         });
-        
-        // Add scroll indication when scrolling
         wrapper.addEventListener('scroll', () => {
             if (wrapper.scrollLeft > 0) {
                 wrapper.classList.add('scrolled-horizontally');
@@ -24,8 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
-    // Add class to parent for tables that overflow
     function checkTableOverflow(wrapper) {
         const table = wrapper.querySelector('table');
         if (table && table.offsetWidth > wrapper.offsetWidth) {
@@ -34,15 +25,11 @@ document.addEventListener('DOMContentLoaded', function() {
             wrapper.closest('.admin-card, .card')?.classList.remove('admin-table-scroll');
         }
     }
-    
-    // Add column classes to table cells for better responsive control
+    // Add column classes for responsive control
     const tables = document.querySelectorAll('.admin-table, .users-table');
     tables.forEach(table => {
-        // ID columns (usually first column)
         const firstCells = table.querySelectorAll('tr > *:first-child');
         firstCells.forEach(cell => cell.classList.add('col-id'));
-        
-        // Image columns (usually have img tag)
         table.querySelectorAll('td').forEach(cell => {
             if (cell.querySelector('img')) {
                 cell.classList.add('col-image');
@@ -53,8 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-        
-        // Action columns (usually last column)
         const lastCells = table.querySelectorAll('tr > *:last-child');
         lastCells.forEach(cell => cell.classList.add('col-actions'));
     });

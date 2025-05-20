@@ -1,21 +1,11 @@
-/**
- * Admin Orders Page Functionality
- */
+// Admin Orders Page Functionality
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Initialize filter dropdown
   initFilterDropdown();
-  
-  // Initialize order detail modal
   initOrderDetailModal();
-  
-  // Initialize update status modal
   initUpdateStatusModal();
 });
 
-/**
- * Initialize filter dropdown
- */
 function initFilterDropdown() {
   const filterBtn = document.getElementById('filterBtn');
   const filterDropdown = document.getElementById('filterDropdown');
@@ -24,7 +14,6 @@ function initFilterDropdown() {
     filterBtn.addEventListener('click', function() {
       filterDropdown.style.display = filterDropdown.style.display === 'none' ? 'block' : 'none';
     });
-    
     document.addEventListener('click', function(event) {
       if (!filterBtn.contains(event.target) && !filterDropdown.contains(event.target)) {
         filterDropdown.style.display = 'none';
@@ -33,9 +22,6 @@ function initFilterDropdown() {
   }
 }
 
-/**
- * Initialize order detail modal
- */
 function initOrderDetailModal() {
   const viewOrderBtns = document.querySelectorAll('.view-order');
   const printOrderBtn = document.getElementById('printOrderBtn');
@@ -44,8 +30,6 @@ function initOrderDetailModal() {
   viewOrderBtns.forEach(btn => {
     btn.addEventListener('click', function() {
       const orderId = this.getAttribute('data-id');
-      
-      // Show loading state
       if (orderDetailContent) {
         orderDetailContent.innerHTML = `
           <div class="loading-spinner">
@@ -54,20 +38,14 @@ function initOrderDetailModal() {
           </div>
         `;
       }
-      
-      // Open the modal using the modal component
       if (window.CourtKartModals && window.CourtKartModals.orderDetailModal) {
         window.CourtKartModals.orderDetailModal.open();
       } else {
-        // Fallback if modal component isn't loaded yet
         const orderDetailModal = document.getElementById('orderDetailModal');
         if (orderDetailModal) {
           orderDetailModal.classList.add('active');
         }
       }
-      
-      // In a real application, you would fetch order details via AJAX
-      // For now, we'll just show mock data after a short delay
       setTimeout(function() {
         if (orderDetailContent) {
           orderDetailContent.innerHTML = getOrderDetailMarkup(orderId);
@@ -76,12 +54,10 @@ function initOrderDetailModal() {
     });
   });
   
-  // Add print functionality
   if (printOrderBtn) {
     printOrderBtn.addEventListener('click', function() {
       const printContents = orderDetailContent.innerHTML;
       const originalContents = document.body.innerHTML;
-      
       document.body.innerHTML = `
         <div class="print-only">${printContents}</div>
         <style>
@@ -91,11 +67,8 @@ function initOrderDetailModal() {
           }
         </style>
       `;
-      
       window.print();
       document.body.innerHTML = originalContents;
-      
-      // Re-initialize modals after restoring content
       if (window.initModals) {
         window.initModals();
       }
@@ -103,9 +76,6 @@ function initOrderDetailModal() {
   }
 }
 
-/**
- * Initialize update status modal
- */
 function initUpdateStatusModal() {
   const updateStatusBtns = document.querySelectorAll('.update-status');
   const saveStatusBtn = document.getElementById('saveStatusBtn');
@@ -118,21 +88,11 @@ function initUpdateStatusModal() {
     btn.addEventListener('click', function() {
       const orderId = this.getAttribute('data-id');
       const currentStatus = this.getAttribute('data-status');
-      
-      if (statusOrderId) {
-        statusOrderId.value = orderId;
-      }
-      
-      // Set the current status as selected in dropdown
-      if (orderStatus && currentStatus) {
-        orderStatus.value = currentStatus;
-      }
-      
-      // Open modal using the modal component
+      if (statusOrderId) statusOrderId.value = orderId;
+      if (orderStatus && currentStatus) orderStatus.value = currentStatus;
       if (window.CourtKartModals && window.CourtKartModals.updateStatusModal) {
         window.CourtKartModals.updateStatusModal.open();
       } else {
-        // Fallback if modal component isn't loaded yet
         const updateStatusModal = document.getElementById('updateStatusModal');
         if (updateStatusModal) {
           updateStatusModal.classList.add('active');
@@ -141,7 +101,6 @@ function initUpdateStatusModal() {
     });
   });
   
-  // Close modal functionality
   function closeUpdateStatusModal() {
     if (window.CourtKartModals && window.CourtKartModals.updateStatusModal) {
       window.CourtKartModals.updateStatusModal.close();
@@ -153,31 +112,24 @@ function initUpdateStatusModal() {
     }
   }
   
-  // Add close button handlers
   if (cancelStatusBtn) {
     cancelStatusBtn.addEventListener('click', closeUpdateStatusModal);
   }
-  
   document.querySelectorAll('#updateStatusModal [data-close]').forEach(element => {
     element.addEventListener('click', closeUpdateStatusModal);
   });
-  
-  // Form submission
   if (saveStatusBtn && updateStatusForm) {
     saveStatusBtn.addEventListener('click', function() {
       if (updateStatusForm.checkValidity()) {
         updateStatusForm.submit();
       } else {
-        // Trigger HTML5 validation
         updateStatusForm.reportValidity();
       }
     });
   }
 }
 
-/**
- * Helper function to get mock order detail markup
- */
+// Returns mock order detail markup for modal
 function getOrderDetailMarkup(orderId) {
   return `
     <div style="padding: 1rem; background-color: var(--light); border-radius: var(--radius-md); margin-bottom: 1.5rem;">
@@ -192,7 +144,6 @@ function getOrderDetailMarkup(orderId) {
         </span>
       </div>
     </div>
-    
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
       <div style="padding: 1rem; background-color: var(--light); border-radius: var(--radius-md);">
         <h5 style="margin-top: 0;">Customer</h5>
@@ -207,7 +158,6 @@ function getOrderDetailMarkup(orderId) {
         <p>Method: Credit Card<br>Status: Paid<br>Transaction ID: TXN${Math.floor(Math.random() * 10000)}</p>
       </div>
     </div>
-    
     <h4>Order Items</h4>
     <div class="admin-table-wrapper">
       <table class="admin-table">

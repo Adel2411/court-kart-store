@@ -287,25 +287,19 @@ function initDeleteModal() {
     });
   });
   
-  // Close modal functionality
+  // Modal close handlers
   const closeDeleteModalFn = function() {
     deleteModal.classList.remove('active');
   };
-  
-  // Add click handler to close button
   deleteModal.querySelector('.modal-close').addEventListener('click', closeDeleteModalFn);
-  
-  // Add click handler to backdrop
   deleteModal.querySelector('.modal-backdrop').addEventListener('click', closeDeleteModalFn);
-  
   if (closeDeleteModal) closeDeleteModal.addEventListener('click', closeDeleteModalFn);
   if (cancelDeleteBtn) cancelDeleteBtn.addEventListener('click', closeDeleteModalFn);
   
-  // Add submit handler for delete form
+  // Confirm delete
   if (confirmDeleteBtn && deleteUserForm) {
     confirmDeleteBtn.addEventListener('click', function(e) {
       e.preventDefault();
-      
       if (confirm('Are you absolutely sure you want to delete this user? This action cannot be undone.')) {
         try {
           deleteUserForm.submit();

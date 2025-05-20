@@ -69,7 +69,7 @@
                     <tr>
                         <td colspan="6" style="text-align: center; padding: 2rem;">
                             <div style="color: var(--gray);">
-                                <i class="fas fa-shopping-cart" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                                <i class="fas fa-shopping-bag" style="font-size: 2rem; margin-bottom: 1rem;"></i>
                                 <p>No orders found</p>
                             </div>
                         </td>

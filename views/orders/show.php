@@ -107,7 +107,7 @@
                             
                             <div class="timeline-steps">
                                 <div class="step <?= in_array($order->status, ['pending', 'confirmed', 'shipped', 'delivered']) ? 'completed' : '' ?>">
-                                    <div class="step-icon"><i class="fas fa-shopping-cart"></i></div>
+                                    <div class="step-icon"><i class="fas fa-shopping-bag"></i></div>
                                     <div class="step-label">Order Placed</div>
                                     <div class="step-date"><?= date('M d', strtotime($order->created_at ?? 'now')) ?></div>
                                 </div>

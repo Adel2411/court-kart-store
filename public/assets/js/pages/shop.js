@@ -321,30 +321,23 @@ document.addEventListener("DOMContentLoaded", function () {
         '<span class="stock-status out-of-stock"><i class="fas fa-times-circle"></i> Out of Stock</span>';
     }
 
-    // Enhanced star rating display with half stars - matching product.php approach
+    // Star rating display
     const rating = parseFloat(data.average_rating || 0);
     const reviewCount = data.reviews_count || 0;
-    
-    // Calculate stars exactly like product.php does
     const fullStars = Math.floor(rating);
     const halfStar = rating - fullStars >= 0.5;
     const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-    
     let stars = "";
-    // Add full stars
     for (let i = 0; i < fullStars; i++) {
       stars += '<i class="fas fa-star"></i>';
     }
-    // Add half star if needed
     if (halfStar) {
       stars += '<i class="fas fa-star-half-alt"></i>';
     }
-    // Add empty stars
     for (let i = 0; i < emptyStars; i++) {
       stars += '<i class="far fa-star"></i>';
     }
 
-    // Create badges for special product statuses
     let badges = "";
     if (data.is_new) {
       badges += '<span class="badge new">New</span>';

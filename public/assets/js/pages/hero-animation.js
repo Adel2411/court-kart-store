@@ -5,9 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Animate elements on page load
     animateHeroElements();
     
-    // Initialize counters
-    startCounters();
-    
     // Scroll indicator animation
     animateScrollIndicator();
 });
@@ -50,34 +47,6 @@ function animateHeroElements() {
         }, delay * 1000);
         
         delay += 0.15;
-    });
-}
-
-/**
- * Start number counter animations
- */
-function startCounters() {
-    const counters = document.querySelectorAll('.counter-animation');
-    
-    counters.forEach(counter => {
-        const target = parseInt(counter.getAttribute('data-target'), 10);
-        const duration = 2000; // 2 seconds
-        const step = Math.ceil(target / (duration / 30)); // Update every 30ms
-        let current = 0;
-        
-        const updateCounter = () => {
-            current += step;
-            
-            if (current > target) {
-                counter.textContent = target;
-            } else {
-                counter.textContent = current;
-                setTimeout(updateCounter, 30);
-            }
-        };
-        
-        // Start counter after a delay
-        setTimeout(updateCounter, 800);
     });
 }
 

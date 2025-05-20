@@ -101,7 +101,7 @@
                         
                         <div class="product-buttons">
                             <button type="submit" class="btn btn-primary" <?= $stock < 1 ? 'disabled' : '' ?>>
-                                <i class="fas fa-shopping-cart"></i> Add to Cart
+                                <i class="fas fa-shopping-bag"></i> Add to Cart
                             </button>
                             <button type="button" class="btn btn-outline wishlist-btn" data-action="wishlist" data-id="<?= $id ?>">
                                 <i class="far fa-heart"></i> <span>Add to Wishlist</span>

@@ -124,19 +124,16 @@ function initReviewForm() {
             reviewFormContainer.style.display = 'block';
         });
     }
-    
     if (cancelReviewBtn && reviewFormContainer) {
         cancelReviewBtn.addEventListener('click', function() {
             reviewFormContainer.style.display = 'none';
         });
     }
-    
     if (starRating && ratingInput) {
         starRating.forEach(star => {
             star.addEventListener('click', function() {
                 const rating = this.getAttribute('data-rating');
                 ratingInput.value = rating;
-                
                 // Update stars
                 starRating.forEach(s => {
                     const r = s.getAttribute('data-rating');
@@ -146,7 +143,6 @@ function initReviewForm() {
                         s.innerHTML = '<i class="far fa-star"></i>';
                     }
                 });
-                
                 // Update rating text
                 const ratingTexts = {
                     1: 'Poor',
@@ -155,15 +151,12 @@ function initReviewForm() {
                     4: 'Very Good',
                     5: 'Excellent'
                 };
-                
                 if (ratingText) {
                     ratingText.textContent = ratingTexts[rating] || 'Select a rating';
                 }
             });
-            
             star.addEventListener('mouseover', function() {
                 const rating = this.getAttribute('data-rating');
-                
                 starRating.forEach(s => {
                     const r = s.getAttribute('data-rating');
                     if (r <= rating) {
@@ -172,10 +165,8 @@ function initReviewForm() {
                     }
                 });
             });
-            
             star.addEventListener('mouseout', function() {
                 const currentRating = ratingInput.value;
-                
                 starRating.forEach(s => {
                     const r = s.getAttribute('data-rating');
                     if (r <= currentRating) {

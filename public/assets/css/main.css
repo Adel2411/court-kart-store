@@ -302,8 +302,6 @@ a:hover {
   }
 }
 
-/* Additional global styles for enhanced landing page */
-
 /* Animations */
 @keyframes fadeIn {
   from {
@@ -325,22 +323,6 @@ a:hover {
   }
   100% {
     transform: scale(1);
-  }
-}
-
-@keyframes bounce {
-  0%,
-  20%,
-  50%,
-  80%,
-  100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
   }
 }
 

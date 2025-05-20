@@ -256,7 +256,7 @@
                                         <input type="hidden" name="quantity" value="1">
                                         <input type="hidden" name="return_url" value="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
                                         <button type="submit" class="btn primary">
-                                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                                            <i class="fas fa-shopping-bag"></i> Add to Cart
                                         </button>
                                     </form>
                                 </div>

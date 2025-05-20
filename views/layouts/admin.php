@@ -47,7 +47,7 @@
                     </li>
                     <li class="admin-menu-item">
                         <a href="/admin/orders" class="admin-menu-link <?= $_SERVER['REQUEST_URI'] == '/admin/orders' ? 'active' : '' ?>">
-                            <span class="admin-menu-icon"><i class="fas fa-shopping-cart"></i></span>
+                            <span class="admin-menu-icon"><i class="fas fa-shopping-bag"></i></span>
                             Orders
                         </a>
                     </li>

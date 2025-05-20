@@ -104,7 +104,7 @@
                                     <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
                                     <input type="hidden" name="quantity" value="1">
                                     <button type="submit" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                                        <i class="fas fa-shopping-bag"></i> Add to Cart
                                     </button>
                                 </form>
                             </div>
@@ -237,7 +237,7 @@
                                     <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
                                     <input type="hidden" name="quantity" value="1">
                                     <button type="submit" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                                        <i class="fas fa-shopping-bag"></i> Add to Cart
                                     </button>
                                 </form>
                             </div>

@@ -284,19 +284,3 @@ function showTooltip(element, text) {
         }, 300);
     }, 2000);
 }
-
-/**
- * Update the cart count in the header - no fetch call
- */
-function updateCartCount() {
-    // The cart count will be set by PHP directly in the HTML
-    // Just add animation if needed
-    const cartCountElements = document.querySelectorAll('.cart-count');
-    cartCountElements.forEach(element => {
-        // Simple animation
-        element.style.transform = 'scale(1.5)';
-        setTimeout(() => {
-            element.style.transform = 'scale(1)';
-        }, 300);
-    });
-}
