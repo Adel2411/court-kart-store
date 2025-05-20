@@ -1,6 +1,6 @@
 <div class="wishlist-container">
     <header class="wishlist-header">
-        <div class="header-content">
+        <div class="wishlist-header-content">
             <h1>My Wishlist</h1>
             <p class="header-subtitle">Items you've saved for later</p>
             

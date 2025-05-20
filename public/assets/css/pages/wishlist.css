@@ -18,7 +18,12 @@
   position: relative;
 }
 
-.header-content h1 {
+.wishlist-header-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.wishlist-header-content h1 {
   font-size: 2.25rem;
   font-weight: 700;
   color: var(--secondary-dark);
@@ -338,7 +343,7 @@
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   }
   
-  .header-content h1 {
+  .wishlist-header-content h1 {
     font-size: 2rem;
   }
 }
@@ -425,7 +430,7 @@
 }
 
 @media (max-width: 480px) {
-  .header-content h1 {
+  .wishlist-header-content h1 {
     font-size: 1.75rem;
   }
   

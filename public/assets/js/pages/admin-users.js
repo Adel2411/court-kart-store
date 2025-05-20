@@ -263,24 +263,24 @@ function initEditModal() {
 function initDeleteModal() {
   const deleteButtons = document.querySelectorAll('.delete-user');
   const deleteModal = document.getElementById('deleteUserModal');
-  const closeDeleteModal = document.getElementById('closeDeleteModal');
   const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
   const deleteUserForm = document.getElementById('deleteUserForm');
   const deleteUserId = document.getElementById('deleteUserId');
   const deleteUserName = document.getElementById('deleteUserName');
-  const confirmDeleteBtn = document.querySelector('#deleteUserForm button[type="submit"]');
   
-  if (!deleteModal) return;
+  if (!deleteModal || !deleteButtons.length) return;
   
   deleteButtons.forEach(button => {
     button.addEventListener('click', function() {
       const userId = this.getAttribute('data-id');
       const row = this.closest('tr');
-      const userName = row.querySelector('.user-name').textContent;
+      
+      // Extract user email from the row (3rd column contains email)
+      const userEmail = row.querySelector('td:nth-child(3)').textContent.trim();
       
       // Set form values
       deleteUserId.value = userId;
-      deleteUserName.textContent = userName;
+      deleteUserName.textContent = userEmail;
       
       // Show modal
       deleteModal.classList.add('active');
@@ -291,22 +291,30 @@ function initDeleteModal() {
   const closeDeleteModalFn = function() {
     deleteModal.classList.remove('active');
   };
+  
+  // Add click handler to close button and backdrop
   deleteModal.querySelector('.modal-close').addEventListener('click', closeDeleteModalFn);
   deleteModal.querySelector('.modal-backdrop').addEventListener('click', closeDeleteModalFn);
-  if (closeDeleteModal) closeDeleteModal.addEventListener('click', closeDeleteModalFn);
-  if (cancelDeleteBtn) cancelDeleteBtn.addEventListener('click', closeDeleteModalFn);
   
-  // Confirm delete
-  if (confirmDeleteBtn && deleteUserForm) {
-    confirmDeleteBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      if (confirm('Are you absolutely sure you want to delete this user? This action cannot be undone.')) {
-        try {
-          deleteUserForm.submit();
-        } catch (error) {
-          console.error('Error submitting delete user form:', error);
-          alert('Failed to delete user. Please try again.');
-        }
+  // Add click handler to cancel button
+  if (cancelDeleteBtn) {
+    cancelDeleteBtn.addEventListener('click', closeDeleteModalFn);
+  }
+  
+  // Submit form directly when confirm button is clicked
+  // No need for additional confirmation since we're already in a confirmation modal
+  if (deleteUserForm) {
+    deleteUserForm.addEventListener('submit', function(e) {
+      // Form will submit normally - no need to prevent default
+      // Just add error handling
+      try {
+        // Let the form submit normally
+        return true;
+      } catch (error) {
+        e.preventDefault();
+        console.error('Error submitting delete user form:', error);
+        alert('Failed to delete user. Please try again.');
+        return false;
       }
     });
   }
