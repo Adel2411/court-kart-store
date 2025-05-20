@@ -25,12 +25,26 @@ class CheckoutController
         $cartItems = Cart::getItems($userId);
 
         $totalPrice = 0;
+        $subtotal = 0;
+        $discountAmount = 0;
+        
         foreach ($cartItems as &$item) {
             $product = \App\Models\Product::getById($item['product_id']);
             $item['name'] = $product['name'];
             $item['price'] = $product['price'];
             $item['image_url'] = $product['image_url'];
-            $item['subtotal'] = $product['price'] * $item['quantity'];
+            $item['discount'] = $product['discount'] ?? 0;
+            
+            // Calculate the actual price after discount
+            $itemDiscountedPrice = $item['price'] * (1 - $item['discount']);
+            $itemSubtotal = $item['price'] * $item['quantity'];
+            $itemDiscountedSubtotal = $itemDiscountedPrice * $item['quantity'];
+            
+            // Track original price and discount amounts
+            $subtotal += $itemSubtotal;
+            $discountAmount += ($itemSubtotal - $itemDiscountedSubtotal);
+            
+            $item['subtotal'] = $itemDiscountedSubtotal;
             $totalPrice += $item['subtotal'];
         }
 
@@ -43,6 +57,8 @@ class CheckoutController
         echo View::renderWithLayout('checkout/index', 'main', [
             'title' => 'Checkout - Court Kart',
             'cartItems' => $cartItems,
+            'subtotal' => $subtotal,
+            'discountAmount' => $discountAmount,
             'totalPrice' => $totalPrice,
             'page_css' => 'checkout',
             'page_js' => 'checkout',
@@ -70,6 +86,8 @@ class CheckoutController
         }
 
         $totalPrice = 0;
+        $subtotal = 0;
+        $discountAmount = 0;
         $orderItems = [];
 
         foreach ($cartItems as $item) {
@@ -87,16 +105,25 @@ class CheckoutController
             }
 
             $itemPrice = $product['price'];
+            $itemDiscount = $product['discount'] ?? 0;
+            $itemDiscountedPrice = $itemPrice * (1 - $itemDiscount);
+            
             $itemSubtotal = $itemPrice * $item['quantity'];
-            $totalPrice += $itemSubtotal;
+            $itemDiscountedSubtotal = $itemDiscountedPrice * $item['quantity'];
+            
+            $subtotal += $itemSubtotal;
+            $discountAmount += ($itemSubtotal - $itemDiscountedSubtotal);
+            $totalPrice += $itemDiscountedSubtotal;
 
             $orderItems[] = [
                 'product_id' => $item['product_id'],
                 'quantity' => $item['quantity'],
-                'price' => $itemPrice,
+                'price' => $itemDiscountedPrice, // Store the discounted price
+                'original_price' => $itemPrice,  // Keep the original price for reference
+                'discount' => $itemDiscount,     // Track the discount percentage
             ];
         }
-
+        
         if (empty($_POST['shipping_address']) || empty($_POST['payment_method'])) {
             Session::flash('error', 'Please fill all required fields');
             header('Location: /checkout');
@@ -121,7 +148,9 @@ class CheckoutController
 
         Session::set('checkout_data', $orderData);
         Session::set('checkout_total', $totalPrice);
-
+        Session::set('checkout_subtotal', $subtotal);
+        Session::set('checkout_discount', $discountAmount);
+        
         $orderId = Order::createOrder($userId, $orderItems, $totalPrice);
 
         if ($orderId) {
@@ -158,9 +187,13 @@ class CheckoutController
 
         $checkoutData = Session::get('checkout_data') ?? [];
         $totalPrice = Session::get('checkout_total') ?? 0;
+        $subtotal = Session::get('checkout_subtotal') ?? 0;
+        $discountAmount = Session::get('checkout_discount') ?? 0;
 
         Session::remove('checkout_data');
         Session::remove('checkout_total');
+        Session::remove('checkout_subtotal');
+        Session::remove('checkout_discount');
 
         $email = $checkoutData['email'] ?? Session::get('user_email');
         $paymentMethod = $checkoutData['payment_method'] ?? 'Credit Card';
@@ -169,6 +202,8 @@ class CheckoutController
             'title' => 'Order Confirmed - Court Kart',
             'orderId' => $orderId,
             'email' => $email,
+            'subtotal' => $subtotal,
+            'discountAmount' => $discountAmount,
             'totalPrice' => $totalPrice,
             'paymentMethod' => $paymentMethod,
             'page_css' => 'checkout',

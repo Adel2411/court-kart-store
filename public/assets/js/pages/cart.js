@@ -166,14 +166,16 @@ function validateMinimumOrder() {
   const minimumOrderAmount = 5; // Set minimum order value as needed
   
   if (checkoutButton && totalPriceElement) {
-    const totalPrice = parseFloat(totalPriceElement.textContent.replace('$', ''));
+    const totalPrice = parseFloat(totalPriceElement.textContent.replace(/[$,]/g, ''));
     
-    if (totalPrice < minimumOrderAmount) {
+    if (isNaN(totalPrice) || totalPrice < minimumOrderAmount) {
       checkoutButton.classList.add('disabled');
       checkoutButton.addEventListener('click', function(e) {
         e.preventDefault();
         alert(`Minimum order amount is $${minimumOrderAmount}. Please add more products to your cart.`);
       });
+    } else {
+      checkoutButton.classList.remove('disabled');
     }
   }
 }

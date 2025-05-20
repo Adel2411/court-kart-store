@@ -139,7 +139,14 @@
                             <h4><?= htmlspecialchars($item['name']) ?></h4>
                             <div class="summary-item-meta">
                                 <span class="quantity">Qty: <?= $item['quantity'] ?></span>
-                                <span class="price">$<?= number_format($item['price'], 2) ?></span>
+                                <?php if (isset($item['discount']) && $item['discount'] > 0): ?>
+                                    <span class="price">
+                                        <s>$<?= number_format($item['price'], 2) ?></s>
+                                        $<?= number_format($item['price'] * (1 - $item['discount']), 2) ?>
+                                    </span>
+                                <?php else: ?>
+                                    <span class="price">$<?= number_format($item['price'], 2) ?></span>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -149,8 +156,14 @@
             <div class="summary-totals">
                 <div class="summary-row">
                     <span>Subtotal</span>
-                    <span>$<?= number_format($totalPrice, 2) ?></span>
+                    <span>$<?= number_format($subtotal, 2) ?></span>
                 </div>
+                <?php if ($discountAmount > 0): ?>
+                <div class="summary-row">
+                    <span>Discount</span>
+                    <span>-$<?= number_format($discountAmount, 2) ?></span>
+                </div>
+                <?php endif; ?>
                 <div class="summary-row">
                     <span>Shipping</span>
                     <span>Free</span>

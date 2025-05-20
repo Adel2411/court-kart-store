@@ -33,6 +33,17 @@
                 <span><?= htmlspecialchars(ucfirst($paymentMethod ?? 'Credit Card')) ?></span>
             </div>
             
+            <?php if (isset($subtotal) && isset($discountAmount) && $discountAmount > 0): ?>
+            <div class="summary-row">
+                <span>Subtotal:</span>
+                <span>$<?= number_format($subtotal ?? 0, 2) ?></span>
+            </div>
+            <div class="summary-row">
+                <span>Discount:</span>
+                <span>-$<?= number_format($discountAmount ?? 0, 2) ?></span>
+            </div>
+            <?php endif; ?>
+            
             <div class="summary-row">
                 <span>Total:</span>
                 <span>$<?= number_format($totalPrice ?? 0, 2) ?></span>
